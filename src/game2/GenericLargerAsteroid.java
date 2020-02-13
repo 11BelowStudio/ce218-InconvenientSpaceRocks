@@ -49,6 +49,7 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
         super.update();
         timeToLive--;
         redScale = timeToLive/8;
+        updateColour();
         if (timeToLive == 0){
             dead = true;
             wasHit = false;
@@ -75,28 +76,30 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     public abstract void spawnChildren();
     //will be used to generate the child asteroids
 
-    public Color getColour(){
-        return new Color(128-redScale,128+redScale,0);
+    protected void updateColour(){
+        this.objectColour = new Color(128-redScale,128+redScale,0,128);
     }
 
 
     @Override
     public void draw(Graphics2D g) {
+        this.notIntangible();
         AffineTransform at = g.getTransform();
         g.translate(position.x, position.y);
         spaceRockGoSpinny(g);
         //g.setColor(Color.red);
-        g.setColor(getColour());
+        g.setColor(objectColour);
         //g.fillOval((int) (position.x - RADIUS), (int) (position.y - RADIUS), (int) (2 * RADIUS), (int)(2 * RADIUS));
         //g.fillPolygon(this.objectPolygon);
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
+        //g.fill(transformedArea);
+        g.setPaint(new TexturePaint(texture,this.areaRectangle));
+        g.fill(transformedArea);
+        g.setColor(objectColour);
         g.fill(transformedArea);
     }
 
-    @Override
-    public String toString(){
-        return ("x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
-    }
+
 }

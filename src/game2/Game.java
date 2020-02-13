@@ -132,8 +132,8 @@ public class Game {
                     GameObject temp2 = gameObjects.get(j);
                     if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
                         if ((isAsteroid ^ temp2 instanceof GenericAsteroid) ||
-                                (isBullet ^ temp2 instanceof Bullet) ||
-                                (isShip ^ temp2 instanceof Ship)
+                                (isBullet ^ (temp2 instanceof Bullet || temp2 instanceof Ship)) ||
+                                (isShip ^ (temp2 instanceof Ship || temp2 instanceof Bullet))
                         ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
                             //can't really do 'if (.class != .class)', as the GenericAsteroid superclass kinda messes with it
                             temp.collisionHandling(temp2);
@@ -152,6 +152,11 @@ public class Game {
                 //if the current GameObject has childObjects,
                 //they're all added to 'alive',
                 //before the GameObject's childObjects list is wiped
+                /*
+                for (GameObject c: temp.childObjects){
+                    c.update();
+                    alive.add(c);
+                }*/
                 alive.addAll(temp.childObjects);
                 temp.childObjects = null;
             }

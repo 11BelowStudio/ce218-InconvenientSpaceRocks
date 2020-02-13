@@ -65,11 +65,25 @@ class GameLevels {
         //returns one random configuration for the current level of the player, passed as a parameter to makeBoard in FlipBoard
 
         int tempLevel = level - 1; //reduces level by 1 for purposes of easily getting it from the arraylist
-        if (tempLevel > 7){
-            tempLevel = 7; //there's only configurations for 8 levels so yeah final level repeats
-            //however, there are lot of potential outcomes to the makeBoard() call for each configuration, so not a huge loss
+        if (tempLevel > 7){ //there's only configurations for 8 levels so yeah after that it works differently
+            int extraLevel = tempLevel-7; //works out how many levels the player has gone past the final level
+            ArrayList<Integer> theLevel = getRandomLevel(7); //obtains a random final level
+            for (int i = 0; i < 3; i++) {
+                //increases the quantity of each asteroid by a random number
+                //  between 1 and the number of levels that the player has progressed past the final defined level
+                int current = theLevel.get(i);
+                current += (int)(Math.random() * extraLevel);
+                theLevel.set(i,current);
+            }
+            return theLevel;
+        } else {
+            return getRandomLevel(tempLevel);
+            //returns the level as-is if the player hasn't got past level
         }
-        ArrayList<ArrayList<Integer>> temp = levels.get(tempLevel); //extracts the configurations for the current level only
+    }
+
+    private ArrayList<Integer> getRandomLevel(int levelToGet){
+        ArrayList<ArrayList<Integer>> temp = levels.get(levelToGet);//extracts the configurations for the current level only
         Collections.shuffle(temp); //randomizes the configurations for the current level
         return temp.get(0); //gets the first configuration after the order was randomized
     }

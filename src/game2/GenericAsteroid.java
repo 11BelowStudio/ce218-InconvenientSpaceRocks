@@ -4,9 +4,11 @@ import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static game1.Constants.FRAME_HEIGHT;
 import static game1.Constants.FRAME_WIDTH;
+import static game2.Constants.AN_TEXTURE;
 import static game2.Constants.DT;
 
 public abstract class GenericAsteroid extends GameObject {
@@ -68,6 +70,7 @@ public abstract class GenericAsteroid extends GameObject {
         spinSpeed = Math.toRadians(((Math.random() * 2)-1)/32); //rate at which space rock go spinny
         setSpecifics();
         objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,asteroidScale);
+        //texture = (BufferedImage)AN_TEXTURE;
     }
 
     protected abstract void setSpecifics();
@@ -81,5 +84,10 @@ public abstract class GenericAsteroid extends GameObject {
     @Override
     protected void hitLogic() {
         wasHit = true;
+    }
+
+    @Override
+    public String toString(){
+        return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
     }
 }

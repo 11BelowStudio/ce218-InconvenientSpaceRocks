@@ -25,8 +25,8 @@ public class Ship extends GameObject {
     // constant speed loss factor
     public static final double DRAG = 0.015;
 
-    public static final Color SHIP_COLOUR = Color.cyan;
-    public static final Color GODMODE_COLOUR = Color.MAGENTA;
+    public static final Color SHIP_COLOUR =  new Color(0,255,255,128);
+    public static final Color GODMODE_COLOUR = new Color(255,0,255,128);
 
     public static final long BULLET_DELAY = 250;
     //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
@@ -97,6 +97,9 @@ public class Ship extends GameObject {
 
         intangible = true;
 
+        objectColour = SHIP_COLOUR;
+
+
     }
 
     public Ship(Controller ctrl, Game game, Vector2D direction){
@@ -115,10 +118,15 @@ public class Ship extends GameObject {
             currentAction.shoot = false;
         }
 
-        if (intangible && System.currentTimeMillis() >= gracePeriodExpiresAt){
-            //will cause the player's godmode to expire after the grace period expires
-            intangible = false;
-            System.out.println("no more godmode for u");
+        if (intangible){
+            if (System.currentTimeMillis() >= gracePeriodExpiresAt){
+                //will cause the player's godmode to expire after the grace period expires
+                intangible = false;
+                this.objectColour = SHIP_COLOUR;
+                System.out.println("no more godmode for u");
+            } else{
+                this.objectColour = GODMODE_COLOUR;
+            }
         }
 
         direction.rotate(Math.toRadians(currentAction.turn * STEER_RATE));
@@ -201,11 +209,6 @@ public class Ship extends GameObject {
             g.setColor(Color.red);
             g.fillPolygon(thrustPolygon);
         }
-        if (intangible){
-            g.setColor(GODMODE_COLOUR);
-        } else {
-            g.setColor(SHIP_COLOUR);
-        }
         //g.fillPolygon(objectPolygon);
         //g.fillPolygon(objectPolygon = new Polygon(hitboxX, hitboxY, hitboxX.length));
         //g.setTransform(translatedRotated);
@@ -215,6 +218,9 @@ public class Ship extends GameObject {
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
+        g.setPaint(new TexturePaint(texture,this.areaRectangle));
+        g.fill(transformedArea);
+        g.setColor(objectColour);
         g.fill(transformedArea);
 
         /*

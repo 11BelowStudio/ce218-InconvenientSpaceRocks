@@ -33,4 +33,9 @@ public class BigAsteroid extends GenericLargerAsteroid {
         }
         //return children;
     }
+
+    @Override
+    public String toString(){
+        return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
+    }
 }

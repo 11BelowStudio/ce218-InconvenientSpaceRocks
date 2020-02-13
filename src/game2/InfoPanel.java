@@ -13,15 +13,14 @@ public class InfoPanel extends JPanel {
     AttributeLabel<Integer> livesLabel;
 
 
-    //Game game;
+    Game game;
 
-    /*
+
     InfoPanel(Game game){
-
+        this();
         this.game = game;
 
-
-    }*/
+    }
 
     InfoPanel(){
 
@@ -51,5 +50,11 @@ public class InfoPanel extends JPanel {
         updateScore(newScore);
         updateLevel(newLevel);
         updateLives(newLives);
+    }
+
+    void update(){
+        updateScore(game.score);
+        updateLevel(game.currentLevel);
+        updateLives(game.lives);
     }
 }

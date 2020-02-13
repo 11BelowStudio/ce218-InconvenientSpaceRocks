@@ -6,6 +6,9 @@ import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+
+import static game2.Constants.SPEHSS;
 
 public class View extends JComponent {
     // background colour
@@ -15,6 +18,8 @@ public class View extends JComponent {
 
     private InfoPanel gameInfo;
 
+    private BufferedImage spehss;
+
     AttributeString<Integer> scoreString;
     AttributeString<Integer> levelString;
     AttributeString<Integer> livesString;
@@ -22,9 +27,11 @@ public class View extends JComponent {
     public View(Game game) {
 
         this.game = game;
-        //gameInfo = new InfoPanel(game);
+        gameInfo = new InfoPanel(game);
         //gameInfo = new InfoPanel();
-        //this.add(gameInfo,BorderLayout.NORTH);
+        this.add(gameInfo,BorderLayout.NORTH);
+
+        spehss = (BufferedImage)SPEHSS;
 
 
         scoreString = new AttributeString<>("Score: ",0);
@@ -56,9 +63,15 @@ public class View extends JComponent {
     public void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
         // paint the background
-        g.setColor(BG_COLOR);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        //Now, in order to actually see the asteroids you'll need to add a for-each loop to the paintComponent method of BasicView that draws all the asteroids on the screen.
+        //g.setColor(BG_COLOR);
+        Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
+        g.setPaint(new TexturePaint(spehss,background));
+        g.fill(background);
+        g.setColor(Color.white);
+        int eighthWidth = getWidth()/8;;
+        g.drawString(scoreString.toString(),eighthWidth,10);
+        g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
+        g.drawString(livesString.toString(), 6*eighthWidth,10);
 
         synchronized (Game.class) {
             for (GameObject o : game.gameObjects) {
@@ -76,12 +89,14 @@ public class View extends JComponent {
         g.drawString(gameInfo.levelLabel.getText(),3*(getWidth()/8),10);
         g.drawString(gameInfo.livesLabel.getText(), 6*(getWidth()/8),10);
          */
-        int eighthWidth = getWidth()/8;;
+
         //g.scale(2,2);
         updateAll(game.score,game.currentLevel,game.lives);
-        g.drawString(scoreString.toString(),eighthWidth,10);
-        g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
-        g.drawString(livesString.toString(), 6*eighthWidth,10);
+        //int eighthWidth = getWidth()/8;
+        //g.drawString(scoreString.toString(),eighthWidth,10);
+        //g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
+        //g.drawString(livesString.toString(), 6*eighthWidth,10);
+        //gameInfo.updateAll(game.score,game.currentLevel,game.lives);
 
         if(game.gameOver){
             g.drawString("GAME OVER YEAH",(int)(3.5*eighthWidth),getHeight()/2);

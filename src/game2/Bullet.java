@@ -46,6 +46,7 @@ public class Bullet extends GameObject {
     public void update(){
         super.update();
         timeToLive--;
+        objectColour = new Color(255 - (5*timeToLive),255 - (3*timeToLive),255 - (timeToLive/2),128);
 
         if (timeToLive == 0){
             dead = true;
@@ -64,13 +65,14 @@ public class Bullet extends GameObject {
 
     @Override
     public void draw(Graphics2D g) {
+        this.notIntangible();
         AffineTransform at = g.getTransform();
         g.translate(position.x, position.y);
         double rot = velocity.angle() + Math.PI / 2;
         g.rotate(rot);
         //g.scale(RADIUS, RADIUS);
         //g.setColor(Color.ORANGE);
-        g.setColor(new Color(255 - (5*timeToLive),255 - (3*timeToLive),255 - (timeToLive/2))) ;
+        g.setColor(objectColour);
         //g.setColor(new Color(255 - (int)(0.5*scaledDistance),255 - (int)(0.15*scaledDistance),255 - (int)(0.05*scaledDistance)));
         //g.fillPolygon(objectPolygon = new Polygon(xCorners, yCorners, xCorners.length));
         //g.fillPolygon(transformedObjectPolygon = (Polygon)g.getTransform().createTransformedShape(objectPolygon));
@@ -78,8 +80,10 @@ public class Bullet extends GameObject {
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
+        g.setPaint(new TexturePaint(texture,this.areaRectangle));
         g.fill(transformedArea);
-
+        g.setColor(objectColour);
+        g.fill(transformedArea);
 
     }
 

@@ -44,7 +44,12 @@ public class MediumAsteroid extends GenericLargerAsteroid {
     }
 
     @Override
-    public Color getColour(){
-        return new Color(255-redScale,redScale,0);
+    public void updateColour(){
+        this.objectColour = new Color(255-redScale,redScale,0,128);
+    }
+
+    @Override
+    public String toString(){
+        return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
     }
 }

@@ -2,6 +2,10 @@ package game2;
 
 import java.awt.*;
 import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import utilities.ImageManager;
 
 //basically contains some commonly used values and such
 
@@ -25,4 +29,17 @@ public class Constants {
     //public static final int DELAY = 20; //delay of 20: 50fps
     public static final double DT = DELAY / 1000.0;  // DELAY in seconds
     //public static final double DT = DELAY / 1000.0;
+
+    public static final int MODEL_SPEED = 20;
+    public static final long MODEL_DURATION = 20;
+
+    public static Image AN_TEXTURE, SPEHSS;//ASTEROID1, MILKYWAY1;
+    static {
+        try {
+            //ASTEROID1 = ImageManager.loadImage("asteroid1");
+            //MILKYWAY1 = ImageManager.loadImage("milkyway1");
+            AN_TEXTURE = ImageManager.loadImage("anTexture");
+            SPEHSS = ImageManager.loadImage("spehss");
+        } catch (IOException e) { e.printStackTrace(); }
+    }
 }

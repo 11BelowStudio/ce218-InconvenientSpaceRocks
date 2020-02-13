@@ -5,6 +5,7 @@ import utilities.Vector2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import static game2.Constants.*;
@@ -39,6 +40,10 @@ public abstract class GameObject{
 
     protected Vector2D lastPos;
 
+    public BufferedImage texture;
+
+    protected Color objectColour;
+
     int[] hitboxX, hitboxY;
     int[] transformedHitboxX,transformedHitboxY;
 
@@ -46,10 +51,12 @@ public abstract class GameObject{
         position = p;
         velocity = v;
         dead = false;
-        intangible = false;
+        intangible = true; //everything intangible on 1st frame to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         childObjects = null;
         pointValue = 0;
+        texture = (BufferedImage)AN_TEXTURE;
+        objectColour = Color.MAGENTA;
     }
 
     public void update(){
@@ -75,20 +82,26 @@ public abstract class GameObject{
     public abstract void draw(Graphics2D g);
 
     public boolean overlap(GameObject other){
-        // TODO: simple overlap detection based on bounding circles
-        if (this.intangible || other.intangible){
-            return false;
-        } else{ //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
-        //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
+        // overlap detection based on areas
+        try {
+            if (this.intangible || other.intangible) {
+                return false;
+            } else if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
+                //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
 
-            if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
-            //if (this.position.dist(other.position) <= 100){
+                //if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
+                //if (this.position.dist(other.position) <= 100){
 
                 //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
                 Area thisArea = new Area(this.transformedArea);
                 thisArea.intersect(other.transformedArea);
                 return !thisArea.isEmpty();
+                //}
             }
+        } catch(NullPointerException e){
+            System.out.println(e);
+            System.out.println("This: " + this.toString());
+            System.out.println("Other: " + other.toString());
         }
         return false;
     }
@@ -109,6 +122,9 @@ public abstract class GameObject{
         transformedArea = new Area(transformedShape);
         //the transformedArea is the transformedShape parameter but as an Area instead
 
+        this.areaRectangle = transformedArea.getBounds();
+        //a simple bounding rectangle for this area
+
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
             intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
@@ -125,18 +141,24 @@ public abstract class GameObject{
             //moving stuff on the right of the screen to the left of it
             intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
         }
-        this.areaRectangle = transformedArea.getBounds();
+
         //calculates a simple bounding rectangle for this area
+        //g.setClip(transformedArea);
     }
 
+    //@Override
     private void intersectHandler(Graphics2D g, Rectangle rightScreen, int xTranslate, int yTranslate) {
         AffineTransform backup = g.getTransform();
         Area tempArea = (Area)transformedArea.clone();
         tempArea.intersect(new Area(rightScreen));
         transformedArea.subtract(tempArea);
         g.translate(xTranslate, yTranslate);
-        g.fill(tempArea);
         transformedArea.add(tempArea);
+        areaRectangle = transformedArea.getBounds();
+        g.setPaint(new TexturePaint(texture,areaRectangle));
+        g.fill(tempArea); //filling the sprite with the texture
+        g.setColor(objectColour);
+        g.fill(transformedArea); //now filling it with the overlay
         g.setTransform(backup);
     }
 
@@ -159,6 +181,17 @@ public abstract class GameObject{
         g.fill(tempArea);
         transformedArea.add(tempArea);
     }*/
+
+
+    @Override
+    public String toString(){
+        return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
+    }
+
+    protected void notIntangible(){
+        this.intangible = false;
+    }
+
 
 
 

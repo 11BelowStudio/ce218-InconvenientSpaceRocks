@@ -6,6 +6,8 @@ import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
 
 import static game1.Constants.*;
 
@@ -58,6 +60,7 @@ public class Asteroid extends GenericAsteroid {
         RADIUS = 15;
         pointValue = 1;
         asteroidScale = 0.5;
+        objectColour = new Color(255,0,0,128);
         //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
     }
 
@@ -72,21 +75,34 @@ public class Asteroid extends GenericAsteroid {
 
     @Override
     public void draw(Graphics2D g) {
+        //Graphics2D g2 = (Graphics2D) g.create();
+        this.notIntangible();
         AffineTransform at = g.getTransform();
         g.translate(position.x, position.y);
         spaceRockGoSpinny(g);
-        g.setColor(Color.red);
+        //g.setColor(new Color(255,0,0,128));
         //g.fillPolygon(objectPolygon = new Polygon(xCorners,yCorners,xCorners.length));
         //g.fillOval((int) (position.x - RADIUS), (int) (position.y - RADIUS), (int) (2 * RADIUS), (int)(2 * RADIUS));
         //g.fillPolygon(objectPolygon);
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
+        //BufferedImage tempImage = (BufferedImage) texture;
+        //System.out.println(g.getPaint().getClass());
+        //Paint tempPaint = g.getPaint();
+        //g.setPaint(new TexturePaint(tempImage,new Rectangle(0,0,256,256)));
+        g.setPaint(new TexturePaint(texture,this.areaRectangle));
         g.fill(transformedArea);
+        g.setColor(objectColour);
+        g.fill(transformedArea);
+        //g.setPaint(tempPaint);
+        //g.dispose();
     }
+
+
 
     @Override
     public String toString(){
-	    return ("x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
+        return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
     }
 }
