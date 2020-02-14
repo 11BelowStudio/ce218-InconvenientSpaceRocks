@@ -234,7 +234,6 @@ public class Ship extends GameObject {
         //g.fillPolygon(objectPolygon = new Polygon(hitboxX, hitboxY, hitboxX.length));
         //g.setTransform(translatedRotated);
         //g.fillPolygon(objectPolygon);
-        //g.fillPolygon(objectPolygon);
         //objectPolygon.translate((int)position.x,(int)position.y);
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
@@ -243,15 +242,6 @@ public class Ship extends GameObject {
         paintTheArea(g);
 
 
-        /*
-        for (Bullet b: bulletList){
-            if (b.dead){
-                bulletList.remove(b);
-                //causes java.util.ConcurrentModificationException
-            } else {
-                b.draw(g);
-            }
-        }*/
     }
 
     public void giveImmunity(){
