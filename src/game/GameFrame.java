@@ -1,12 +1,9 @@
-package game2;
-
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+package game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
 
-import static game1.Constants.DELAY;
+import static basicGame.Constants.DELAY;
 
 public class GameFrame extends JFrame {
 

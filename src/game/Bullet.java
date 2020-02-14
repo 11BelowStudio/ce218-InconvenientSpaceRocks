@@ -1,4 +1,4 @@
-package game2;
+package game;
 
 import utilities.PolygonUtilities;
 import utilities.Vector2D;
@@ -80,10 +80,12 @@ public class Bullet extends GameObject {
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
+        /*
         g.setPaint(new TexturePaint(texture,this.areaRectangle));
         g.fill(transformedArea);
         g.setColor(objectColour);
-        g.fill(transformedArea);
+        g.fill(transformedArea);*/
+        paintTheArea(g);
 
     }
 

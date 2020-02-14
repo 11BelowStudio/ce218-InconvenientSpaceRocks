@@ -1,8 +1,6 @@
-package game2;
+package game;
 
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import utilities.ImageManager;
@@ -33,13 +31,14 @@ public class Constants {
     public static final int MODEL_SPEED = 20;
     public static final long MODEL_DURATION = 20;
 
-    public static Image AN_TEXTURE, SPEHSS;//ASTEROID1, MILKYWAY1;
+    public static Image AN_TEXTURE, SPEHSS, SHIP;//ASTEROID1, MILKYWAY1;
     static {
         try {
             //ASTEROID1 = ImageManager.loadImage("asteroid1");
             //MILKYWAY1 = ImageManager.loadImage("milkyway1");
             AN_TEXTURE = ImageManager.loadImage("anTexture");
             SPEHSS = ImageManager.loadImage("spehss");
+            SHIP = ImageManager.loadImage("shipV1");
         } catch (IOException e) { e.printStackTrace(); }
     }
 }

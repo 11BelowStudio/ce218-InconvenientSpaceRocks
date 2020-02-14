@@ -1,10 +1,10 @@
-package game1;
+package basicGame;
 
 import utilities.Vector2D;
 
 import java.awt.*;
 
-import static game1.Constants.*;
+import static basicGame.Constants.*;
 
 public class BasicShip {
     public static final int RADIUS = 8;

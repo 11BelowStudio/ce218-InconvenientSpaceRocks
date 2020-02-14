@@ -1,13 +1,9 @@
-package game2;
+package game;
 
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.List;
-
-import static game1.Constants.FRAME_HEIGHT;
-import static game1.Constants.FRAME_WIDTH;
 
 public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
@@ -95,10 +91,12 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
         //g.fill(transformedArea);
+        /*
         g.setPaint(new TexturePaint(texture,this.areaRectangle));
         g.fill(transformedArea);
         g.setColor(objectColour);
-        g.fill(transformedArea);
+        g.fill(transformedArea);*/
+        paintTheArea(g);
     }
 
 

@@ -1,15 +1,12 @@
-package game2;
+package game;
 
 
-import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.image.BufferedImage;
 
-import static game1.Constants.*;
+import static basicGame.Constants.*;
 
 public class Asteroid extends GenericAsteroid {
 

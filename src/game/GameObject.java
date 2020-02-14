@@ -1,4 +1,4 @@
-package game2;
+package game;
 
 import utilities.Vector2D;
 
@@ -8,7 +8,7 @@ import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import static game2.Constants.*;
+import static game.Constants.*;
 
 public abstract class GameObject{
 
@@ -56,7 +56,7 @@ public abstract class GameObject{
         childObjects = null;
         pointValue = 0;
         texture = (BufferedImage)AN_TEXTURE;
-        objectColour = Color.MAGENTA;
+        objectColour = new Color(255,255,255,32);
     }
 
     public void update(){
@@ -118,7 +118,7 @@ public abstract class GameObject{
         //return transformedObjectPolygon;
     }*/
 
-    public void wrapAround(Graphics2D g, Shape transformedShape){
+    protected void wrapAround(Graphics2D g, Shape transformedShape){
         transformedArea = new Area(transformedShape);
         //the transformedArea is the transformedShape parameter but as an Area instead
 
@@ -155,11 +155,21 @@ public abstract class GameObject{
         g.translate(xTranslate, yTranslate);
         transformedArea.add(tempArea);
         areaRectangle = transformedArea.getBounds();
+        /*
         g.setPaint(new TexturePaint(texture,areaRectangle));
-        g.fill(tempArea); //filling the sprite with the texture
+        g.fill(transformedArea); //filling the sprite with the texture
         g.setColor(objectColour);
         g.fill(transformedArea); //now filling it with the overlay
+         */
+        paintTheArea(g);
         g.setTransform(backup);
+    }
+
+    protected void paintTheArea(Graphics2D g){
+        g.setPaint(new TexturePaint(texture,areaRectangle));
+        g.fill(transformedArea); //filling the sprite with the texture
+        g.setColor(objectColour);
+        g.fill(transformedArea); //now filling it with the overlay
     }
 
     /*

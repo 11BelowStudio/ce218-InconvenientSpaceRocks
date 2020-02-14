@@ -1,14 +1,12 @@
-package game2;
+package game;
 
 import utilities.AttributeString;
 
-import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
-import static game2.Constants.SPEHSS;
+import static game.Constants.SPEHSS;
 
 public class View extends JComponent {
     // background colour
@@ -18,7 +16,9 @@ public class View extends JComponent {
 
     private InfoPanel gameInfo;
 
-    private BufferedImage spehss;
+    private Image bg;
+
+    AffineTransform bgTransform;
 
     AttributeString<Integer> scoreString;
     AttributeString<Integer> levelString;
@@ -31,7 +31,16 @@ public class View extends JComponent {
         //gameInfo = new InfoPanel();
         this.add(gameInfo,BorderLayout.NORTH);
 
-        spehss = (BufferedImage)SPEHSS;
+        bg = SPEHSS;
+
+        double imWidth = bg.getWidth(null);
+        double imHeight = bg.getHeight(null);
+        double stretchx = (imWidth > Constants.FRAME_WIDTH? 1 :
+                Constants.FRAME_WIDTH/imWidth);
+        double stretchy = (imHeight > Constants.FRAME_HEIGHT? 1 :
+                Constants.FRAME_HEIGHT/imHeight);
+        bgTransform = new AffineTransform();
+        bgTransform.scale(stretchx, stretchy);
 
 
         scoreString = new AttributeString<>("Score: ",0);
@@ -63,16 +72,18 @@ public class View extends JComponent {
     public void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
         // paint the background
-        //g.setColor(BG_COLOR);
-        Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
-        g.setPaint(new TexturePaint(spehss,background));
-        g.fill(background);
+        g.setColor(BG_COLOR);
+        //Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
+        //g.setPaint(new TexturePaint(spehss,background));
+        //g.fill(background);
+        g.drawImage(bg, bgTransform,null);
         g.setColor(Color.white);
-        int eighthWidth = getWidth()/8;;
+        int eighthWidth = getWidth()/8;
+        /*
         g.drawString(scoreString.toString(),eighthWidth,10);
         g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
         g.drawString(livesString.toString(), 6*eighthWidth,10);
-
+        */
         synchronized (Game.class) {
             for (GameObject o : game.gameObjects) {
                 o.draw(g);
@@ -85,6 +96,7 @@ public class View extends JComponent {
         /*
         gameInfo.updateAll(game.score,game.currentLevel,game.lives);
         gameInfo.paint(g);
+        g.setColor(Color.white);
         g.drawString(gameInfo.scoreLabel.getText(),(getWidth()/8),10);
         g.drawString(gameInfo.levelLabel.getText(),3*(getWidth()/8),10);
         g.drawString(gameInfo.livesLabel.getText(), 6*(getWidth()/8),10);
@@ -93,9 +105,10 @@ public class View extends JComponent {
         //g.scale(2,2);
         updateAll(game.score,game.currentLevel,game.lives);
         //int eighthWidth = getWidth()/8;
-        //g.drawString(scoreString.toString(),eighthWidth,10);
-        //g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
-        //g.drawString(livesString.toString(), 6*eighthWidth,10);
+        g.drawString(scoreString.toString(),eighthWidth,10);
+        g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
+        g.drawString(livesString.toString(), 6*eighthWidth,10);
+
         //gameInfo.updateAll(game.score,game.currentLevel,game.lives);
 
         if(game.gameOver){

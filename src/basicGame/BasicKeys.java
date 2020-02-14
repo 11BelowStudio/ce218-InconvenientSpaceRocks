@@ -1,11 +1,11 @@
-package game2;
+package basicGame;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Keys extends KeyAdapter implements Controller {
+public class BasicKeys extends KeyAdapter implements BasicController  {
     Action action;
-    public Keys() {
+    public BasicKeys() {
         action = new Action();
     }
 
@@ -16,7 +16,6 @@ public class Keys extends KeyAdapter implements Controller {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        action.theAnyButton = true;
         switch (key) {
             case KeyEvent.VK_UP:
                 action.thrust = 1;
@@ -36,7 +35,6 @@ public class Keys extends KeyAdapter implements Controller {
     public void keyReleased(KeyEvent e) {
         //these are all off when the key is released
         int key = e.getKeyCode();
-        action.theAnyButton = false;
         switch (key) {
             case KeyEvent.VK_UP:
                 action.thrust = 0;

@@ -1,8 +1,7 @@
-package game2;
+package game;
 
 import utilities.AttributeLabel;
 
-import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 

@@ -1,11 +1,9 @@
 package utilities;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
 
 
-import static game2.Constants.DRAWING_SCALE;
+import static game.Constants.DRAWING_SCALE;
 
 public class PolygonUtilities {
 

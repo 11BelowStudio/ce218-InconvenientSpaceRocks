@@ -1,11 +1,11 @@
-package game1;
+package basicGame;
 
 
 import utilities.Vector2D;
 
-import static game1.Constants.DT;
-import static game1.Constants.FRAME_HEIGHT;
-import static game1.Constants.FRAME_WIDTH;
+import static basicGame.Constants.DT;
+import static basicGame.Constants.FRAME_HEIGHT;
+import static basicGame.Constants.FRAME_WIDTH;
 import java.awt.Color;
 import java.awt.Graphics2D;
 

@@ -1,14 +1,7 @@
-package game2;
-
-import utilities.JEasyFrame;
-import utilities.Vector2D;
+package game;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static game1.Constants.DELAY;
-import static game2.Constants.FRAME_HEIGHT;
-import static game2.Constants.FRAME_WIDTH;
 
 public class Game {
     public static final int N_INITIAL_ASTEROIDS = 5;
@@ -47,6 +40,7 @@ public class Game {
         pointsToEarnLife = LIFE_COST;
 
         currentLevel = 0;
+        //currentLevel = 7;
 
         waitingToRespawn = false;
         gameOver = false;
@@ -118,6 +112,7 @@ public class Game {
                 asteroidsRemaining = true;
             }
             g.update();
+
         }
 
         //doing collision handling and dealing with the results of the collision handling

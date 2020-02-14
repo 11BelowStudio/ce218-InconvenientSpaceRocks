@@ -1,4 +1,4 @@
-package game2;
+package game;
 
 public interface Controller {
     public Action action();

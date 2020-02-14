@@ -1,12 +1,9 @@
-package game2;
+package game;
 
-import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class MediumAsteroid extends GenericLargerAsteroid {
 

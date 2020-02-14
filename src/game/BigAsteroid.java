@@ -1,6 +1,5 @@
-package game2;
+package game;
 
-import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.util.ArrayList;

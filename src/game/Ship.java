@@ -1,14 +1,15 @@
-package game2;
+package game;
 
+import org.w3c.dom.css.Rect;
 import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.io.BufferedReader;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static game2.Constants.*;
+import static game.Constants.*;
 
 public class Ship extends GameObject {
     //public static final int RADIUS = 8;
@@ -25,8 +26,8 @@ public class Ship extends GameObject {
     // constant speed loss factor
     public static final double DRAG = 0.015;
 
-    public static final Color SHIP_COLOUR =  new Color(0,255,255,128);
-    public static final Color GODMODE_COLOUR = new Color(255,0,255,128);
+    public static final Color SHIP_COLOUR =  new Color(0,255,255,32);
+    public static final Color GODMODE_COLOUR = new Color(255,0,255,32);
 
     public static final long BULLET_DELAY = 250;
     //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
@@ -34,11 +35,13 @@ public class Ship extends GameObject {
     private long canFireNextBulletAt;
     //when the player can fire their next bullet
 
-    private static final int GRACE_PERIOD = 1000;
+    private static final int RESPAWN_GRACE_PERIOD = 1000;
     //player has a grace period of 1000ms (1s) of invulnerability when respawning
+    private static final int REWARD_GRACE_PERIOD = 250;
+    //0.25s of invulenrability after destroying an asteroid
 
     private long gracePeriodExpiresAt;
-    //records when the player's grace period when respawning will expire
+    //records when the player's grace period will expire
 
 
     // direction in which the nose of the ship is pointing
@@ -59,6 +62,10 @@ public class Ship extends GameObject {
 
     private Polygon thrustPolygon;
 
+    private Rectangle definedRect;
+
+    double lastRotation;
+
     public Ship(Controller ctrl, Game game) {
 
         super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0));
@@ -66,6 +73,8 @@ public class Ship extends GameObject {
         this.ctrl = ctrl;
 
         this.game = game;
+
+
 
         //position = new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2);
         direction = Vector2D.polar(Math.toRadians(270),1);
@@ -76,6 +85,8 @@ public class Ship extends GameObject {
         hitboxY = new int[] {1,2,-2,2};
 
         this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
+
+        definedRect = new Rectangle(0,0,(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
 
         //declaring the thrust triangle shape
         int[] XPTHRUST = new int[]{0,1,-1};
@@ -93,11 +104,13 @@ public class Ship extends GameObject {
         canFireNextBulletAt = System.currentTimeMillis();
         //allows bullet to be fired instantly basically
 
-        gracePeriodExpiresAt = System.currentTimeMillis() + GRACE_PERIOD;
+        gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
 
         intangible = true;
 
         objectColour = SHIP_COLOUR;
+
+        texture = (BufferedImage)Constants.SHIP;
 
 
     }
@@ -113,6 +126,8 @@ public class Ship extends GameObject {
         Action currentAction = ctrl.action();
         //Vector2D lastPos = new Vector2D(position);
 
+        Vector2D lastPos = this.position;
+
         if (currentAction.shoot){
             mkBullet();
             currentAction.shoot = false;
@@ -121,9 +136,7 @@ public class Ship extends GameObject {
         if (intangible){
             if (System.currentTimeMillis() >= gracePeriodExpiresAt){
                 //will cause the player's godmode to expire after the grace period expires
-                intangible = false;
-                this.objectColour = SHIP_COLOUR;
-                System.out.println("no more godmode for u");
+                notIntangible();
             } else{
                 this.objectColour = GODMODE_COLOUR;
             }
@@ -151,6 +164,7 @@ public class Ship extends GameObject {
 
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
         //wraps the position around if appropriate
+        definedRect = new Rectangle((int)(position.x - 2*DRAWING_SCALE),(int)(position.y - 2*DRAWING_SCALE),(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
 
         //System.out.println("\n");
         //System.out.println(direction);
@@ -178,7 +192,7 @@ public class Ship extends GameObject {
             //if it's gone past the time when the next bullet can be fired,
             //a bullet can be fired
 
-            intangible = false; //attacking will cause a premature end to the player's intangibility
+            notIntangible(); //attacking will cause a premature end to the player's intangibility
 
             canFireNextBulletAt = System.currentTimeMillis() + BULLET_DELAY;
             //works out when the player is next allowed to fire a bullet
@@ -195,6 +209,13 @@ public class Ship extends GameObject {
             //the new bullet is constructed in front of where the ship is, in the direction that it is pointing
             //and is put it in childObjects
         }
+    }
+
+    @Override
+    protected void notIntangible(){
+        super.notIntangible();
+        System.out.println("no more godmode for u"); //debug message
+        this.objectColour = SHIP_COLOUR; //goes back to normal colour
     }
 
     public void draw(Graphics2D g){
@@ -218,10 +239,9 @@ public class Ship extends GameObject {
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
-        g.setPaint(new TexturePaint(texture,this.areaRectangle));
-        g.fill(transformedArea);
-        g.setColor(objectColour);
-        g.fill(transformedArea);
+        //g.setPaint(new TexturePaint(texture,this.areaRectangle));
+        paintTheArea(g);
+
 
         /*
         for (Bullet b: bulletList){
@@ -237,8 +257,16 @@ public class Ship extends GameObject {
     public void giveImmunity(){
         //gives the ship some temporary immunity at the start of every level,
         //so it won't get defeated by a new asteroid as it spawns in
-        gracePeriodExpiresAt = System.currentTimeMillis() + GRACE_PERIOD;
+        gracePeriodExpiresAt = System.currentTimeMillis() + REWARD_GRACE_PERIOD;
         intangible = true;
+    }
+
+    @Override
+    protected void paintTheArea(Graphics2D g){
+        g.setPaint(new TexturePaint(texture,definedRect));
+        g.fill(transformedArea);
+        g.setColor(objectColour);
+        g.fill(transformedArea);
     }
 
 

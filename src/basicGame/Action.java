@@ -1,4 +1,4 @@
-package game1;
+package basicGame;
 
 public class Action {
     public int thrust; // 0 = off, 1 = on

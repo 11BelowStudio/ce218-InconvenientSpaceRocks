@@ -1,10 +1,10 @@
-package game1;
+package basicGame;
 
 import utilities.JEasyFrame;
 
 import java.util.ArrayList;
 import java.util.List;
-import static game1.Constants.DELAY;
+import static basicGame.Constants.DELAY;
 
 public class BasicGame {
     public static final int N_INITIAL_ASTEROIDS = 5;

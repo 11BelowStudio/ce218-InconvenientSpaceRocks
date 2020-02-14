@@ -1,11 +1,4 @@
-package game2;
-
-import utilities.JEasyFrame;
-
-import javax.swing.*;
-import java.awt.*;
-
-import static game1.Constants.DELAY;
+package game;
 
 public class MainClassIsHere {
 

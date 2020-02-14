@@ -1,4 +1,4 @@
-package game2;
+package game;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +67,9 @@ class GameLevels {
         int tempLevel = level - 1; //reduces level by 1 for purposes of easily getting it from the arraylist
         if (tempLevel > 7){ //there's only configurations for 8 levels so yeah after that it works differently
             int extraLevel = tempLevel-7; //works out how many levels the player has gone past the final level
+            if (extraLevel > 8){
+                extraLevel = 8; //just making sure it doesn't get too out of hand
+            }
             ArrayList<Integer> theLevel = getRandomLevel(7); //obtains a random final level
             for (int i = 0; i < 3; i++) {
                 //increases the quantity of each asteroid by a random number

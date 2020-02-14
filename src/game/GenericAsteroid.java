@@ -1,15 +1,13 @@
-package game2;
+package game;
 
 import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-import static game1.Constants.FRAME_HEIGHT;
-import static game1.Constants.FRAME_WIDTH;
-import static game2.Constants.AN_TEXTURE;
-import static game2.Constants.DT;
+import static basicGame.Constants.FRAME_HEIGHT;
+import static basicGame.Constants.FRAME_WIDTH;
+import static game.Constants.DT;
 
 public abstract class GenericAsteroid extends GameObject {
 
