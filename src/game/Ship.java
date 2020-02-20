@@ -86,7 +86,7 @@ public class Ship extends GameObject {
 
         this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
 
-        definedRect = new Rectangle(0,0,(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
+        definedRect = new Rectangle((int)(position.x - 2*DRAWING_SCALE),(int)(position.y - 2*DRAWING_SCALE),(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
 
         //declaring the thrust triangle shape
         int[] XPTHRUST = new int[]{0,1,-1};
@@ -151,6 +151,12 @@ public class Ship extends GameObject {
 
         thrusting = (currentAction.thrust != 0);
 
+        if (thrusting){
+            SoundManager.startThrust();
+        } else{
+            SoundManager.stopThrust();
+        }
+
         if (velocity.mag() > MAX_SPEED){
             //ensures that velocity is capped at MAX_SPEED
             velocity.set(Vector2D.polar(velocity.angle(),MAX_SPEED));
@@ -164,6 +170,7 @@ public class Ship extends GameObject {
 
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
         //wraps the position around if appropriate
+        
         definedRect = new Rectangle((int)(position.x - 2*DRAWING_SCALE),(int)(position.y - 2*DRAWING_SCALE),(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
 
         //System.out.println("\n");
@@ -208,6 +215,8 @@ public class Ship extends GameObject {
             );
             //the new bullet is constructed in front of where the ship is, in the direction that it is pointing
             //and is put it in childObjects
+
+            SoundManager.fire();
         }
     }
 
@@ -221,6 +230,7 @@ public class Ship extends GameObject {
     public void draw(Graphics2D g){
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
+        //definedRect = g.getTransform().createTransformedShape(definedRect).getBounds();
         double rot = direction.angle() + Math.PI / 2;
         g.rotate(rot);
         //AffineTransform translatedRotated = g.getTransform(); //gets backup of the scale before drawing scale was done

@@ -15,7 +15,8 @@ public class BigAsteroid extends GenericLargerAsteroid {
     protected void setSpecifics(){
         super.setSpecifics();
         RADIUS = 50;
-        pointValue = 15;
+        pointValue = 24; //worth 4 potential medium asteroids (extra 12 potential from the 2 spawned mediums = potential 36) if shot
+            //only worth up to 30 points from the mediums if this is allowed to expire (25 if mediums allowed to expire)
         asteroidScale = 1.25;
 
     }

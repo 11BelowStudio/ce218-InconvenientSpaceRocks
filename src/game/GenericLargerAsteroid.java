@@ -63,8 +63,10 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     protected int howManyChildren(){
         //will only attempt to spawn the children if this is dead
         if (wasHit) {
+            SoundManager.play(SoundManager.crunch);
             return hitChildren;
         } else {
+            SoundManager.play(SoundManager.mediumCrunch);
             return decayChildren;
         }
     }

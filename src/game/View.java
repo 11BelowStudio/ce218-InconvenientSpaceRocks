@@ -5,6 +5,7 @@ import utilities.AttributeString;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import static game.Constants.SPEHSS;
 
@@ -23,6 +24,9 @@ public class View extends JComponent {
     AttributeString<Integer> scoreString;
     AttributeString<Integer> levelString;
     AttributeString<Integer> livesString;
+
+    Rectangle background;
+    int tempx,tempy;
 
     public View(Game game) {
 
@@ -46,6 +50,13 @@ public class View extends JComponent {
         scoreString = new AttributeString<>("Score: ",0);
         levelString = new AttributeString<>("Level: ",0);
         livesString = new AttributeString<>("Lives: ",0);
+
+
+        tempx = 0;
+        tempy = 0;
+        background = new Rectangle(tempx, tempy, (int)stretchx, (int)stretchy);
+
+
     }
 
 
@@ -71,12 +82,16 @@ public class View extends JComponent {
     @Override
     public void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
+        AffineTransform backup1 = g.getTransform();
         // paint the background
         g.setColor(BG_COLOR);
         //Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
         //g.setPaint(new TexturePaint(spehss,background));
         //g.fill(background);
+        //bgTransform.translate(-1,-1);
         g.drawImage(bg, bgTransform,null);
+        //g.setTransform(backup1);
+        //g.setTransform(bgTransform);
         g.setColor(Color.white);
         int eighthWidth = getWidth()/8;
         /*

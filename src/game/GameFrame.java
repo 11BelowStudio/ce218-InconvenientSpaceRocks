@@ -41,6 +41,8 @@ public class GameFrame extends JFrame {
             Thread.sleep(DELAY);
         }*/
 
+        SoundManager.startGame();
+
         Timer repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
         repaintTimer.start();
@@ -58,6 +60,10 @@ public class GameFrame extends JFrame {
             }
             System.out.println(missedFrames);
         }
+
+        SoundManager.stopGame();
+        SoundManager.stopThrust();
+
         //game.update();
         //view.repaint();
     }

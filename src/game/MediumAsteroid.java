@@ -23,7 +23,8 @@ public class MediumAsteroid extends GenericLargerAsteroid {
         super.setSpecifics();
         RADIUS = 25;
         //timeToLive = (int)(Math.random() * 512) + 512;
-        pointValue = 3;
+        pointValue = 4; //worth 4 small asteroids if destroyed by the player
+            //2 small asteroids if shot = 6 potential points if shot, but only 5 if allowed to decay
         asteroidScale = 0.75;
         //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1.5);
     }

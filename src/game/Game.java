@@ -27,6 +27,8 @@ public class Game {
     boolean gameOver;
 
     public Game() {
+
+
         gameObjects = new ArrayList<>();
         levelConfigs = new GameLevels();
         ctrl = new Keys();
@@ -55,6 +57,8 @@ public class Game {
     }
 
     public ArrayList<GameObject> setupLevel(){
+
+        SoundManager.play(SoundManager.intimidating);
 
         ArrayList<GameObject> newObjects = new ArrayList<>();
 
@@ -167,8 +171,11 @@ public class Game {
                 score += g.pointValue;
                 pointsToEarnLife -= g.pointValue;
                 if (pointsToEarnLife <= 0){
-                    lives++;
-                    pointsToEarnLife += LIFE_COST;
+                    //if player has earned enough points to get a new life
+                    SoundManager.play(SoundManager.nice); //they are told that it's nice
+                    lives++; //lives incremented
+                    pointsToEarnLife += LIFE_COST; //need to earn another LIFE_COST points to earn a new life
+                    //points above the threshold effectively roll over
                 }
                 ship.giveImmunity();
                 //also given some temporary immunity for free,
@@ -185,8 +192,10 @@ public class Game {
         if (playerHit){
             if (lives > 0) {
                 waitingToRespawn = true;
+                SoundManager.play(SoundManager.ohno);
             } else{
                 System.out.println("GAME OVER YEAH!");
+                SoundManager.play(SoundManager.andYouFailed);
                 gameOver = true;
             }
         }

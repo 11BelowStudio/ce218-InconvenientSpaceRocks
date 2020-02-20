@@ -69,6 +69,12 @@ public class Asteroid extends GenericAsteroid {
         return new Asteroid(position);
     }*/
 
+    @Override
+    public void hit(){
+        super.hit();
+        SoundManager.play(SoundManager.solidHit);
+    }
+
 
     @Override
     public void draw(Graphics2D g) {
