@@ -45,7 +45,7 @@ public abstract class GameObject{
     protected Color objectColour;
 
     int[] hitboxX, hitboxY;
-    int[] transformedHitboxX,transformedHitboxY;
+    //int[] transformedHitboxX,transformedHitboxY;
 
     public GameObject(Vector2D p, Vector2D v){
         position = p;
@@ -146,21 +146,14 @@ public abstract class GameObject{
         //g.setClip(transformedArea);
     }
 
-    //@Override
-    private void intersectHandler(Graphics2D g, Rectangle rightScreen, int xTranslate, int yTranslate) {
+    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate) {
         AffineTransform backup = g.getTransform();
         Area tempArea = (Area)transformedArea.clone();
-        tempArea.intersect(new Area(rightScreen));
+        tempArea.intersect(new Area(intersectCheckRect));
         transformedArea.subtract(tempArea);
         g.translate(xTranslate, yTranslate);
         transformedArea.add(tempArea);
         areaRectangle = transformedArea.getBounds();
-        /*
-        g.setPaint(new TexturePaint(texture,areaRectangle));
-        g.fill(transformedArea); //filling the sprite with the texture
-        g.setColor(objectColour);
-        g.fill(transformedArea); //now filling it with the overlay
-         */
         paintTheArea(g);
         g.setTransform(backup);
     }
@@ -172,25 +165,7 @@ public abstract class GameObject{
         g.fill(transformedArea); //now filling it with the overlay
     }
 
-    /*
-    private void intersectVertical(Graphics2D g, Rectangle r){
-        Area tempArea = (Area)transformedArea.clone();
-        tempArea.intersect(new Area(r));
-        transformedArea.subtract(tempArea);
-        g.translate(0,FRAME_HEIGHT);
-        g.fill(tempArea);
-        transformedArea.add(tempArea);
-    }*/
 
-    /*
-    private void intersectHorizontal(Graphics2D g, Rectangle r){
-        Area tempArea = (Area)transformedArea.clone();
-        tempArea.intersect(new Area(r));
-        transformedArea.subtract(tempArea);
-        g.translate(FRAME_WIDTH,0);
-        g.fill(tempArea);
-        transformedArea.add(tempArea);
-    }*/
 
 
     @Override

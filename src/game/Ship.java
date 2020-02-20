@@ -64,7 +64,7 @@ public class Ship extends GameObject {
 
     private Rectangle definedRect;
 
-    double lastRotation;
+    //double lastRotation;
 
     public Ship(Controller ctrl, Game game) {
 
@@ -86,7 +86,10 @@ public class Ship extends GameObject {
 
         this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
 
-        definedRect = new Rectangle((int)(position.x - 2*DRAWING_SCALE),(int)(position.y - 2*DRAWING_SCALE),(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
+        //ensures that the ship's hitbox and texture is scaled correctly
+        RADIUS = DRAWING_SCALE*2;
+
+        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
 
         //declaring the thrust triangle shape
         int[] XPTHRUST = new int[]{0,1,-1};
@@ -98,8 +101,7 @@ public class Ship extends GameObject {
         //the most recent bullet that has been fired
         lastBullet = null;
 
-        //ensures that the ship's hitbox is scaled correctly
-        RADIUS = DRAWING_SCALE*2;
+
 
         canFireNextBulletAt = System.currentTimeMillis();
         //allows bullet to be fired instantly basically
@@ -126,7 +128,7 @@ public class Ship extends GameObject {
         Action currentAction = ctrl.action();
         //Vector2D lastPos = new Vector2D(position);
 
-        Vector2D lastPos = this.position;
+        //Vector2D lastPos = this.position;
 
         if (currentAction.shoot){
             mkBullet();
@@ -170,8 +172,12 @@ public class Ship extends GameObject {
 
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
         //wraps the position around if appropriate
-        
-        definedRect = new Rectangle((int)(position.x - 2*DRAWING_SCALE),(int)(position.y - 2*DRAWING_SCALE),(int)DRAWING_SCALE*4,(int)DRAWING_SCALE*4);
+
+        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
+
+
+
+        //definedRect.setLocation((int)(position.x - RADIUS),(int)(position.y - RADIUS));
 
         //System.out.println("\n");
         //System.out.println(direction);
@@ -228,6 +234,7 @@ public class Ship extends GameObject {
     }
 
     public void draw(Graphics2D g){
+        //definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
         //definedRect = g.getTransform().createTransformedShape(definedRect).getBounds();

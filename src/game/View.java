@@ -25,8 +25,8 @@ public class View extends JComponent {
     AttributeString<Integer> levelString;
     AttributeString<Integer> livesString;
 
-    Rectangle background;
-    int tempx,tempy;
+    //Rectangle background;
+    //int tempx,tempy;
 
     public View(Game game) {
 
@@ -52,9 +52,9 @@ public class View extends JComponent {
         livesString = new AttributeString<>("Lives: ",0);
 
 
-        tempx = 0;
-        tempy = 0;
-        background = new Rectangle(tempx, tempy, (int)stretchx, (int)stretchy);
+        //tempx = 0;
+        //tempy = 0;
+        //background = new Rectangle(tempx, tempy, (int)stretchx, (int)stretchy);
 
 
     }
@@ -82,9 +82,15 @@ public class View extends JComponent {
     @Override
     public void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
-        AffineTransform backup1 = g.getTransform();
+
+        //AffineTransform backup1 = g.getTransform();
+
+        //g.translate(tempx--,tempy--);
+
+
         // paint the background
         g.setColor(BG_COLOR);
+        g.fill(this.getBounds());
         //Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
         //g.setPaint(new TexturePaint(spehss,background));
         //g.fill(background);

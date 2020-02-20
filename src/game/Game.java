@@ -16,7 +16,7 @@ public class Game {
 
     int lives;
 
-    private final int LIFE_COST = 50;
+    private final int LIFE_COST = 100;
 
     int pointsToEarnLife;
 

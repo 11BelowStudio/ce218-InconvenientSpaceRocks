@@ -19,9 +19,11 @@ public class GameFrame extends JFrame {
         view = new View(game);
         gameInfo = new InfoPanel(game);
         this.addKeyListener(game.ctrl);
-        this.add(gameInfo,BorderLayout.NORTH);
+        //this.add(gameInfo,BorderLayout.NORTH);
 
-        getContentPane().add(BorderLayout.CENTER,view);
+        this.add(view,BorderLayout.CENTER);
+
+        //getContentPane().add(BorderLayout.CENTER,view);
         pack();
         this.setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

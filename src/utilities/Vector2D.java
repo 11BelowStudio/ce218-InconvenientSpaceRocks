@@ -147,10 +147,13 @@ public final class Vector2D {
 
     // normalise vector so that magnitude becomes 1
     //basically divides x and y by mag so mag effectively becomes 1
+    //unless the magnitude is 0 at which case it can't really do anything
     public Vector2D normalise() {
         double currentMag = this.mag();
-        this.x = x/currentMag;
-        this.y = y/currentMag;
+        if (currentMag != 0) {
+            this.x = x / currentMag;
+            this.y = y / currentMag;
+        }
         return this;
     }
 
