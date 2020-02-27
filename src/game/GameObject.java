@@ -51,7 +51,7 @@ public abstract class GameObject{
         position = p;
         velocity = v;
         dead = false;
-        intangible = true; //everything intangible on 1st frame to avoid exceptions being thrown on frame 1 collisions
+        intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         childObjects = null;
         pointValue = 0;

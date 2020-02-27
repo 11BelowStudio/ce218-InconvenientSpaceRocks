@@ -5,8 +5,8 @@ import utilities.Vector2D;
 
 import java.awt.*;
 
-import static basicGame.Constants.FRAME_HEIGHT;
-import static basicGame.Constants.FRAME_WIDTH;
+import static game.Constants.FRAME_HEIGHT;
+import static game.Constants.FRAME_WIDTH;
 import static game.Constants.DT;
 
 public abstract class GenericAsteroid extends GameObject {

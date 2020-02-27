@@ -9,4 +9,15 @@ public class Action {
     public boolean noAction(){ return (thrust == 0 && turn == 0 && !shoot && !theAnyButton); }
 
     public boolean theAnyButton(){ return theAnyButton; }
+
+    public Action(){}
+
+    public Action(boolean funTimes){
+        if (funTimes){
+            //thrust = 1;
+            //turn = 1;
+            //shoot = true;
+            //theAnyButton = true;
+        }
+    }
 }

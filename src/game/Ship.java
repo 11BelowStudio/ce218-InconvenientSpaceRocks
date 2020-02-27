@@ -1,18 +1,16 @@
 package game;
 
-import org.w3c.dom.css.Rect;
 import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static game.Constants.*;
+import static game.Constants.FRAME_HEIGHT;
 
-public class Ship extends GameObject {
-    //public static final int RADIUS = 8;
+public abstract class Ship extends GameObject {
 
     // rotation velocity in radians per second
     public static final double STEER_RATE = 2*Math.PI;
@@ -25,24 +23,7 @@ public class Ship extends GameObject {
 
     // constant speed loss factor
     public static final double DRAG = 0.015;
-
-    public static final Color SHIP_COLOUR =  new Color(0,255,255,32);
-    public static final Color GODMODE_COLOUR = new Color(255,0,255,32);
-
-    public static final long BULLET_DELAY = 250;
-    //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
-
-    private long canFireNextBulletAt;
-    //when the player can fire their next bullet
-
-    private static final int RESPAWN_GRACE_PERIOD = 1000;
-    //player has a grace period of 1000ms (1s) of invulnerability when respawning
-    private static final int REWARD_GRACE_PERIOD = 250;
-    //0.25s of invulenrability after destroying an asteroid
-
-    private long gracePeriodExpiresAt;
-    //records when the player's grace period will expire
-
+    //public static Color SHIP_COLOUR;
 
     // direction in which the nose of the ship is pointing
     // this will be the direction in which thrust is applied
@@ -50,35 +31,34 @@ public class Ship extends GameObject {
     public Vector2D direction;
 
     // controller which provides an Action object in each frame
-    private Controller ctrl;
+    protected Controller ctrl;
 
     //recording if there is thrust
-    private boolean thrusting;
+    protected boolean thrusting;
 
+    public static final long BULLET_DELAY = 250;
+    //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
 
-    public Bullet lastBullet;
+    protected long canFireNextBulletAt;
+    //when the player can fire their next bullet
 
     public Game game;
 
-    private Polygon thrustPolygon;
+    public PlayerBullet lastBullet;
 
-    private Rectangle definedRect;
+    protected Rectangle definedRect;
 
-    //double lastRotation;
+    protected Polygon thrustPolygon;
 
-    public Ship(Controller ctrl, Game game) {
 
-        super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0));
-
-        this.ctrl = ctrl;
-
+    protected Ship(Vector2D p, Vector2D v,Game game) {
+        super(p, v);
         this.game = game;
 
-
-
-        //position = new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2);
-        direction = Vector2D.polar(Math.toRadians(270),1);
-        //velocity = Vector2D.polar(direction.angle(),0);
+        //the most recent bullet that has been fired
+        lastBullet = null;
+        canFireNextBulletAt = System.currentTimeMillis();
+        //allows bullet to be fired instantly basically
 
         //declaring the ship shape
         hitboxX = new int[] {0,2,0,-2};
@@ -86,44 +66,23 @@ public class Ship extends GameObject {
 
         this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
 
-        //ensures that the ship's hitbox and texture is scaled correctly
-        RADIUS = DRAWING_SCALE*2;
-
-        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
-
-        //declaring the thrust triangle shape
         int[] XPTHRUST = new int[]{0,1,-1};
         int[] YPTHRUST = new int[]{2,0,0};
 
         this.thrustPolygon = PolygonUtilities.scaledPolygonConstructor(XPTHRUST,YPTHRUST,1);
 
+        //objectColour = SHIP_COLOUR;
 
-        //the most recent bullet that has been fired
-        lastBullet = null;
-
-
-
-        canFireNextBulletAt = System.currentTimeMillis();
-        //allows bullet to be fired instantly basically
-
-        gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
-
-        intangible = true;
-
-        objectColour = SHIP_COLOUR;
-
-        texture = (BufferedImage)Constants.SHIP;
-
-
+        //ensures that the ship's hitbox and texture is scaled correctly
+        RADIUS = DRAWING_SCALE*2;
+        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
     }
 
-    public Ship(Controller ctrl, Game game, Vector2D direction){
-        this(ctrl,game);
-        this.direction = direction;
+    public Ship(Vector2D p, Vector2D v, Controller ctrl, Game game){
+        this(p,v,game);
+        this.ctrl = ctrl;
     }
 
-
-    @Override
     public void update(){
         Action currentAction = ctrl.action();
         //Vector2D lastPos = new Vector2D(position);
@@ -133,15 +92,6 @@ public class Ship extends GameObject {
         if (currentAction.shoot){
             mkBullet();
             currentAction.shoot = false;
-        }
-
-        if (intangible){
-            if (System.currentTimeMillis() >= gracePeriodExpiresAt){
-                //will cause the player's godmode to expire after the grace period expires
-                notIntangible();
-            } else{
-                this.objectColour = GODMODE_COLOUR;
-            }
         }
 
         direction.rotate(Math.toRadians(currentAction.turn * STEER_RATE));
@@ -174,64 +124,22 @@ public class Ship extends GameObject {
         //wraps the position around if appropriate
 
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
-
-
-
-        //definedRect.setLocation((int)(position.x - RADIUS),(int)(position.y - RADIUS));
-
-        //System.out.println("\n");
-        //System.out.println(direction);
-        //System.out.println(velocity);
-        //System.out.println(position);
-
-        /*
-        for (Bullet b: bulletList) {
-            b.update();
-        }*/
-        //updateHitbox(lastPos);
-        //Vector2D moveDist = getMoveDist(lastPos);
-        //thrustPolygon.translate((int)moveDist.x, (int)moveDist.y);
-
     }
 
-    @Override
-    protected void hitLogic() {
-        //currently doesn't need to do anything if hit, may change
-        System.out.println("oof");
-    }
-
-    public void mkBullet(){
+    protected void mkBullet(){
         if (System.currentTimeMillis() >= canFireNextBulletAt) {
             //if it's gone past the time when the next bullet can be fired,
             //a bullet can be fired
-
             notIntangible(); //attacking will cause a premature end to the player's intangibility
-
             canFireNextBulletAt = System.currentTimeMillis() + BULLET_DELAY;
             //works out when the player is next allowed to fire a bullet
             childObjects = new ArrayList<>();
-            childObjects.add(
-                    new Bullet(
-                        new Vector2D(
-                                (position.x + ((2 * RADIUS) * (direction.x))),
-                                (position.y + ((2 * RADIUS) * (direction.y)))
-                        ),
-                        direction
-                    )
-            );
-            //the new bullet is constructed in front of where the ship is, in the direction that it is pointing
-            //and is put it in childObjects
-
-            SoundManager.fire();
+            addBulletToChildren();
         }
     }
 
-    @Override
-    protected void notIntangible(){
-        super.notIntangible();
-        System.out.println("no more godmode for u"); //debug message
-        this.objectColour = SHIP_COLOUR; //goes back to normal colour
-    }
+    protected abstract void addBulletToChildren(); //ensures the correct bullet for the type of ship is fired
+
 
     public void draw(Graphics2D g){
         //definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
@@ -243,10 +151,7 @@ public class Ship extends GameObject {
         //AffineTransform translatedRotated = g.getTransform(); //gets backup of the scale before drawing scale was done
         //g.scale(DRAWING_SCALE, DRAWING_SCALE);
         //g.scale(RADIUS, RADIUS);
-        if (thrusting) {
-            g.setColor(Color.red);
-            g.fillPolygon(thrustPolygon);
-        }
+        drawDetails(g);
         //g.fillPolygon(objectPolygon);
         //g.fillPolygon(objectPolygon = new Polygon(hitboxX, hitboxY, hitboxX.length));
         //g.setTransform(translatedRotated);
@@ -257,16 +162,9 @@ public class Ship extends GameObject {
         wrapAround(g,transformedShape);
         //g.setPaint(new TexturePaint(texture,this.areaRectangle));
         paintTheArea(g);
-
-
     }
 
-    public void giveImmunity(){
-        //gives the ship some temporary immunity at the start of every level,
-        //so it won't get defeated by a new asteroid as it spawns in
-        gracePeriodExpiresAt = System.currentTimeMillis() + REWARD_GRACE_PERIOD;
-        intangible = true;
-    }
+    protected abstract void drawDetails(Graphics g);
 
     @Override
     protected void paintTheArea(Graphics2D g){
@@ -275,6 +173,5 @@ public class Ship extends GameObject {
         g.setColor(objectColour);
         g.fill(transformedArea);
     }
-
 
 }

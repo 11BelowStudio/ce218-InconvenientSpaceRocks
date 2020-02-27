@@ -18,8 +18,10 @@ public final class Vector2D {
 
     // constructor that copies the argument vector
     public Vector2D(Vector2D v) {
-        this.x = v.x;
-        this.y = v.y;
+        double tempX = v.x;
+        double tempY = v.y;
+        this.x = tempX;
+        this.y = tempY;
     }
 
     // set coordinates

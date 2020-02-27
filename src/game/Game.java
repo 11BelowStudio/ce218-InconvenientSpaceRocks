@@ -1,7 +1,10 @@
 package game;
 
+import utilities.Vector2D;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
     public static final int N_INITIAL_ASTEROIDS = 5;
@@ -10,7 +13,9 @@ public class Game {
     private GameLevels levelConfigs;
 
     Keys ctrl;
-    Ship ship;
+    PlayerShip ship;
+
+    EnemyShip enemy;
 
     int score;
 
@@ -32,7 +37,7 @@ public class Game {
         gameObjects = new ArrayList<>();
         levelConfigs = new GameLevels();
         ctrl = new Keys();
-        ship = new Ship(ctrl,this);
+        ship = new PlayerShip(ctrl,this);
         gameObjects.add(ship);
 
         score = 0;
@@ -46,6 +51,8 @@ public class Game {
 
         waitingToRespawn = false;
         gameOver = false;
+
+        enemy = null;
 
 
         //setupLevel();
@@ -124,15 +131,15 @@ public class Game {
             GameObject temp = gameObjects.get(i);
             if (!temp.intangible || !temp.dead) { //only need to bother checking the collision if this isn't intangible/dead
                 boolean isAsteroid = (temp instanceof GenericAsteroid);
-                boolean isBullet = (temp instanceof Bullet);
-                boolean isShip = (temp instanceof Ship);
+                boolean isBullet = (temp instanceof PlayerBullet);
+                boolean isShip = (temp instanceof PlayerShip);
                 //working out what type of object temp is
                 for (int j = i; j < gameObjects.size(); j++) {
                     GameObject temp2 = gameObjects.get(j);
                     if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
                         if ((isAsteroid ^ temp2 instanceof GenericAsteroid) ||
-                                (isBullet ^ (temp2 instanceof Bullet || temp2 instanceof Ship)) ||
-                                (isShip ^ (temp2 instanceof Ship || temp2 instanceof Bullet))
+                                (isBullet ^ (temp2 instanceof PlayerBullet || temp2 instanceof PlayerShip)) ||
+                                (isShip ^ (temp2 instanceof PlayerShip || temp2 instanceof PlayerBullet))
                         ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
                             //can't really do 'if (.class != .class)', as the GenericAsteroid superclass kinda messes with it
                             temp.collisionHandling(temp2);
@@ -181,12 +188,15 @@ public class Game {
                 //also given some temporary immunity for free,
                 // so the player isn't immediately going to die if they shot an asteroid right in front of them
             }
-            if (g instanceof Ship){
+            if (g instanceof PlayerShip){
                 //if the ship is here, the player is mcfricking dead
                 System.out.println("ur ded lol");
                 lives--;
                 playerHit = true;
 
+            }
+            if (g instanceof EnemyShip){
+                enemy = null;
             }
         }
         if (playerHit){
@@ -202,7 +212,7 @@ public class Game {
 
         if (waitingToRespawn && ctrl.action.theAnyButton()) {
             waitingToRespawn = false;
-            alive.add(ship = new Ship(ctrl, this, ship.direction));
+            alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
             //creates a new ship if the player can respawn and the player presses any button
         }
 
@@ -217,6 +227,18 @@ public class Game {
             //so they have some time to react to the new obstacles
         }
 
+        if (!waitingToRespawn && (enemy == null)){
+            if (Math.random() < 0.125){
+                if (Math.random() < 0.25) {
+                    enemy = new EnemyShip(new RotateNShoot(), this);
+                } else{
+                    enemy = new EnemyShip(this);
+                    enemy.giveController(new AimController(this,enemy));
+                }
+                alive.add(enemy);
+            }
+        }
+
         synchronized (Game.class) {
             gameObjects.clear();
             gameObjects.addAll(alive);
@@ -224,6 +246,14 @@ public class Game {
         //ship.update();
 
         //System.out.println("Lives: " + lives + "| Score: " + score);
+    }
+
+    public Vector2D getShipPosition(){
+        if (ship.dead){
+            return null;
+        } else{
+            return ship.position;
+        }
     }
 
 
