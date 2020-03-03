@@ -31,9 +31,9 @@ public class View extends JComponent {
     public View(Game game) {
 
         this.game = game;
-        gameInfo = new InfoPanel(game);
+        //gameInfo = new InfoPanel(game);
         //gameInfo = new InfoPanel();
-        this.add(gameInfo,BorderLayout.NORTH);
+        //this.add(gameInfo,BorderLayout.NORTH);
 
         bg = SPEHSS;
 

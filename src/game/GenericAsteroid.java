@@ -20,14 +20,14 @@ public abstract class GenericAsteroid extends GameObject {
     public GenericAsteroid() {
 
         super(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
-                new Vector2D((Math.random() * MAX_SPEED * 2) - MAX_SPEED, (Math.random() * MAX_SPEED * 2) - MAX_SPEED)
+                Vector2D.polar(Math.random() * 360, Math.random() * MAX_SPEED)
         );
         setShared();
     }
 
     public GenericAsteroid(Vector2D startPosition){
         super(startPosition,
-                new Vector2D((Math.random() * MAX_SPEED * 2) - MAX_SPEED,(Math.random() * MAX_SPEED * 2) - MAX_SPEED)
+                Vector2D.polar(Math.random() * 360,Math.random() * MAX_SPEED)
         );
         setShared();
     }
@@ -76,13 +76,15 @@ public abstract class GenericAsteroid extends GameObject {
     protected void spaceRockGoSpinny(Graphics2D g){
         g.rotate(rotationAngle);
         rotationAngle+=(spinSpeed/DT);
-        //space rock go spinny at speed of nyoom (or at least spinSpeed/DT so it's not eye-hurting
+        //space rock go spinny at speed of nyoom (or at least spinSpeed/DT so it's not eye-hurting)
     }
 
+    /*
     @Override
-    protected void hitLogic() {
+    protected void hitLogic(boolean hitByPlayer) {
         wasHit = true;
-    }
+        playerHit = hitByPlayer;
+    }*/
 
     @Override
     public String toString(){

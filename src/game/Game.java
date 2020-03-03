@@ -177,7 +177,7 @@ public class Game {
 
         for (GameObject g: dead){
             //working out if something is dead because the player hit it or not
-            if (g.wasHit){
+            if (g.playerHit){
                 //player earns points if they hit the thing which is now dead
                 score += g.pointValue;
                 pointsToEarnLife -= g.pointValue;
@@ -201,6 +201,7 @@ public class Game {
             }
             if (g instanceof EnemyShip){
                 enemy = null;
+                enemyPlayer.ded();
                 //no enemy if the enemy got hit
             }
         }

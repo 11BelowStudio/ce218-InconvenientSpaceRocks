@@ -160,9 +160,7 @@ public final class Vector2D {
     }
 
     public Vector2D setMag(double newMag) {
-        Vector2D temp = polar(this.angle(),newMag);
-        this.x = temp.x;
-        this.y = temp.y;
+        this.set(polar(this.angle(),newMag));
         return this;
     }
 

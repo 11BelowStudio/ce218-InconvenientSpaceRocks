@@ -26,7 +26,10 @@ public abstract class GameObject{
     //whether or not this game object can be interacted with
 
     protected boolean wasHit;
-    //records if it was hit by the player or not
+    //records if it was hit by something or not
+
+    protected boolean playerHit;
+    //records if the player hit it or not
 
     public int pointValue;
 
@@ -38,14 +41,12 @@ public abstract class GameObject{
 
     public Rectangle areaRectangle;
 
-    protected Vector2D lastPos;
 
     public BufferedImage texture;
 
     protected Color objectColour;
 
     int[] hitboxX, hitboxY;
-    //int[] transformedHitboxX,transformedHitboxY;
 
     public GameObject(Vector2D p, Vector2D v){
         position = p;
@@ -53,6 +54,7 @@ public abstract class GameObject{
         dead = false;
         intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
+        playerHit = false;
         childObjects = null;
         pointValue = 0;
         texture = (BufferedImage)AN_TEXTURE;
@@ -67,16 +69,21 @@ public abstract class GameObject{
     }
 
 
-    public void hit(){
+    public void hit(boolean hitByPlayer){
         if (!intangible){
-            //it's dead if it got hit whilst intangible
+            //it's dead if it got hit whilst not intangible
             dead = true;
             intangible = true;
-            hitLogic();
         }
+        hitLogic(hitByPlayer);
     }
 
-    protected abstract void hitLogic();
+    protected void hitLogic(boolean hitByPlayer){
+        wasHit = true;
+        if (!playerHit) {
+            playerHit = hitByPlayer; //will only be updated if this is not true;
+        }
+    }
     //will contain the stuff that will happen if this object was actually hit (and not intangible)
 
     public abstract void draw(Graphics2D g);
@@ -107,8 +114,8 @@ public abstract class GameObject{
     }
     public void collisionHandling(GameObject other) {
         if (this.getClass() != other.getClass() && this.overlap(other)) {
-            this.hit();
-            other.hit();
+            this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
+            other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
         }
     }
 

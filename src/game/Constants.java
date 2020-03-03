@@ -15,10 +15,11 @@ public class Constants {
     public static final Dimension FRAME_SIZE = new Dimension(
             Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
 
-    public static final Rectangle leftScreen = new Rectangle(-100,-100,100,FRAME_HEIGHT+100);
-    public static final Rectangle rightScreen = new Rectangle(FRAME_WIDTH,-100,100,FRAME_HEIGHT+100);
-    public static final Rectangle aboveScreen = new Rectangle(-100,-100,FRAME_WIDTH+100,100);
-    public static final Rectangle underScreen = new Rectangle(-100,FRAME_HEIGHT,FRAME_WIDTH+100,100);
+    public static final int boundingRect = 200;
+    public static final Rectangle leftScreen = new Rectangle(-boundingRect,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
+    public static final Rectangle rightScreen = new Rectangle(FRAME_WIDTH,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
+    public static final Rectangle aboveScreen = new Rectangle(-boundingRect,-boundingRect,FRAME_WIDTH+boundingRect,boundingRect);
+    public static final Rectangle underScreen = new Rectangle(-boundingRect,FRAME_HEIGHT,FRAME_WIDTH+boundingRect,boundingRect);
 
     public static final double DRAWING_SCALE = 10;
 

@@ -30,22 +30,19 @@ public class PlayerShip extends Ship {
 
 
 
+
+
     private static final int RESPAWN_GRACE_PERIOD = 1000;
     //player has a grace period of 1000ms (1s) of invulnerability when respawning
     private static final int REWARD_GRACE_PERIOD = 250;
-    //0.25s of invulenrability after destroying an asteroid
+    //0.25s of invulnerability after destroying an asteroid
 
     private long gracePeriodExpiresAt;
     //records when the player's grace period will expire
 
 
-    public Game game;
 
 
-
-
-
-    //double lastRotation;
 
     public PlayerShip(Controller ctrl, Game game) {
 
@@ -75,11 +72,17 @@ public class PlayerShip extends Ship {
 
         gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
 
+
+
         //intangible = true;
 
         objectColour = SHIP_COLOUR;
 
         texture = (BufferedImage)Constants.SHIP;
+
+        BULLET_DELAY = 250;
+
+        warpDistance = 200;
 
 
     }
@@ -104,7 +107,7 @@ public class PlayerShip extends Ship {
     }
 
     @Override
-    protected void hitLogic() {
+    protected void hitLogic(boolean hitByPlayer) {
         //currently doesn't need to do anything if hit, may change
         System.out.println("oof");
     }

@@ -13,7 +13,7 @@ import static game.Constants.FRAME_HEIGHT;
 public abstract class Ship extends GameObject {
 
     // rotation velocity in radians per second
-    public static final double STEER_RATE = 2*Math.PI;
+    protected double STEER_RATE = 2*Math.PI;
 
     // acceleration when thrust is applied
     public static final double MAG_ACC = 5;
@@ -36,7 +36,7 @@ public abstract class Ship extends GameObject {
     //recording if there is thrust
     protected boolean thrusting;
 
-    public static final long BULLET_DELAY = 250;
+    protected long BULLET_DELAY;
     //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
 
     protected long canFireNextBulletAt;
@@ -44,17 +44,27 @@ public abstract class Ship extends GameObject {
 
     public Game game;
 
-    public PlayerBullet lastBullet;
+    public Bullet lastBullet;
 
     protected Rectangle definedRect;
 
     protected Polygon thrustPolygon;
 
+    protected Action currentAction;
+
+    protected long WARP_DELAY = 500;
+
+    protected long canWarpAt;
+
+    protected double warpDistance;
+
+
+
 
     public Ship(Vector2D p, Vector2D v, Controller ctrl, Game game){
         super(p,v);
         this.game = game;
-
+        direction = Vector2D.polar(Math.toRadians(270),1);
         //the most recent bullet that has been fired
         lastBullet = null;
         canFireNextBulletAt = System.currentTimeMillis();
@@ -77,10 +87,15 @@ public abstract class Ship extends GameObject {
         RADIUS = DRAWING_SCALE*2;
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         this.ctrl = ctrl;
+        canWarpAt = System.currentTimeMillis();
+
+        warpDistance = 100;
+
+
     }
 
     public void update(){
-        Action currentAction = ctrl.action();
+        currentAction = ctrl.action();
         //Vector2D lastPos = new Vector2D(position);
 
         //Vector2D lastPos = this.position;
@@ -107,7 +122,7 @@ public abstract class Ship extends GameObject {
 
         if (velocity.mag() > MAX_SPEED){
             //ensures that velocity is capped at MAX_SPEED
-            velocity.set(Vector2D.polar(velocity.angle(),MAX_SPEED));
+            velocity.setMag(MAX_SPEED);
         }
 
         velocity.mult(1-DRAG);
@@ -116,18 +131,31 @@ public abstract class Ship extends GameObject {
         position.addScaled(velocity,DT);
         //updates the position by the velocity (weighted by the frame time)
 
+        long now = System.currentTimeMillis();
+        if (currentAction.warp && now >= canWarpAt) {
+            position.addScaled(direction, warpDistance);
+            canWarpAt = now + WARP_DELAY;
+            velocity.setMag(0);
+            currentAction.warp = false;
+        }
+
+        finishUpdate();
+    }
+
+    protected void finishUpdate(){
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
         //wraps the position around if appropriate
 
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
+        //defines the definedRect
     }
 
     protected void mkBullet(){
-        if (System.currentTimeMillis() >= canFireNextBulletAt) {
+        if (System.currentTimeMillis() > canFireNextBulletAt) {
             //if it's gone past the time when the next bullet can be fired,
             //a bullet can be fired
             notIntangible(); //attacking will cause a premature end to the player's intangibility
-            canFireNextBulletAt = System.currentTimeMillis() + BULLET_DELAY;
+            canFireNextBulletAt = (System.currentTimeMillis() + BULLET_DELAY);
             //works out when the player is next allowed to fire a bullet
             childObjects = new ArrayList<>();
             addBulletToChildren();

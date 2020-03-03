@@ -11,25 +11,28 @@ public class GameFrame extends JFrame {
 
     public View view;
 
-    private InfoPanel gameInfo;
+    //private InfoPanel gameInfo;
 
     public GameFrame() throws InterruptedException {
-        super("blideo bame");
+        this.setTitle("blideo bame");
         game = new Game();
         view = new View(game);
-        gameInfo = new InfoPanel(game);
+        //gameInfo = new InfoPanel(game);
         this.addKeyListener(game.ctrl);
         //this.add(gameInfo,BorderLayout.NORTH);
 
         this.add(view,BorderLayout.CENTER);
+        //this.add(title,BorderLayout.CENTER);
 
         //getContentPane().add(BorderLayout.CENTER,view);
         pack();
         this.setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         repaint();
+        //titleScreen();
 
         runGame();
+
 
     }
 
@@ -52,7 +55,7 @@ public class GameFrame extends JFrame {
         while (!game.gameOver){
             long startTime = System.currentTimeMillis();
             game.update();
-            gameInfo.update();
+            //gameInfo.update();
             long endTime = System.currentTimeMillis();
             long timeout = DELAY - (endTime - startTime);
             if (timeout > 0){

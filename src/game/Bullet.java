@@ -12,8 +12,6 @@ public abstract class Bullet extends GameObject {
 
     double distanceToGo;
 
-    double scaledDistance;
-
     int frameCount;
 
     public Bullet(Vector2D position, Vector2D direction){
@@ -39,9 +37,7 @@ public abstract class Bullet extends GameObject {
         }
     }
 
-    public void hitLogic(){
-        //just here to not break the abstract method basically
-    }
+
 
     @Override
     public void draw(Graphics2D g) {

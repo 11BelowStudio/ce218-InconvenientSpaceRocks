@@ -70,8 +70,8 @@ public class Asteroid extends GenericAsteroid {
     }*/
 
     @Override
-    public void hit(){
-        super.hit();
+    public void hit(boolean hitByPlayer){
+        super.hit(hitByPlayer);
         SoundManager.play(SoundManager.solidHit);
     }
 
@@ -83,10 +83,6 @@ public class Asteroid extends GenericAsteroid {
         AffineTransform at = g.getTransform();
         g.translate(position.x, position.y);
         spaceRockGoSpinny(g);
-        //g.setColor(new Color(255,0,0,128));
-        //g.fillPolygon(objectPolygon = new Polygon(xCorners,yCorners,xCorners.length));
-        //g.fillOval((int) (position.x - RADIUS), (int) (position.y - RADIUS), (int) (2 * RADIUS), (int)(2 * RADIUS));
-        //g.fillPolygon(objectPolygon);
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
