@@ -135,7 +135,7 @@ public class PlayerShip extends Ship {
     }
 
     @Override
-    protected void drawDetails(Graphics g) {
+    protected void drawDetails(Graphics2D g) {
         if (thrusting) {
             g.setColor(Color.red);
             g.fillPolygon(thrustPolygon);

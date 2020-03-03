@@ -187,11 +187,39 @@ public final class Vector2D {
         return new Vector2D(v.x*fac,v.y*fac);
     }
 
-    public static Vector2D getVectorBetween(Vector2D origin, Vector2D endPoint){
-        Vector2D between = new Vector2D(endPoint);
-        between.subtract(origin);
-        System.out.println("Origin: " + origin + ", End: " + endPoint+ ", Difference: " +between);
-        return between;
+
+    public double getAngleBetween(Vector2D v){
+        double xAngle = v.x - x;
+        double yAngle = v.y - y;
+        return Math.atan2(yAngle,xAngle);
+    }
+
+    public Vector2D getVectorBetween(Vector2D v){
+        return Vector2D.polar(getAngleBetween(v),dist(v));
+    }
+
+    public double getAngleBetween(Vector2D v, double w, double h){
+        double xAngle = v.x - x;
+        double yAngle = v.y - y;
+        double w2 = w/2;
+        double h2 = h/2;
+        if (xAngle > w2){
+            xAngle =- w2;
+        } else if(xAngle < -w2){
+            xAngle += w2;
+        }
+
+        if (yAngle > h2){
+            yAngle =- h2;
+        } else if(yAngle < -h2){
+            yAngle += h2;
+        }
+        return Math.atan2(yAngle,xAngle);
+
+    }
+
+    public Vector2D getVectorBetween(Vector2D v, double w, double h){
+        return Vector2D.polar(getAngleBetween(v,w,h),v.dist(this));
     }
 
 }

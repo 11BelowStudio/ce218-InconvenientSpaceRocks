@@ -31,6 +31,8 @@ public class Game {
 
     boolean gameOver;
 
+    private EnemyPlayer enemyPlayer;
+
     public Game() {
 
 
@@ -53,6 +55,8 @@ public class Game {
         gameOver = false;
 
         enemy = null;
+
+        enemyPlayer = new EnemyPlayer(this);
 
 
         //setupLevel();
@@ -169,7 +173,7 @@ public class Game {
 
         }
 
-        boolean playerHit = false;
+        boolean playerHit = false; //recording if the player was hit or not
 
         for (GameObject g: dead){
             //working out if something is dead because the player hit it or not
@@ -197,6 +201,7 @@ public class Game {
             }
             if (g instanceof EnemyShip){
                 enemy = null;
+                //no enemy if the enemy got hit
             }
         }
         if (playerHit){
@@ -210,32 +215,32 @@ public class Game {
             }
         }
 
-        if (waitingToRespawn && ctrl.action.theAnyButton()) {
-            waitingToRespawn = false;
-            alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
-            //creates a new ship if the player can respawn and the player presses any button
-        }
+        if (waitingToRespawn){
+            //if waiting for the player to respawn
+            if (ctrl.action.theAnyButton()) {
+                waitingToRespawn = false;
+                alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
+                //creates a new ship if the player can respawn and the player presses any button
+            }
+        } else {
 
-        if (!asteroidsRemaining){
-            //if no asteroids remain alive, the level is done
-            currentLevel++;
-            //moves forward a level
-            alive.addAll(setupLevel());
-            //adds the asteroids for the next level
-            ship.giveImmunity();
-            //gives the player some temporary immunity,
-            //so they have some time to react to the new obstacles
-        }
+            if (!asteroidsRemaining) {
+                //if no asteroids remain, and the player isn't currently dead, the level is done
+                currentLevel++;
+                //moves forward a level
+                alive.addAll(setupLevel());
+                //adds the asteroids for the next level
+                ship.giveImmunity();
+                //gives the player some temporary immunity,
+                //so they have some time to react to the new obstacles
+            }
 
-        if (!waitingToRespawn && (enemy == null)){
-            if (Math.random() < 0.125){
-                if (Math.random() < 0.25) {
-                    enemy = new EnemyShip(new RotateNShoot(), this);
-                } else{
-                    enemy = new EnemyShip(this);
-                    enemy.giveController(new AimController(this,enemy));
+            if (enemy == null) {
+                if (Math.random() < 0.125) {
+                    enemy = new EnemyShip(enemyPlayer, this);
+                    enemyPlayer.newEnemy(enemy);
+                    alive.add(enemy);
                 }
-                alive.add(enemy);
             }
         }
 

@@ -51,8 +51,8 @@ public abstract class Ship extends GameObject {
     protected Polygon thrustPolygon;
 
 
-    protected Ship(Vector2D p, Vector2D v,Game game) {
-        super(p, v);
+    public Ship(Vector2D p, Vector2D v, Controller ctrl, Game game){
+        super(p,v);
         this.game = game;
 
         //the most recent bullet that has been fired
@@ -76,10 +76,6 @@ public abstract class Ship extends GameObject {
         //ensures that the ship's hitbox and texture is scaled correctly
         RADIUS = DRAWING_SCALE*2;
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
-    }
-
-    public Ship(Vector2D p, Vector2D v, Controller ctrl, Game game){
-        this(p,v,game);
         this.ctrl = ctrl;
     }
 
@@ -146,6 +142,7 @@ public abstract class Ship extends GameObject {
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
         //definedRect = g.getTransform().createTransformedShape(definedRect).getBounds();
+        drawLineToPlayer(g);
         double rot = direction.angle() + Math.PI / 2;
         g.rotate(rot);
         //AffineTransform translatedRotated = g.getTransform(); //gets backup of the scale before drawing scale was done
@@ -164,7 +161,11 @@ public abstract class Ship extends GameObject {
         paintTheArea(g);
     }
 
-    protected abstract void drawDetails(Graphics g);
+    protected abstract void drawDetails(Graphics2D g);
+
+    protected void drawLineToPlayer(Graphics2D g){
+        //nothing
+    }
 
     @Override
     protected void paintTheArea(Graphics2D g){

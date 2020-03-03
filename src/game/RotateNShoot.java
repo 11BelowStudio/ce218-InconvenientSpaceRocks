@@ -7,4 +7,5 @@ public class RotateNShoot implements Controller {
         action.shoot = true;
         action.turn = 1;
         return action;
-    } }
+    }
+}
