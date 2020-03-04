@@ -160,7 +160,7 @@ public class EnemyPlayer implements Controller{
         if (targetPosition != null) {
             Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);
-            if (angleDifference >= 0 - (Math.PI /16) && angleDifference <= (Math.PI / 16) && canAct) {
+            if (angleDifference >= 0 - (Math.PI /4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.shoot = true;
                 nextActionIn();
             } else {
@@ -176,7 +176,7 @@ public class EnemyPlayer implements Controller{
         if (targetPosition != null) {
             Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);
-            if (angleDifference >= 0 - (Math.PI / 8) && angleDifference <= (Math.PI / 8) && canAct) {
+            if (angleDifference >= 0 - (Math.PI / 4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.warp = true;
                 nextActionIn();
             } else {
@@ -187,7 +187,7 @@ public class EnemyPlayer implements Controller{
     }
 
     private void turnToPlayer(double angleDifference){
-        if (angleDifference > 0) {
+        if (angleDifference > 0 ) {
             action.turn = -1;
         } else if (angleDifference < 0) {
             action.turn = 1;

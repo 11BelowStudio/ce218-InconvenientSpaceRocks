@@ -2,6 +2,7 @@ package game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 
 import static basicGame.Constants.DELAY;
 
@@ -13,7 +14,7 @@ public class GameFrame extends JFrame {
 
     //private InfoPanel gameInfo;
 
-    public GameFrame() throws InterruptedException {
+    public GameFrame() throws Throwable {
         this.setTitle("blideo bame");
         game = new Game();
         view = new View(game);
@@ -31,12 +32,32 @@ public class GameFrame extends JFrame {
         repaint();
         //titleScreen();
 
-        runGame();
+        while (true) {
+            runGame();
+            for (KeyListener k: this.getKeyListeners()) {
+                this.removeKeyListener(k);
+            }
+            game = new Game();
+            //game = new Game();
+            this.addKeyListener(game.ctrl);
+            view.replaceGame(game);
+            //repaint();
+        }
+
 
 
     }
 
-    private void runGame() throws InterruptedException {
+    public void gameStart() throws Throwable{
+        try{
+            runGame();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void runGame() throws Throwable {
 
         /*
         while (true){//(!game.gameOver) {
@@ -45,6 +66,7 @@ public class GameFrame extends JFrame {
             view.repaint();
             Thread.sleep(DELAY);
         }*/
+
 
         SoundManager.startGame();
 
@@ -68,6 +90,16 @@ public class GameFrame extends JFrame {
 
         SoundManager.stopGame();
         SoundManager.stopThrust();
+        while (!game.reset){
+            long startTime = System.currentTimeMillis();
+            game.update();
+            long endTime = System.currentTimeMillis();
+            long timeout = DELAY - (endTime - startTime);
+            if (timeout > 0){
+                Thread.sleep(timeout);
+            }
+        }
+        repaintTimer.stop();
 
         //game.update();
         //view.repaint();

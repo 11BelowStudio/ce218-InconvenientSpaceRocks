@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import static game.Constants.FRAME_HEIGHT;
+import static game.Constants.FRAME_WIDTH;
+
 public class Game {
-    public static final int N_INITIAL_ASTEROIDS = 5;
     public List<GameObject> gameObjects;
 
     private GameLevels levelConfigs;
@@ -42,8 +44,17 @@ public class Game {
 
     int objectWait;
 
-    public Game() {
+    int lastAsteroidCount;
 
+    int timeSinceLastAsteroidChange;
+
+
+    boolean reset;
+
+    public Game() {
+        //levelConfigs = new GameLevels();
+        //ctrl = new Keys();
+        //resetGame();
 
         gameObjects = new ArrayList<>();
         newObjects = new Stack<>();
@@ -68,7 +79,14 @@ public class Game {
 
         enemyPlayer = new EnemyPlayer(this);
 
+        lastAsteroidCount = 0;
+
+        timeSinceLastAsteroidChange = 0;
+
         resetEnemySpawnTimer();
+
+        reset = false;
+        /**/
 
 
         //setupLevel();
@@ -78,6 +96,50 @@ public class Game {
         //testAsteroid = new BasicAsteroid(0,0,20,50);
         //asteroids.add(testAsteroid);
     }
+
+
+    private void resetGame(){
+        reset = true;
+        if (gameObjects != null) {
+            gameObjects = new ArrayList<>();
+        }
+        if (newObjects != null) {
+            newObjects = new Stack<>();
+        }
+        if (ship != null) {
+            ship = new PlayerShip(ctrl, this);
+            gameObjects.add(ship);
+        }
+
+        score = 0;
+
+        lives = 3;
+
+        pointsToEarnLife = LIFE_COST;
+
+        currentLevel = 0;
+        //currentLevel = 7;
+
+        waitingToRespawn = false;
+        gameOver = false;
+
+        if (enemy != null) {
+            enemy = null;
+        }
+        if (enemyPlayer != null) {
+            enemyPlayer = new EnemyPlayer(this);
+        }
+
+        lastAsteroidCount = 0;
+
+        timeSinceLastAsteroidChange = 0;
+
+        resetEnemySpawnTimer();
+        //ready = true;
+        //gf.gameStart();
+    }
+
+
 
     public ArrayList<GameObject> setupLevel(){
 
@@ -109,7 +171,7 @@ public class Game {
 
     }
 
-    public void update() {
+    public void update() throws Throwable {
         List<GameObject> alive = new ArrayList<>();
         //list for objects that are still alive
 
@@ -128,11 +190,8 @@ public class Game {
 
         for (GameObject g : gameObjects) {
             //updating everything basically
-            if (g instanceof GenericAsteroid){
-                asteroidsRemaining = true;
-            }
-            g.update();
 
+            g.update();
         }
 
         //doing collision handling and dealing with the results of the collision handling
@@ -174,10 +233,13 @@ public class Game {
                 }*/
 
                 alive.addAll(temp.childObjects);
+
                 temp.childObjects = null;
             }
 
         }
+
+
 
         boolean playerHit = false; //recording if the player was hit or not
 
@@ -222,6 +284,48 @@ public class Game {
             }
         }
 
+
+        //here is a failsafe, just in case an asteroid gets lost.
+        //basically yeets all the asteroids if the count of asteroids hasn't changed in the past 3000 frames
+        if (!gameOver) {
+            reset = false;
+            int asteroidCount = 0;
+
+            for (GameObject g : alive) {
+                //checking to see if there are any alive asteroids left
+                if (g instanceof GenericAsteroid){
+                    asteroidsRemaining = true;
+                    asteroidCount++;
+                }
+            }
+            if (asteroidCount == lastAsteroidCount) {
+                timeSinceLastAsteroidChange++;
+                if (timeSinceLastAsteroidChange == 3000) {
+                    for (GameObject g : alive) {
+                        if (g instanceof GenericAsteroid) {
+                            g.dead = true;
+                        }
+                    }
+                }
+            } else {
+                lastAsteroidCount = asteroidCount;
+                timeSinceLastAsteroidChange = 0;
+            }
+        } else{
+            if (ctrl.action.theAnyButton){
+                resetGame();
+                try {
+                    this.finalize();
+                } catch(Exception e){
+                    e.printStackTrace();
+                } catch(Throwable t){
+                    t.printStackTrace();
+                }
+            }
+        }
+
+
+
         if (waitingToRespawn){
             //if waiting for the player to respawn
             if (ctrl.action.theAnyButton()) {
@@ -229,7 +333,19 @@ public class Game {
                 alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
                 //creates a new ship if the player can respawn and the player presses any button
             }
-        } else {
+        } else if (enemy == null) {
+            if (Math.random() < 0.125) {
+                if (timeForEnemyToRespawn <= 0) {
+                    enemy = new EnemyShip(enemyPlayer, this);
+                    enemyPlayer.newEnemy(enemy);
+                    alive.add(enemy);
+                    //newObjects.add(enemy);
+                    resetEnemySpawnTimer();
+                } else{
+                    timeForEnemyToRespawn--;
+                }
+            }
+        }
 
             /*
             if (!asteroidsRemaining) {
@@ -245,24 +361,32 @@ public class Game {
             }*/
 
             if (newObjects.isEmpty()) {
-                if (!asteroidsRemaining) {
+                if (!asteroidsRemaining && !gameOver) {
                     //if no asteroids remain, and the player isn't currently dead, the level is done
                     currentLevel++;
                     //moves forward a level
                     newObjects.addAll(setupLevel());
                     //adds the asteroids for the next level
                     ship.giveImmunity();
-                    objectWait = 10;
+                    objectWait = 0;
                     //gives the player some temporary immunity,
                     //so they have some time to react to the new obstacles
                 }
             } else{
-                if (objectWait == 0) {
+                System.out.println(newObjects.size() + " new objects left");
+                if (newObjects.peek().dead){
+                    newObjects.pop();
+                }
+                if (objectWait <= 0) {
                     System.out.println("objects to spawn: " + newObjects.size());
                     GameObject newObject = newObjects.pop();
-                    if (newObject.position.dist(ship.position) <= 100){
-                        newObject.position.add(200,200);
-                        //nothing will spawn too close to the ship now
+                    if (!ship.dead) {
+                        Vector2D vecFromShip = getShipPosition().getVectorBetween(newObject.position, FRAME_WIDTH, FRAME_HEIGHT);
+                        if (vecFromShip.mag() <= 100) {
+                            newObject.position.add(vecFromShip.setMag(100));
+                            newObject.update();
+                            //nothing will spawn too close to the ship now
+                        }
                     }
                     alive.add(newObject);
                     objectWait = 10;
@@ -271,19 +395,8 @@ public class Game {
                 }
             }
 
-            if (enemy == null) {
-                if (Math.random() < 0.125) {
-                    if (timeForEnemyToRespawn <= 0) {
-                        enemy = new EnemyShip(enemyPlayer, this);
-                        enemyPlayer.newEnemy(enemy);
-                        alive.add(enemy);
-                        resetEnemySpawnTimer();
-                    } else{
-                        timeForEnemyToRespawn--;
-                    }
-                }
-            }
-        }
+
+        //}
 
         synchronized (Game.class) {
             gameObjects.clear();

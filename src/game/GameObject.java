@@ -81,9 +81,9 @@ public abstract class GameObject{
                 intangible = true;
                 hitLogic(hitByPlayer);
             }
-        } else {
+        }/* else {
             stillIntangible = true;
-        }
+        }*/
     }
 
     protected void hitLogic(boolean hitByPlayer){
@@ -104,14 +104,14 @@ public abstract class GameObject{
             } else if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
                 //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
 
-                //if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
+                if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
                 //if (this.position.dist(other.position) <= 100){
 
-                //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
-                Area thisArea = new Area(this.transformedArea);
-                thisArea.intersect(other.transformedArea);
-                return !thisArea.isEmpty();
-                //}
+                    //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
+                    Area thisArea = new Area(this.transformedArea);
+                    thisArea.intersect(other.transformedArea);
+                    return !thisArea.isEmpty();
+                }
             }
         } catch(NullPointerException e){
             System.out.println(e);
@@ -157,15 +157,13 @@ public abstract class GameObject{
             intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
         }
 
-        //calculates a simple bounding rectangle for this area
-        //g.setClip(transformedArea);
     }
 
     private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate) {
-        AffineTransform backup = g.getTransform();
-        Area tempArea = (Area)transformedArea.clone();
-        tempArea.intersect(new Area(intersectCheckRect));
-        transformedArea.subtract(tempArea);
+        AffineTransform backup = g.getTransform(); //gets copy of original affine transform
+        Area tempArea = (Area)transformedArea.clone(); //copies the transformed area
+        tempArea.intersect(new Area(intersectCheckRect)); //get the intersection of it with the intersection rectangle
+        //transformedArea.subtract(tempArea);
         g.translate(xTranslate, yTranslate);
         transformedArea.add(tempArea);
         areaRectangle = transformedArea.getBounds();
@@ -189,10 +187,8 @@ public abstract class GameObject{
     }
 
     protected void notIntangible(){
-        /*if (finalIntangible){
-            this.finalIntangible = false;
-            this.intangible = false;
-        }*/
+        //basically supposed to make the thing not intangible,
+        //however, also means that the thing won't die instantly due to losing intangibility whilst in contact with something
         if (intangible){
             this.intangible = false;
             this.finalIntangible = true;

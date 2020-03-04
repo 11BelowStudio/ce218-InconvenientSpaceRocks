@@ -1,10 +1,20 @@
 package game;
 
+import javax.swing.*;
+
 public class MainClassIsHere {
 
-    public static void main(String[] args) throws Exception {
+    JFrame titleFrame;
 
-        GameFrame theGame = new GameFrame();
+    //GameFrame theGame;
+
+    public static void main(String[] args) throws Throwable{
+
+        try {
+            GameFrame theGame = new GameFrame();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         /*
         Game game = new Game();

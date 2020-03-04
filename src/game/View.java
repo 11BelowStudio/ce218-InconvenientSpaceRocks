@@ -15,8 +15,6 @@ public class View extends JComponent {
 
     private Game game;
 
-    private InfoPanel gameInfo;
-
     private Image bg;
 
     AffineTransform bgTransform;
@@ -57,6 +55,13 @@ public class View extends JComponent {
         //background = new Rectangle(tempx, tempy, (int)stretchx, (int)stretchy);
 
 
+    }
+
+    public void replaceGame(Game game){
+        this.game = game;
+        scoreString.showValue(0);
+        levelString.showValue(0);
+        livesString.showValue(0);
     }
 
 
@@ -106,10 +111,12 @@ public class View extends JComponent {
         g.drawString(livesString.toString(), 6*eighthWidth,10);
         */
         synchronized (Game.class) {
-            for (GameObject o : game.gameObjects) {
-                o.draw(g);
-                //basically calls the draw method of each gameObject
-            }
+            //if (game.ready) {
+                for (GameObject o : game.gameObjects) {
+                    o.draw(g);
+                    //basically calls the draw method of each gameObject
+                }
+            //}
         }
         AffineTransform backup = g.getTransform();
         //game.ship.draw(g);

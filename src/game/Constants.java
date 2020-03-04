@@ -15,7 +15,7 @@ public class Constants {
     public static final Dimension FRAME_SIZE = new Dimension(
             Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
 
-    public static final int boundingRect = 200;
+    public static final int boundingRect = 300;
     public static final Rectangle leftScreen = new Rectangle(-boundingRect,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
     public static final Rectangle rightScreen = new Rectangle(FRAME_WIDTH,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
     public static final Rectangle aboveScreen = new Rectangle(-boundingRect,-boundingRect,FRAME_WIDTH+boundingRect,boundingRect);
