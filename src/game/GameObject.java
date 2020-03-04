@@ -120,7 +120,7 @@ public abstract class GameObject{
         }
         return false;
     }
-    public void collisionHandling(GameObject other) {
+    void collisionHandling(GameObject other) {
         if (this.getClass() != other.getClass() && this.overlap(other)) {
             this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
             other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
@@ -133,7 +133,7 @@ public abstract class GameObject{
         //return transformedObjectPolygon;
     }*/
 
-    protected void wrapAround(Graphics2D g, Shape transformedShape){
+    void wrapAround(Graphics2D g, Shape transformedShape){
         transformedArea = new Area(transformedShape);
         //the transformedArea is the transformedShape parameter but as an Area instead
 

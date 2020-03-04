@@ -25,7 +25,7 @@ public class PolygonUtilities {
         double standardRadius = scale * DRAWING_SCALE * 4;
         double maxRadius = standardRadius * 1.5;
         double minRadius = standardRadius * 0.75;
-        //int nPoints = xCorners.length;
+
         for (int i = 0; i < nPoints; i++) {
             Vector2D temp = Vector2D.polar(
                     Math.PI * 2 * (i + Math.random())/ nPoints,

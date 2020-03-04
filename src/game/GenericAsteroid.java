@@ -4,10 +4,9 @@ import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
-import static game.Constants.FRAME_HEIGHT;
-import static game.Constants.FRAME_WIDTH;
-import static game.Constants.DT;
+import static game.Constants.*;
 import static java.lang.Math.PI;
 
 public abstract class GenericAsteroid extends GameObject {
@@ -39,6 +38,7 @@ public abstract class GenericAsteroid extends GameObject {
     }
 
     private void setShared(){
+        texture = (BufferedImage)SPACE_ROCK;
         boolean definedAsteroid = true;
         int corners = (int)((Math.random() * 5) + (Math.random() * 5)) + 2;
         switch ((int)(Math.random() * 10)){
@@ -84,7 +84,7 @@ public abstract class GenericAsteroid extends GameObject {
 
     protected abstract void setSpecifics();
 
-    protected void spaceRockGoSpinny(Graphics2D g){
+    void spaceRockGoSpinny(Graphics2D g){
         g.rotate(rotationAngle);
         rotationAngle+=(spinSpeed/DT);
         //space rock go spinny at speed of nyoom (or at least spinSpeed/DT so it's not eye-hurting)
