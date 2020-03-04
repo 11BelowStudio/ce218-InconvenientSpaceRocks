@@ -24,6 +24,9 @@ public abstract class GameObject{
 
     protected boolean intangible;
     //whether or not this game object can be interacted with
+    protected boolean finalIntangible;
+    //records whether or not this is the final intangibility update; used to extend intangibility until the thing can be used
+    protected boolean stillIntangible;
 
     protected boolean wasHit;
     //records if it was hit by something or not
@@ -57,6 +60,7 @@ public abstract class GameObject{
         playerHit = false;
         childObjects = null;
         pointValue = 0;
+        finalIntangible = false;
         texture = (BufferedImage)AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
     }
@@ -70,12 +74,16 @@ public abstract class GameObject{
 
 
     public void hit(boolean hitByPlayer){
-        if (!intangible){
-            //it's dead if it got hit whilst not intangible
-            dead = true;
-            intangible = true;
+        if (!finalIntangible || !stillIntangible) {
+            if (!intangible) {
+                //it's dead if it got hit whilst not intangible
+                dead = true;
+                intangible = true;
+                hitLogic(hitByPlayer);
+            }
+        } else {
+            stillIntangible = true;
         }
-        hitLogic(hitByPlayer);
     }
 
     protected void hitLogic(boolean hitByPlayer){
@@ -181,7 +189,20 @@ public abstract class GameObject{
     }
 
     protected void notIntangible(){
-        this.intangible = false;
+        /*if (finalIntangible){
+            this.finalIntangible = false;
+            this.intangible = false;
+        }*/
+        if (intangible){
+            this.intangible = false;
+            this.finalIntangible = true;
+        } else if (stillIntangible) {
+            this.intangible = true;
+            this.stillIntangible = false;
+            this.finalIntangible = true;
+        } else if (finalIntangible){
+            finalIntangible = false;
+        }
     }
 
 

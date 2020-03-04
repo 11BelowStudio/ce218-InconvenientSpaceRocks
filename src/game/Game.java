@@ -5,6 +5,7 @@ import utilities.Vector2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class Game {
     public static final int N_INITIAL_ASTEROIDS = 5;
@@ -33,10 +34,19 @@ public class Game {
 
     private EnemyPlayer enemyPlayer;
 
+    int timeForEnemyToRespawn;
+
+    int enemyRespawnChance;
+
+    Stack<GameObject> newObjects;
+
+    int objectWait;
+
     public Game() {
 
 
         gameObjects = new ArrayList<>();
+        newObjects = new Stack<>();
         levelConfigs = new GameLevels();
         ctrl = new Keys();
         ship = new PlayerShip(ctrl,this);
@@ -57,6 +67,8 @@ public class Game {
         enemy = null;
 
         enemyPlayer = new EnemyPlayer(this);
+
+        resetEnemySpawnTimer();
 
 
         //setupLevel();
@@ -93,13 +105,6 @@ public class Game {
             newObjects.add(new BigAsteroid());
         }
 
-        for (GameObject g: newObjects){
-            if (g.position.dist(ship.position) <= 100){
-                g.position.add(200,200);
-                //nothing will spawn too close to the ship now
-            }
-        }
-
         return newObjects;
 
     }
@@ -133,17 +138,17 @@ public class Game {
         //doing collision handling and dealing with the results of the collision handling
         for (int i = 0; i < gameObjects.size(); i++) {
             GameObject temp = gameObjects.get(i);
+            boolean isAsteroid = (temp instanceof GenericAsteroid);
             if (!temp.intangible || !temp.dead) { //only need to bother checking the collision if this isn't intangible/dead
-                boolean isAsteroid = (temp instanceof GenericAsteroid);
-                boolean isBullet = (temp instanceof PlayerBullet);
-                boolean isShip = (temp instanceof PlayerShip);
+                boolean isPlayer = (temp instanceof PlayerShip || temp instanceof PlayerBullet);
+                boolean isEnemy = (temp instanceof EnemyShip || temp instanceof  EnemyBullet);
                 //working out what type of object temp is
                 for (int j = i; j < gameObjects.size(); j++) {
                     GameObject temp2 = gameObjects.get(j);
                     if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
                         if ((isAsteroid ^ temp2 instanceof GenericAsteroid) ||
-                                (isBullet ^ (temp2 instanceof PlayerBullet || temp2 instanceof PlayerShip)) ||
-                                (isShip ^ (temp2 instanceof PlayerShip || temp2 instanceof PlayerBullet))
+                                (isPlayer ^ (temp2 instanceof PlayerShip || temp2 instanceof PlayerBullet)) ||
+                                (isEnemy ^ (temp2 instanceof EnemyShip || temp2 instanceof EnemyBullet))
                         ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
                             //can't really do 'if (.class != .class)', as the GenericAsteroid superclass kinda messes with it
                             temp.collisionHandling(temp2);
@@ -167,6 +172,7 @@ public class Game {
                     c.update();
                     alive.add(c);
                 }*/
+
                 alive.addAll(temp.childObjects);
                 temp.childObjects = null;
             }
@@ -225,22 +231,56 @@ public class Game {
             }
         } else {
 
+            /*
             if (!asteroidsRemaining) {
                 //if no asteroids remain, and the player isn't currently dead, the level is done
                 currentLevel++;
                 //moves forward a level
-                alive.addAll(setupLevel());
+                newObjects.addAll(setupLevel());
                 //adds the asteroids for the next level
                 ship.giveImmunity();
+                objectWait = 10;
                 //gives the player some temporary immunity,
                 //so they have some time to react to the new obstacles
+            }*/
+
+            if (newObjects.isEmpty()) {
+                if (!asteroidsRemaining) {
+                    //if no asteroids remain, and the player isn't currently dead, the level is done
+                    currentLevel++;
+                    //moves forward a level
+                    newObjects.addAll(setupLevel());
+                    //adds the asteroids for the next level
+                    ship.giveImmunity();
+                    objectWait = 10;
+                    //gives the player some temporary immunity,
+                    //so they have some time to react to the new obstacles
+                }
+            } else{
+                if (objectWait == 0) {
+                    System.out.println("objects to spawn: " + newObjects.size());
+                    GameObject newObject = newObjects.pop();
+                    if (newObject.position.dist(ship.position) <= 100){
+                        newObject.position.add(200,200);
+                        //nothing will spawn too close to the ship now
+                    }
+                    alive.add(newObject);
+                    objectWait = 10;
+                } else{
+                    objectWait--;
+                }
             }
 
             if (enemy == null) {
                 if (Math.random() < 0.125) {
-                    enemy = new EnemyShip(enemyPlayer, this);
-                    enemyPlayer.newEnemy(enemy);
-                    alive.add(enemy);
+                    if (timeForEnemyToRespawn <= 0) {
+                        enemy = new EnemyShip(enemyPlayer, this);
+                        enemyPlayer.newEnemy(enemy);
+                        alive.add(enemy);
+                        resetEnemySpawnTimer();
+                    } else{
+                        timeForEnemyToRespawn--;
+                    }
                 }
             }
         }
@@ -260,6 +300,13 @@ public class Game {
         } else{
             return ship.position;
         }
+    }
+
+    private void resetEnemySpawnTimer(){
+        if (currentLevel < 100) {
+            timeForEnemyToRespawn = 100 - currentLevel;
+        }
+        timeForEnemyToRespawn +=  (int)(Math.random() * 100);
     }
 
 

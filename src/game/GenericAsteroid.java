@@ -8,6 +8,7 @@ import java.awt.*;
 import static game.Constants.FRAME_HEIGHT;
 import static game.Constants.FRAME_WIDTH;
 import static game.Constants.DT;
+import static java.lang.Math.PI;
 
 public abstract class GenericAsteroid extends GameObject {
 
@@ -20,14 +21,14 @@ public abstract class GenericAsteroid extends GameObject {
     public GenericAsteroid() {
 
         super(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
-                Vector2D.polar(Math.random() * 360, Math.random() * MAX_SPEED)
+                Vector2D.polar(Math.random() * 2 * PI, Math.random() * MAX_SPEED)
         );
         setShared();
     }
 
     public GenericAsteroid(Vector2D startPosition){
         super(startPosition,
-                Vector2D.polar(Math.random() * 360,Math.random() * MAX_SPEED)
+                Vector2D.polar(Math.random() * 2 * PI,Math.random() * MAX_SPEED)
         );
         setShared();
     }
@@ -38,7 +39,9 @@ public abstract class GenericAsteroid extends GameObject {
     }
 
     private void setShared(){
-        switch ((int)(Math.random() * 6)){
+        boolean definedAsteroid = true;
+        int corners = (int)((Math.random() * 5) + (Math.random() * 5)) + 2;
+        switch ((int)(Math.random() * 10)){
             case 0:
                 this.hitboxX = new int[]{0,3,4,3,0,-3,-4,-3}; //{0,3,4,3,0,-3,-4,-3}
                 this.hitboxY = new int[]{4,3,0,-3,-4,-3,0,3}; //{4,3,0,-3,-4,-3,0,3}
@@ -63,11 +66,19 @@ public abstract class GenericAsteroid extends GameObject {
                 this.hitboxX = new int[]{0,-3,-2,0,2,3};
                 this.hitboxY = new int[]{-4,1,3,4,3,1};
                 break;
+            default:
+                this.hitboxX = new int[corners];
+                this.hitboxY = new int[corners];
+                definedAsteroid = false;
         }
         rotationAngle = Math.toRadians((Math.random() * 360)-180); //initial angle for the asteroid
         spinSpeed = Math.toRadians(((Math.random() * 2)-1)/32); //rate at which space rock go spinny
         setSpecifics();
-        objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,asteroidScale);
+        if (definedAsteroid) {
+            objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX, hitboxY, asteroidScale);
+        } else{
+            objectPolygon = PolygonUtilities.randomScaledPolygonConstructor(hitboxX,hitboxY,asteroidScale,corners);
+        }
         //texture = (BufferedImage)AN_TEXTURE;
     }
 
