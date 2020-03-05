@@ -65,10 +65,22 @@ public abstract class GameObject{
         wasHit = false;
         playerHit = false;
         childObjects = null;
-        pointValue = 0;
         finalIntangible = false;
+        collided = false;
+        pointValue = 0;
         texture = (BufferedImage)AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
+    }
+
+    public void revive(Vector2D p, Vector2D v){
+        this.position.set(p);
+        this.velocity.set(v);
+        dead = false;
+        intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
+        wasHit = false;
+        playerHit = false;
+        childObjects = null;
+        finalIntangible = false;
         collided = false;
     }
 

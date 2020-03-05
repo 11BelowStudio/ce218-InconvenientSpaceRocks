@@ -15,13 +15,18 @@ public class EnemyShip extends Ship {
         super(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),Vector2D.polar((Math.random() * Math.PI * 2) - Math.PI, 1),ctrl,game);
         objectColour = new Color(255,128,0,96);
         pointValue = 20;
-        direction = new Vector2D(velocity);
-        direction.normalise();
+        direction = new Vector2D(velocity).normalise();
+        //direction.normalise();
         BULLET_DELAY = 500;
         STEER_RATE = 1.5*Math.PI;
     }
 
-    @Override
+    public EnemyPlayer getPlayer(){
+        return (EnemyPlayer) ctrl;
+    }
+
+
+    //@Override
     protected void addBulletToChildren() {
         childObjects.add(
                 new EnemyBullet(
@@ -36,11 +41,6 @@ public class EnemyShip extends Ship {
         //and is put it in childObjects
 
         SoundManager.fire();
-    }
-
-    @Override
-    public void update() {
-        super.update();
     }
 
     @Override

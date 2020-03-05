@@ -13,7 +13,7 @@ public class EnemyPlayer implements Controller{
     private Action action;
     private final int positionUpdateRange = 15;
     private int framesUntilUpdatingEnemyPosition;
-    private final int maxActionDelay = 50;
+    private final int maxActionDelay = 10;
     private int actionDelay;
     private boolean canAct;
     private Vector2D targetPosition;
@@ -27,18 +27,20 @@ public class EnemyPlayer implements Controller{
         nextActionIn();
     }
 
+
     public void newEnemy(EnemyShip s){
+    //public void newEnemy(){
         enemyShip = s;
         alive = true;
         playerType = (int)(Math.random() * 5);
         System.out.println("Enemy "+ playerType);
-        targetPosition = game.getShipPosition();
+        getTargetPosition();
         nextUpdateIn();
         nextActionIn();
     }
 
     public void ded(){
-        enemyShip = null;
+        //enemyShip = null;
         alive = false;
     }
 
@@ -91,7 +93,7 @@ public class EnemyPlayer implements Controller{
                     break;
             }
         } else{
-            action.shoot = false;
+            action.shoot = true;
             action.thrust = 0;
             action.turn = 0;
         }

@@ -11,7 +11,10 @@ import static java.lang.Math.PI;
 
 public abstract class GenericAsteroid extends GameObject {
 
-    public static final double MAX_SPEED = 100;
+    public static final double MAX_SPEED = 150;
+
+    //how long it can persist for
+    protected int timeToLive;
 
     protected double asteroidScale;
 
@@ -45,6 +48,15 @@ public abstract class GenericAsteroid extends GameObject {
         setShared();
     }
 
+    public void revive(){
+        revive(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT));
+    }
+
+    public void revive(Vector2D p){
+        super.revive(p,Vector2D.polar(Math.random() * 2 * PI, Math.random() * MAX_SPEED));
+        setShared();
+    }
+
     @Override
     public void update(){
         super.update();
@@ -57,8 +69,8 @@ public abstract class GenericAsteroid extends GameObject {
         originSpeed = velocity.mag();
         texture = (BufferedImage)SPACE_ROCK;
         boolean definedAsteroid = true;
-        int corners = (int)((Math.random() * 5) + (Math.random() * 5)) + 2;
-        switch ((int)(Math.random() * 10)){
+        int corners = (int)((Math.random() * 6) + (Math.random() * 6)) + 3;
+        switch ((int)(Math.random() * 15)){
             case 0:
                 this.hitboxX = new int[]{0,3,4,3,0,-3,-4,-3}; //{0,3,4,3,0,-3,-4,-3}
                 this.hitboxY = new int[]{4,3,0,-3,-4,-3,0,3}; //{4,3,0,-3,-4,-3,0,3}

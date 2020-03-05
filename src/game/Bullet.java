@@ -14,8 +14,12 @@ public abstract class Bullet extends GameObject {
 
     int frameCount;
 
-    public Bullet(Vector2D position, Vector2D direction){
-        super(position,direction);
+    public Bullet(){
+        this(new Vector2D(1,1),new Vector2D(300,1));
+    }
+
+    public Bullet(Vector2D p, Vector2D v){
+        super(p,v);
         timeToLive = 50;
         distanceToGo = 30;
         RADIUS = 5;
@@ -26,6 +30,15 @@ public abstract class Bullet extends GameObject {
 
         objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,0.5);
 
+    }
+
+    public void revive(Vector2D p, Vector2D d){
+        super.revive(p,d);
+        //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,0.5);
+        timeToLive = 50;
+        distanceToGo = 30;
+        RADIUS = 5;
+        frameCount = 0;
     }
 
     @Override

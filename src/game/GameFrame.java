@@ -135,10 +135,11 @@ public class GameFrame extends JFrame {
             long timeout = DELAY - (endTime - startTime);
             if (timeout > 0){
                 Thread.sleep(timeout);
-            } /*else{
+            } /* else{
                 missedFrames++;
             }
-            System.out.println(missedFrames);*/
+            System.out.println(missedFrames);
+            /* */
         }
 
         SoundManager.stopGame();

@@ -26,6 +26,10 @@ public class PlayerBullet extends Bullet {
         super.update();
     }
 
+    PlayerBullet(){
+        super();
+    }
+
     public void update(){
         super.update();
         objectColour = new Color(255 - (5*timeToLive),255 - (3*timeToLive),255 - (timeToLive/2),128);

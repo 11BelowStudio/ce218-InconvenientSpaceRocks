@@ -23,7 +23,7 @@ public class PolygonUtilities {
             return null;
         }
         double standardRadius = scale * DRAWING_SCALE * 4;
-        double maxRadius = standardRadius * 1.5;
+        double maxRadius = standardRadius * 1.05;
         double minRadius = standardRadius * 0.75;
 
         for (int i = 0; i < nPoints; i++) {

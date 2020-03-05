@@ -17,6 +17,8 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     //how many children it spawns if allowed to expire naturally
     protected final int decayChildren =  5;
 
+    int childrenToSpawn;
+
     int redScale;
 
 
@@ -39,7 +41,8 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     protected void setSpecifics(){
         //hitChildren = 2;
         //decayChildren = 5;
-        childObjects = new ArrayList<>(decayChildren);
+        //childObjects = new ArrayList<>(decayChildren);
+        childObjects = null;
         timeToLive = (int)(Math.random() * 512) + 512;
     }
 
@@ -75,7 +78,11 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
         }
     }
 
-    public abstract void spawnChildren();
+    public void spawnChildren() {
+        childrenToSpawn = howManyChildren();
+        //return children;
+        //will be used to generate the child asteroids
+    }
     //will be used to generate the child asteroids
 
     protected void updateColour(){

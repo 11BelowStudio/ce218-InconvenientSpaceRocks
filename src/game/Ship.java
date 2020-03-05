@@ -21,6 +21,8 @@ public abstract class Ship extends GameObject {
     //maximum speed
     public static final double MAX_SPEED = 250;
 
+    //public static final int RADIUS = 8;
+
     // constant speed loss factor
 
     //public static Color SHIP_COLOUR;
@@ -58,6 +60,12 @@ public abstract class Ship extends GameObject {
 
     protected double warpDistance;
 
+    public boolean fired;
+
+    public Vector2D bulletLocation;
+
+    public Vector2D bulletVelocity;
+
 
 
 
@@ -91,6 +99,28 @@ public abstract class Ship extends GameObject {
 
         warpDistance = 100;
 
+
+    }
+
+    public void revive(Vector2D p, Vector2D v, Vector2D d){
+        super.revive(p,v);
+        this.direction = d;
+        lastBullet = null;
+        canFireNextBulletAt = System.currentTimeMillis();
+        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
+        canWarpAt = System.currentTimeMillis();
+        canFireNextBulletAt = System.currentTimeMillis();
+        bulletLocation = null;
+        bulletVelocity = null;
+        fired = false;
+        intangible = true;
+
+    }
+
+    public void revive() {
+        revive(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
+                Vector2D.polar((Math.random() * Math.PI * 2), Math.random() * MAX_SPEED),
+                Vector2D.polar((Math.random() * Math.PI * 2),1));
 
     }
 
@@ -158,11 +188,18 @@ public abstract class Ship extends GameObject {
             canFireNextBulletAt = (System.currentTimeMillis() + BULLET_DELAY);
             //works out when the player is next allowed to fire a bullet
             childObjects = new ArrayList<>();
-            addBulletToChildren();
+           fireBullet();
         }
     }
 
-    protected abstract void addBulletToChildren(); //ensures the correct bullet for the type of ship is fired
+    protected void fireBullet(){
+        bulletLocation = new Vector2D(
+                (position.x + ((2 * RADIUS) * (direction.x))),
+                (position.y + ((2 * RADIUS) * (direction.y)))
+        );
+        bulletVelocity = new Vector2D(this.direction).setMag(300);
+        fired = true;
+    }; //ensures the correct bullet for the type of ship is fired
 
 
     public void draw(Graphics2D g){

@@ -19,9 +19,7 @@ public class Asteroid extends GenericAsteroid {
 
     public Asteroid(){
 
-        super(new Vector2D(Math.random() * FRAME_WIDTH,Math.random() * FRAME_HEIGHT),
-                new Vector2D((Math.random() * MAX_SPEED * 2) - MAX_SPEED,(Math.random() * MAX_SPEED * 2) - MAX_SPEED)
-        );
+        this(new Vector2D(Math.random() * FRAME_WIDTH,Math.random() * FRAME_HEIGHT));
         /*
         RADIUS = 10;
         pointValue = 1;
@@ -40,7 +38,7 @@ public class Asteroid extends GenericAsteroid {
     }
 
     public Asteroid(Vector2D startPosition){
-        super(startPosition,
+        this(startPosition,
                 new Vector2D((Math.random() * MAX_SPEED * 2) - MAX_SPEED,(Math.random() * MAX_SPEED * 2) - MAX_SPEED)
         );
 
@@ -58,7 +56,18 @@ public class Asteroid extends GenericAsteroid {
         pointValue = 1;
         asteroidScale = 0.5;
         objectColour = new Color(255,0,0,128);
+        timeToLive = 100000;
         //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
+    }
+
+    @Override
+    public void update(){
+        super.update();
+        timeToLive--;
+        if (timeToLive == 0){
+            dead = true;
+            wasHit = false;
+        }
     }
 
     /*public static Asteroid makeRandomAsteroid() {

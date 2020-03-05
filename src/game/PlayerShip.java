@@ -20,7 +20,7 @@ public class PlayerShip extends Ship {
     public static final double MAG_ACC = 5;
 
     //maximum speed
-    public static final double MAX_SPEED = 250;
+    private double MAX_SPEED = 250;
 
     // constant speed loss factor
     public static final double DRAG = 0.015;
@@ -87,8 +87,20 @@ public class PlayerShip extends Ship {
         BULLET_DELAY = 250;
 
         warpDistance = 200;
+        MAX_SPEED = 250;
 
 
+
+    }
+
+    @Override
+    public void revive() {
+        super.revive(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(Math.toRadians(270),0),Vector2D.polar(Math.toRadians(270),1));
+        gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
+        objectColour = SHIP_COLOUR;
+        texture = (BufferedImage)Constants.SHIP;
+        BULLET_DELAY = 250;
+        warpDistance = 200;
     }
 
     public PlayerShip(Controller ctrl, Game game, Vector2D direction){
@@ -101,7 +113,7 @@ public class PlayerShip extends Ship {
     public void update(){
         super.update();
         if (intangible){
-            if (System.currentTimeMillis() >= gracePeriodExpiresAt){
+            if (System.currentTimeMillis() >= gracePeriodExpiresAt || fired){
                 //will cause the player's godmode to expire after the grace period expires
                 notIntangible();
             } else{
@@ -111,6 +123,8 @@ public class PlayerShip extends Ship {
         }
     }
 
+
+
     @Override
     protected void hitLogic(boolean hitByPlayer) {
         //currently doesn't need to do anything if hit, may change
@@ -118,7 +132,7 @@ public class PlayerShip extends Ship {
     }
 
 
-    @Override
+    //@Override
     protected void addBulletToChildren() {
         childObjects.add(
                 new PlayerBullet(

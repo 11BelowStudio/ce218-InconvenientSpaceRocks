@@ -22,11 +22,11 @@ class GameLevels {
                 {{2, 2, 0}, {1, 3, 0}, {0, 0, 1}},
                 {{0, 2, 1}, {0, 1, 2}, {0, 0, 3}, {0, 5,0}},
                 {{0, 0, 4}, {0, 0, 5}},
-                {{0, 0, 6}, {0, 5, 4},{0,15,0}},
-                {{0, 10, 8}, {0, 0, 10}},
+                {{0, 0, 6}, {0, 5, 4},{0,15,1}},
+                {{0, 10, 4}, {0, 0, 10}},
                 {{30, 0, 1}, {0, 6, 10}, {8, 1, 10}, {5, 3, 10}, {2, 5, 10}},
-                {{7, 2, 10}, {4, 4, 10}, {1, 6, 13}, {9, 1, 13}, {6, 3, 10}},
-                {{0, 7, 10}, {8, 2, 10}, {5, 4, 10}, {2, 6, 10}, {7, 3, 10}}
+                {{7, 2, 10}, {4, 4, 10}, {1, 6, 10}, {9, 1, 10}, {6, 3, 10}},
+                {{0, 8, 10}, {8, 2, 10}, {5, 4, 10}, {2, 6, 10}, {7, 3, 10},{40,20,10}},
         };
 
         /*
@@ -68,7 +68,7 @@ class GameLevels {
         if (tempLevel > 7){ //there's only configurations for 8 levels so yeah after that it works differently
             int extraLevel = tempLevel-7; //works out how many levels the player has gone past the final level
             if (extraLevel > 8){
-                extraLevel = 8; //just making sure it doesn't get too out of hand
+                extraLevel =8; //just making sure it doesn't get too out of hand
             }
             ArrayList<Integer> theLevel = getRandomLevel(7); //obtains a random final level
             for (int i = 0; i < 3; i++) {

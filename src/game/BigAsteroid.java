@@ -22,17 +22,7 @@ public class BigAsteroid extends GenericLargerAsteroid {
     }
 
 
-    @Override
-    public void spawnChildren() {
-        this.childObjects = new ArrayList<>();
-        int count = howManyChildren();
-        double x = this.position.x;
-        double y = this.position.y;
-        for (int i = 0; i < count ; i++) {
-            childObjects.add(new MediumAsteroid(new Vector2D(x,y)));
-        }
-        //return children;
-    }
+
 
     @Override
     public String toString(){

@@ -29,17 +29,6 @@ public class MediumAsteroid extends GenericLargerAsteroid {
         //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1.5);
     }
 
-    @Override
-    public void spawnChildren() {
-        this.childObjects = new ArrayList<>();
-        int count = howManyChildren();
-        double x = this.position.x;
-        double y = this.position.y;
-        for (int i = 0; i < count ; i++) {
-            childObjects.add(new Asteroid(new Vector2D(x,y)));
-        }
-        //return children;
-    }
 
     @Override
     public void updateColour(){
