@@ -49,7 +49,13 @@ public abstract class GameObject{
 
     protected Color objectColour;
 
+    public static final double DRAG = 0.015;
+
     int[] hitboxX, hitboxY;
+
+    public static final double MAX_SPEED = 100;
+
+    boolean collided;
 
     public GameObject(Vector2D p, Vector2D v){
         position = p;
@@ -63,12 +69,21 @@ public abstract class GameObject{
         finalIntangible = false;
         texture = (BufferedImage)AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
+        collided = false;
     }
 
     public void update(){
+        collided = false;
         if (!dead) {
             position.addScaled(velocity, DT);
             position.wrap(FRAME_WIDTH, FRAME_HEIGHT);
+            /*
+            if (position.x > HALF_WIDTH){
+                position.x -= FRAME_WIDTH;
+            }
+            if (position.y > HALF_HEIGHT){
+                position.y -= FRAME_HEIGHT;
+            }*/
         }
     }
 
@@ -126,18 +141,18 @@ public abstract class GameObject{
     void collisionHandling(GameObject other) {
         if (this.getClass() != other.getClass() && this.overlap(other)) {
             if (this.intangible || other.intangible) {
-                boolean a = this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
-                boolean b = other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
+                this.bounceOff(other);
             } else{
-                this.bounceCollision(other);
+                this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
+                other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
             }
         }
     }
 
 
-    void capSpeed(double maxSpeed){
-        if (velocity.mag() > maxSpeed){
-            velocity.setMag(maxSpeed);
+    void capSpeed(){
+        if (velocity.mag() > MAX_SPEED){
+            velocity.setMag(MAX_SPEED);
         }
     }
 
@@ -157,16 +172,14 @@ public abstract class GameObject{
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
             intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
-        }
-        if (transformedShape.intersects(underScreen)){
+        } else if (transformedShape.intersects(underScreen)){
             //moving stuff under the screen to the top of it
             intersectHandler(g, underScreen, 0, -FRAME_HEIGHT);
         }
         if (transformedShape.intersects(leftScreen)){
             //moving stuff to the left of the screen to the right of it
             intersectHandler(g,  leftScreen, FRAME_WIDTH, 0);
-        }
-        if (transformedShape.intersects(rightScreen)){
+        } else if (transformedShape.intersects(rightScreen)){
             //moving stuff on the right of the screen to the left of it
             intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
         }
@@ -216,16 +229,24 @@ public abstract class GameObject{
     }
 
 
-    public void bounceCollision(GameObject other){
-        Vector2D coll = new Vector2D(other.position);
-        coll.subtract(position).normalise();
-        Vector2D tangent = new Vector2D(-coll.y, coll.x);
-        Vector2D thisV = new Vector2D(this.velocity);
-        Vector2D otherV = new Vector2D(other.velocity);
-        this.velocity = new Vector2D(thisV.proj(tangent)).add(otherV.proj(coll));
-        //this.capSpeed(200);
-        other.velocity = new Vector2D(otherV.proj(tangent)).add(thisV.proj(coll));
-        //other.capSpeed(200);
+    public void bounceOff(GameObject other){
+        if (other instanceof Bullet){
+            other.dead = true;
+        } else if (!other.collided){
+            collided = true;
+            Vector2D coll = new Vector2D(other.position);
+            coll.subtract(position).normalise();
+            Vector2D tangent = new Vector2D(-coll.y, coll.x);
+            tangent.mult(1.1);
+            Vector2D thisV = new Vector2D(this.velocity);
+            Vector2D otherV = new Vector2D(other.velocity);
+            this.velocity = new Vector2D(thisV.proj(tangent)).add(otherV.proj(coll));
+            position.addScaled(velocity, DT);
+
+            other.velocity = new Vector2D(otherV.proj(tangent)).add(thisV.proj(coll));
+            //other.position.addScaled(other.velocity, DT);
+
+        }
     }
 
 

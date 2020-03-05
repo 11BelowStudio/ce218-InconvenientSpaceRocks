@@ -15,13 +15,21 @@ public abstract class GenericAsteroid extends GameObject {
 
     protected double asteroidScale;
 
+    private double originSpeed;
+
     double rotationAngle, spinSpeed;
 
     public GenericAsteroid() {
 
+        /* */
         super(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
                 Vector2D.polar(Math.random() * 2 * PI, Math.random() * MAX_SPEED)
         );
+        /*
+        super(new Vector2D(Math.random() * HALF_WIDTH, Math.random() * HALF_HEIGHT),
+                Vector2D.polar(Math.random() * 2 * PI, Math.random() * MAX_SPEED)
+        );
+        */
         setShared();
     }
 
@@ -37,7 +45,16 @@ public abstract class GenericAsteroid extends GameObject {
         setShared();
     }
 
+    @Override
+    public void update(){
+        super.update();
+        if(velocity.mag() >= originSpeed){
+            velocity.mult(1-DRAG);
+        }
+    }
+
     private void setShared(){
+        originSpeed = velocity.mag();
         texture = (BufferedImage)SPACE_ROCK;
         boolean definedAsteroid = true;
         int corners = (int)((Math.random() * 5) + (Math.random() * 5)) + 2;

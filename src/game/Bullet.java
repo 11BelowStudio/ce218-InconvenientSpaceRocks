@@ -52,4 +52,9 @@ public abstract class Bullet extends GameObject {
         wrapAround(g,transformedShape);
         paintTheArea(g);
     }
+
+    @Override
+    public void bounceOff(GameObject other){
+        this.dead = true;
+    }
 }

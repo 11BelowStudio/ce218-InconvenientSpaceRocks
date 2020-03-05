@@ -22,6 +22,10 @@ public class View extends JComponent {
 
     private final Image defaultBG = DEFAULT_VIEW;
 
+    private Image urDed;
+
+    private AffineTransform urDedTransform;
+
     //private final Image defaultBG = TITLE;
 
     private AffineTransform bgTransform;
@@ -41,6 +45,12 @@ public class View extends JComponent {
         //gameInfo = new InfoPanel(game);
         //gameInfo = new InfoPanel();
         //this.add(gameInfo,BorderLayout.NORTH);
+
+        urDed = YOU_ARE_DED;
+
+        urDedTransform = new AffineTransform(1,0,0,2,HALF_WIDTH,HALF_HEIGHT);
+
+
 
         hideGame();
         /*
@@ -103,6 +113,9 @@ public class View extends JComponent {
 
 
 
+
+
+
     }
 
 
@@ -147,20 +160,23 @@ public class View extends JComponent {
         if (displayingGame) {
             g.setColor(Color.white);
             int eighthWidth = getWidth() / 8;
-            /*
-            g.drawString(scoreString.toString(),eighthWidth,10);
-            g.drawString(levelString.toString(),(int)(3.5*eighthWidth),10);
-            g.drawString(livesString.toString(), 6*eighthWidth,10);
-            */
+
+            //g.fillRect(-1000,-1000,2000,2000);
+
+            AffineTransform backup = g.getTransform();
+
+
             synchronized (Game.class) {
-                //if (game.ready) {
+
+
                 for (GameObject o : game.gameObjects) {
                     o.draw(g);
                     //basically calls the draw method of each gameObject
                 }
                 //}
             }
-            AffineTransform backup = g.getTransform();
+
+            g.setTransform(backup);
             //game.ship.draw(g);
             g.setColor(Color.white);
             /*
@@ -183,6 +199,7 @@ public class View extends JComponent {
 
             if (game.gameOver) {
                 g.drawString("GAME OVER YEAH", (int) (3.5 * eighthWidth), getHeight() / 2);
+                g.drawImage(urDed,urDedTransform,null);
             } else if (game.waitingToRespawn) {
                 g.drawString("press any key to respawn", (int) (3 * eighthWidth), getHeight() / 2);
             }

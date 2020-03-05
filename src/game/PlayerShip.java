@@ -33,7 +33,7 @@ public class PlayerShip extends Ship {
 
 
     //private static final int RESPAWN_GRACE_PERIOD = 1000;
-    private static final int RESPAWN_GRACE_PERIOD = 100000;
+    private static final int RESPAWN_GRACE_PERIOD = 1000;
     //player has a grace period of 1000ms (1s) of invulnerability when respawning
     private static final int REWARD_GRACE_PERIOD = 250;
     //0.25s of invulnerability after destroying an asteroid
@@ -46,8 +46,11 @@ public class PlayerShip extends Ship {
 
 
     public PlayerShip(Controller ctrl, Game game) {
+        //super(new Vector2D(0,0),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
 
-        super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
+        super(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
+
+        //super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
 
         //position = new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2);
         direction = Vector2D.polar(Math.toRadians(270),1);

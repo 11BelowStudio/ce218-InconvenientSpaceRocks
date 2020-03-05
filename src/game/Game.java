@@ -210,7 +210,7 @@ public class Game {
                 boolean isPlayer = (temp instanceof PlayerShip || temp instanceof PlayerBullet);
                 boolean isEnemy = (temp instanceof EnemyShip || temp instanceof  EnemyBullet);
                 //working out what type of object temp is
-                for (int j = i; j < gameObjects.size(); j++) {
+                for (int j = i+1; j < gameObjects.size(); j++) {
                     GameObject temp2 = gameObjects.get(j);
                     if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
                         if ((isAsteroid ^ temp2 instanceof GenericAsteroid) ||

@@ -22,7 +22,7 @@ public abstract class Ship extends GameObject {
     public static final double MAX_SPEED = 250;
 
     // constant speed loss factor
-    public static final double DRAG = 0.015;
+
     //public static Color SHIP_COLOUR;
 
     // direction in which the nose of the ship is pointing
@@ -166,6 +166,7 @@ public abstract class Ship extends GameObject {
 
 
     public void draw(Graphics2D g){
+
         //definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
@@ -192,7 +193,6 @@ public abstract class Ship extends GameObject {
     protected abstract void drawDetails(Graphics2D g);
 
     protected void drawLineToPlayer(Graphics2D g){
-        //nothing
     }
 
     @Override
