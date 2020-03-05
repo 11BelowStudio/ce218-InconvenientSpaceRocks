@@ -1,5 +1,7 @@
 package game;
 
+import utilities.HighScoreHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
@@ -12,14 +14,21 @@ public class GameFrame extends JFrame {
 
     public View view;
 
+    private HighScoreHandler highScores;
+
+    Timer repaintTimer;
+
     //private InfoPanel gameInfo;
 
-    public GameFrame() throws Throwable {
+    public GameFrame() throws InterruptedException {
         this.setTitle("blideo bame");
+
+        highScores = new HighScoreHandler("SaveData/scores.txt",this, false);
+
         game = new Game();
         view = new View(game);
         //gameInfo = new InfoPanel(game);
-        this.addKeyListener(game.ctrl);
+        //this.addKeyListener(game.ctrl);
         //this.add(gameInfo,BorderLayout.NORTH);
 
         this.add(view,BorderLayout.CENTER);
@@ -31,16 +40,39 @@ public class GameFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         repaint();
         //titleScreen();
-
+        /*
+        repaintTimer = new Timer(DELAY,
+                ev -> view.repaint());
+        */
         while (true) {
-            runGame();
-            for (KeyListener k: this.getKeyListeners()) {
-                this.removeKeyListener(k);
-            }
+
             game = new Game();
             //game = new Game();
             this.addKeyListener(game.ctrl);
             view.replaceGame(game);
+            System.out.println("* setup done *");
+
+            repaintTimer = new Timer(DELAY,
+                    ev -> view.repaint());
+            repaintTimer.start();
+
+            System.out.println("* game started *");
+
+            runGame();
+
+            Thread.sleep(DELAY);
+
+            System.out.println("* game stopped *");
+
+            highScores.recordHighScore(game.score);
+            repaintTimer.stop();
+            repaintTimer = null;
+            for (KeyListener k: this.getKeyListeners()) {
+                this.removeKeyListener(k);
+            }
+
+            System.out.println("* Removed stuff *");
+            //repaintTimer.restart();
             //repaint();
         }
 
@@ -57,7 +89,7 @@ public class GameFrame extends JFrame {
     }
 
 
-    private void runGame() throws Throwable {
+    private void runGame() throws InterruptedException{
 
         /*
         while (true){//(!game.gameOver) {
@@ -67,12 +99,15 @@ public class GameFrame extends JFrame {
             Thread.sleep(DELAY);
         }*/
 
-
+        SoundManager.stopMenu();
         SoundManager.startGame();
 
+        /*
         Timer repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
-        repaintTimer.start();
+
+         */
+        //repaintTimer.start();
         int missedFrames = 0;
         while (!game.gameOver){
             long startTime = System.currentTimeMillis();
@@ -90,6 +125,7 @@ public class GameFrame extends JFrame {
 
         SoundManager.stopGame();
         SoundManager.stopThrust();
+        SoundManager.startMenu();
         while (!game.reset){
             long startTime = System.currentTimeMillis();
             game.update();
@@ -99,7 +135,10 @@ public class GameFrame extends JFrame {
                 Thread.sleep(timeout);
             }
         }
-        repaintTimer.stop();
+
+        Thread.sleep(DELAY);
+
+        //repaintTimer.stop();
 
         //game.update();
         //view.repaint();

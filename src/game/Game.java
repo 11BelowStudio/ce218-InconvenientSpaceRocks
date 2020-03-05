@@ -2,10 +2,7 @@ package game;
 
 import utilities.Vector2D;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 import static game.Constants.FRAME_HEIGHT;
 import static game.Constants.FRAME_WIDTH;
@@ -40,7 +37,8 @@ public class Game {
 
     int enemyRespawnChance;
 
-    Stack<GameObject> newObjects;
+    //Stack<GameObject> newObjects;
+    public List<GameObject> newObjects;
 
     int objectWait;
 
@@ -57,7 +55,8 @@ public class Game {
         //resetGame();
 
         gameObjects = new ArrayList<>();
-        newObjects = new Stack<>();
+        //newObjects = new Stack<>();
+        newObjects = new ArrayList<>();
         levelConfigs = new GameLevels();
         ctrl = new Keys();
         ship = new PlayerShip(ctrl,this);
@@ -100,16 +99,21 @@ public class Game {
 
     private void resetGame(){
         reset = true;
-        if (gameObjects != null) {
+        /*
+        ship = null;
+        if (gameObjects == null) {
             gameObjects = new ArrayList<>();
+        } else{
+            gameObjects.clear();
         }
-        if (newObjects != null) {
-            newObjects = new Stack<>();
+        if (newObjects == null) {
+            //newObjects = new Stack<>();
+            newObjects = new ArrayList<>();
+        } else{
+            newObjects.clear();
         }
-        if (ship != null) {
-            ship = new PlayerShip(ctrl, this);
-            gameObjects.add(ship);
-        }
+        ship = new PlayerShip(ctrl, this);
+        gameObjects.add(ship);
 
         score = 0;
 
@@ -126,22 +130,24 @@ public class Game {
         if (enemy != null) {
             enemy = null;
         }
-        if (enemyPlayer != null) {
-            enemyPlayer = new EnemyPlayer(this);
-        }
+
+        enemyPlayer = new EnemyPlayer(this);
+
+
 
         lastAsteroidCount = 0;
 
         timeSinceLastAsteroidChange = 0;
 
         resetEnemySpawnTimer();
+        */
         //ready = true;
         //gf.gameStart();
     }
 
 
 
-    public ArrayList<GameObject> setupLevel(){
+    private ArrayList<GameObject> setupLevel(){
 
         SoundManager.play(SoundManager.intimidating);
 
@@ -167,11 +173,13 @@ public class Game {
             newObjects.add(new BigAsteroid());
         }
 
+        Collections.shuffle(newObjects);
+
         return newObjects;
 
     }
 
-    public void update() throws Throwable {
+    public void update(){
         List<GameObject> alive = new ArrayList<>();
         //list for objects that are still alive
 
@@ -222,7 +230,7 @@ public class Game {
                 //alive objects added to the alive list
                 alive.add(temp);
             }
-            if (temp.childObjects != null){
+            if (temp.childObjects != null && !temp.childObjects.isEmpty()){
                 //if the current GameObject has childObjects,
                 //they're all added to 'alive',
                 //before the GameObject's childObjects list is wiped
@@ -314,13 +322,6 @@ public class Game {
         } else{
             if (ctrl.action.theAnyButton){
                 resetGame();
-                try {
-                    this.finalize();
-                } catch(Exception e){
-                    e.printStackTrace();
-                } catch(Throwable t){
-                    t.printStackTrace();
-                }
             }
         }
 
@@ -374,22 +375,26 @@ public class Game {
                 }
             } else{
                 System.out.println(newObjects.size() + " new objects left");
+                /*
                 if (newObjects.peek().dead){
                     newObjects.pop();
-                }
+                }*/
                 if (objectWait <= 0) {
                     System.out.println("objects to spawn: " + newObjects.size());
-                    GameObject newObject = newObjects.pop();
-                    if (!ship.dead) {
-                        Vector2D vecFromShip = getShipPosition().getVectorBetween(newObject.position, FRAME_WIDTH, FRAME_HEIGHT);
-                        if (vecFromShip.mag() <= 100) {
-                            newObject.position.add(vecFromShip.setMag(100));
-                            newObject.update();
-                            //nothing will spawn too close to the ship now
+                    //GameObject newObject = newObjects.pop();
+                    for (GameObject newObject : newObjects) {
+                        if (!ship.dead) {
+                            Vector2D vecFromShip = getShipPosition().getVectorBetween(newObject.position, FRAME_WIDTH, FRAME_HEIGHT);
+                            if (vecFromShip.mag() <= 100) {
+                                newObject.position.add(vecFromShip.setMag(100));
+                                newObject.update();
+                                //nothing will spawn too close to the ship now
+                            }
                         }
+                        alive.add(newObject);
+                        objectWait = 10;
                     }
-                    alive.add(newObject);
-                    objectWait = 10;
+                    newObjects.clear();
                 } else{
                     objectWait--;
                 }
@@ -407,7 +412,7 @@ public class Game {
         //System.out.println("Lives: " + lives + "| Score: " + score);
     }
 
-    public Vector2D getShipPosition(){
+    Vector2D getShipPosition(){
         if (ship.dead){
             return null;
         } else{

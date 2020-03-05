@@ -101,7 +101,7 @@ public abstract class GameObject{
         try {
             if (this.intangible || other.intangible) {
                 return false;
-            } else if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
+            } else //if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
                 //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
 
                 if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
@@ -111,7 +111,7 @@ public abstract class GameObject{
                     Area thisArea = new Area(this.transformedArea);
                     thisArea.intersect(other.transformedArea);
                     return !thisArea.isEmpty();
-                }
+                //}
             }
         } catch(NullPointerException e){
             System.out.println(e);

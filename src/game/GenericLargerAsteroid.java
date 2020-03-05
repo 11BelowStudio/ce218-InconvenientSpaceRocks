@@ -4,6 +4,7 @@ import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 
 public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
@@ -12,9 +13,9 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     //how long it can persist for
     protected int timeToLive;
     //how many children it spawns if hit
-    protected int hitChildren;
+    protected final int hitChildren = 2;
     //how many children it spawns if allowed to expire naturally
-    protected int decayChildren;
+    protected final int decayChildren =  5;
 
     int redScale;
 
@@ -36,8 +37,9 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
     @Override
     protected void setSpecifics(){
-        hitChildren = 2;
-        decayChildren = 5;
+        //hitChildren = 2;
+        //decayChildren = 5;
+        childObjects = new ArrayList<>(decayChildren);
         timeToLive = (int)(Math.random() * 512) + 512;
     }
 
