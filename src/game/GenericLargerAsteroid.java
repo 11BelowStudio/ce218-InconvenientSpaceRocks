@@ -57,9 +57,11 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
     //calls spawnChildren() when this is hit
     @Override
-    public void hit(boolean hitByPlayer){
-        super.hit(hitByPlayer);
+    //public void hit(boolean hitByPlayer){
+    public boolean hit(boolean hitByPlayer){
+        boolean temp = super.hit(hitByPlayer);
         spawnChildren();
+        return temp;
     }
 
     protected int howManyChildren(){

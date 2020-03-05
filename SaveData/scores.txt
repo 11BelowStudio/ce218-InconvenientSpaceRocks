@@ -1,3 +1,7 @@
+yeet
+32
+ok
+30
 unknown
 30
 indeed
@@ -6,6 +10,14 @@ unknown
 9
 unknown
 9
+k
+9
+k
+6
+nice
+6
+no
+6
 unknown
 0
 unknown

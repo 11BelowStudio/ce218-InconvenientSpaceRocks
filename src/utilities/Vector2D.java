@@ -220,4 +220,11 @@ public final class Vector2D {
         return Vector2D.polar(getAngleBetween(v,w,h),v.dist(this));
     }
 
+    //projection of this vector in some direction
+    public Vector2D proj(Vector2D d){
+        Vector2D result = new Vector2D(d);
+        result.mult(this.dot(d));
+        return result;
+    }
+
 }

@@ -73,15 +73,18 @@ public abstract class GameObject{
     }
 
 
-    public void hit(boolean hitByPlayer){
-        if (!finalIntangible || !stillIntangible) {
-            if (!intangible) {
+    public boolean hit(boolean hitByPlayer){
+        if ((!finalIntangible || !stillIntangible) && !intangible){
+            //if (!intangible) {
                 //it's dead if it got hit whilst not intangible
                 dead = true;
                 intangible = true;
                 hitLogic(hitByPlayer);
-            }
-        }/* else {
+                return true;
+            //}
+        } return false;
+
+        /* else {
             stillIntangible = true;
         }*/
     }
@@ -99,9 +102,9 @@ public abstract class GameObject{
     public boolean overlap(GameObject other){
         // overlap detection based on areas
         try {
-            if (this.intangible || other.intangible) {
+            /*if (this.intangible || other.intangible) {
                 return false;
-            } else //if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
+            } else */ //if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
                 //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
 
                 if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
@@ -122,8 +125,19 @@ public abstract class GameObject{
     }
     void collisionHandling(GameObject other) {
         if (this.getClass() != other.getClass() && this.overlap(other)) {
-            this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
-            other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
+            if (this.intangible || other.intangible) {
+                boolean a = this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
+                boolean b = other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
+            } else{
+                this.bounceCollision(other);
+            }
+        }
+    }
+
+
+    void capSpeed(double maxSpeed){
+        if (velocity.mag() > maxSpeed){
+            velocity.setMag(maxSpeed);
         }
     }
 
@@ -199,6 +213,19 @@ public abstract class GameObject{
         } else if (finalIntangible){
             finalIntangible = false;
         }
+    }
+
+
+    public void bounceCollision(GameObject other){
+        Vector2D coll = new Vector2D(other.position);
+        coll.subtract(position).normalise();
+        Vector2D tangent = new Vector2D(-coll.y, coll.x);
+        Vector2D thisV = new Vector2D(this.velocity);
+        Vector2D otherV = new Vector2D(other.velocity);
+        this.velocity = new Vector2D(thisV.proj(tangent)).add(otherV.proj(coll));
+        //this.capSpeed(200);
+        other.velocity = new Vector2D(otherV.proj(tangent)).add(thisV.proj(coll));
+        //other.capSpeed(200);
     }
 
 

@@ -32,7 +32,7 @@ public class Constants {
     public static final int MODEL_SPEED = 20;
     public static final long MODEL_DURATION = 20;
 
-    public static Image AN_TEXTURE, SPEHSS, SHIP, SPACE_ROCK;//ASTEROID1, MILKYWAY1;
+    public static Image AN_TEXTURE, SPEHSS, SHIP, SPACE_ROCK, TITLE, DEFAULT_VIEW;//ASTEROID1, MILKYWAY1;
     static {
         try {
             //ASTEROID1 = ImageManager.loadImage("asteroid1");
@@ -41,6 +41,8 @@ public class Constants {
             SPEHSS = ImageManager.loadImage("spehss");
             SHIP = ImageManager.loadImage("shipV1");
             SPACE_ROCK = ImageManager.loadImage("inconvenientSpaceRockTM");
+            TITLE = ImageManager.loadImage("titleImage");
+            DEFAULT_VIEW = ImageManager.loadImage("defaultView");
         } catch (IOException e) { e.printStackTrace(); }
     }
 }

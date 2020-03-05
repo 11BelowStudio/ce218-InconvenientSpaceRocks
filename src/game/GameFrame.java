@@ -5,6 +5,7 @@ import utilities.HighScoreHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.rmi.server.ExportException;
 
 import static basicGame.Constants.DELAY;
 
@@ -44,12 +45,29 @@ public class GameFrame extends JFrame {
         repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
         */
-        while (true) {
+        mainLoop();
+
+    }
+
+
+    private void mainLoop() throws InterruptedException{
+        boolean keepGoing = true;
+
+        while (keepGoing) {
+
+            /* TITLE SCREEN WILL GO HERE  */
+            JOptionPane.showMessageDialog(
+                    this,
+                    "press ok to start the blideo bame"
+            );
+            /* */
 
             game = new Game();
             //game = new Game();
             this.addKeyListener(game.ctrl);
-            view.replaceGame(game);
+            view.showGame(game);
+            //view.setVisible(true);
+            pack();
             System.out.println("* setup done *");
 
             repaintTimer = new Timer(DELAY,
@@ -65,19 +83,19 @@ public class GameFrame extends JFrame {
             System.out.println("* game stopped *");
 
             highScores.recordHighScore(game.score);
-            repaintTimer.stop();
-            repaintTimer = null;
             for (KeyListener k: this.getKeyListeners()) {
                 this.removeKeyListener(k);
             }
+            repaintTimer.stop();
+            repaintTimer = null;
+            //view.setVisible(false);
+            view.hideGame();
+            pack();
 
             System.out.println("* Removed stuff *");
             //repaintTimer.restart();
             //repaint();
         }
-
-
-
     }
 
     public void gameStart() throws Throwable{

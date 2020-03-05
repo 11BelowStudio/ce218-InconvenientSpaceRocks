@@ -25,7 +25,7 @@ public class HighScoreHandler {
     //tracks whether or not this is being accessed in debug mode
     //so it can call out anyone who is using debug mode to record a score
 
-    public HighScoreHandler(String fl, Component c, boolean hax0r){
+    public HighScoreHandler(String fl, Component c, boolean hax0rs){
 
         parentComponent = c;
 
@@ -36,7 +36,7 @@ public class HighScoreHandler {
         scoreFile = new File(fileLocation);
         //initialises the fileLocation string and scoreFile (which is a reference to the file at fileLocation)
 
-        cheater = hax0r; //>:(
+        cheater = hax0rs;
 
         String nameLine;
         String scoreLine;
@@ -144,8 +144,20 @@ public class HighScoreHandler {
         //scoreName = scoreName.replace("\n","");
 
         if (cheater){
+            //>:( no hax pls
             scoreName = "CHEATER ALERT: " + scoreName + " IS A CHEATER";
-            System.out.println("\nYou cheated not only the game but yourself.\nYou didn't grow.\nYou didn't improve.\nYou took a shortcut and gained nothing.\nYou experienced a hollow victory.\nNothing was risked and nothing was gained.\nIt's sad that you don't know the difference.\n");
+            JOptionPane.showMessageDialog(
+                    parentComponent,
+                    "You cheated not only the game but yourself.\n"
+                            + "You didn't grow.\n"
+                            + "You didn't improve.\n"
+                            + "You took a shortcut and gained nothing.\n"
+                            + "You experienced a hollow victory.\n"
+                            + "Nothing was risked and nothing was gained.\n"
+                            + "It's sad that you don't know the difference.\n",
+                    ">:(",
+                    JOptionPane.WARNING_MESSAGE
+            );
             //calls out anyone who is using debug mode to get a high score
         }
 
@@ -229,7 +241,7 @@ public class HighScoreHandler {
         //sb.append(":</b>");
         sb.append("<li>");
         sb.append(sr.toHTMLString());
-        sb.append("</li>");
+        //sb.append("</li>");
         //sb.append("</p><br>");
     }
 
