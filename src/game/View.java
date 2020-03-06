@@ -171,7 +171,7 @@ public class View extends JComponent {
 
                 for (GameObject o : game.gameObjects) {
                     o.draw(g);
-                    o.drawBoundingRect(g);
+                    //o.drawBoundingRect(g);
                     //basically calls the draw method of each gameObject
                 }
                 //}

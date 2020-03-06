@@ -46,6 +46,8 @@ public abstract class GameObject{
 
     public Rectangle areaRectangle;
 
+    public Rectangle backupRect;
+
 
     public BufferedImage texture;
 
@@ -188,42 +190,55 @@ public abstract class GameObject{
         this.areaRectangle = transformedArea.getBounds();
         //a simple bounding rectangle for this area
 
+        backupRect = transformedArea.getBounds();
+
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
-            intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
+            intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT,false);
         } else if (transformedShape.intersects(underScreen)){
             //moving stuff under the screen to the top of it
-            intersectHandler(g, underScreen, 0, -FRAME_HEIGHT);
+            intersectHandler(g, underScreen, 0, -FRAME_HEIGHT,false);
         }
         if (transformedShape.intersects(leftScreen)){
             //moving stuff to the left of the screen to the right of it
-            intersectHandler(g,  leftScreen, FRAME_WIDTH, 0);
+            intersectHandler(g,  leftScreen, FRAME_WIDTH, 0,true);
         } else if (transformedShape.intersects(rightScreen)){
             //moving stuff on the right of the screen to the left of it
-            intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
+            intersectHandler(g, rightScreen, -FRAME_WIDTH, 0,true);
         }
 
     }
 
-    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate) {
+    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate, boolean xWrapAround) {
         AffineTransform backup = g.getTransform(); //gets copy of original affine transform
         Area tempArea = (Area)transformedArea.clone(); //copies the transformed area
         tempArea.intersect(new Area(intersectCheckRect)); //get the intersection of it with the intersection rectangle
         //transformedArea.subtract(tempArea);
+        //tempArea.subtract(transformedArea);
         g.translate(xTranslate, yTranslate);
+        tempArea.transform(g.getTransform());
         transformedArea.add(tempArea);
         //areaRectangle = transformedArea.getBounds();
-        Point areaRectLocation = areaRectangle.getLocation();
-        areaRectLocation.translate(xTranslate,yTranslate);
+        //Point areaRectLocation = areaRectangle.getLocation();
+        //areaRectLocation.translate(xTranslate,yTranslate);
         //TODO: ensure that the pre-wraparound area is covered too
-        areaRectangle.add(areaRectLocation);
+
+
+        if (xWrapAround){
+            areaRectangle.x = 0;
+            areaRectangle.width = FRAME_WIDTH;
+        } else{
+            areaRectangle.y = 0;
+            areaRectangle.height = FRAME_HEIGHT;
+        }
+        //areaRectangle.add(tempArea.getBounds().getLocation());
         //areaRectangle.
         paintTheArea(g);
         g.setTransform(backup);
     }
 
     protected void paintTheArea(Graphics2D g){
-        g.setPaint(new TexturePaint(texture,areaRectangle));
+        g.setPaint(new TexturePaint(texture, backupRect));
         g.fill(transformedArea); //filling the sprite with the texture
         g.setColor(objectColour);
         g.fill(transformedArea); //now filling it with the overlay

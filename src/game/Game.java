@@ -121,7 +121,7 @@ public class Game {
         pointsToEarnLife = LIFE_COST;
 
         currentLevel = 0;
-        //currentLevel = 7;
+        //currentLevel = 8;
         //currentLevel = 100;
 
         waitingToRespawn = false;

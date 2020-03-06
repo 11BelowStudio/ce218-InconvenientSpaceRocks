@@ -68,9 +68,9 @@ public class Bomb extends GameObject {
         //g.fill(transformedArea);
         g.setColor(objectColour);
         g.fill(transformedArea);
-        areaRectangle = transformedArea.getBounds();
-        g.setColor(new Color(255,128,0,128));
-        g.fill(areaRectangle);
+        //areaRectangle = transformedArea.getBounds();
+        //g.setColor(new Color(255,128,0,128));
+        //g.fill(areaRectangle);
     }
 
     protected void paintTheArea(Graphics2D g){
