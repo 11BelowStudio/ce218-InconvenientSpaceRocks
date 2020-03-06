@@ -37,4 +37,24 @@ public class PolygonUtilities {
         return new Polygon(xCorners,yCorners,nPoints);
     }
 
+    public static Polygon prettyMuchACircle(int[] xCorners, int[] yCorners, double scale){
+        xCorners = new int[12];
+        yCorners = new int[12];
+
+        double radius = scale;
+        double angle = 0;
+
+        for (int i = 0; i < 12; i++) {
+            Vector2D temp = Vector2D.polar(
+                    angle,
+                    radius
+            );
+            angle += Math.PI/6; //(Math.PI * 2) / 12
+            xCorners[i] = (int)temp.x;
+            yCorners[i] = (int)temp.y;
+        }
+        return new Polygon(xCorners,yCorners,12);
+
+    }
+
 }

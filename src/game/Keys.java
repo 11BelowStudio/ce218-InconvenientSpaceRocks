@@ -25,14 +25,16 @@ public class Keys extends KeyAdapter implements Controller {
                 action.turn = -1;
                 break;
             case KeyEvent.VK_RIGHT:
-                action.turn = +1;
+                action.turn = 1;
                 break;
             case KeyEvent.VK_SPACE:
                 action.shoot = true;
                 break;
             case KeyEvent.VK_DOWN:
                 action.warp = true;
-
+                break;
+            case KeyEvent.VK_B:
+                action.bomb = true;
                 break;
         }
     }
@@ -54,6 +56,9 @@ public class Keys extends KeyAdapter implements Controller {
                 break;
             case KeyEvent.VK_DOWN:
                 action.warp = false;
+                break;
+            case KeyEvent.VK_B:
+                action.bomb = false;
                 break;
         }
     }

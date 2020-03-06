@@ -71,8 +71,8 @@ public class Asteroid extends GenericAsteroid {
 
     @Override
     //public void hit(boolean hitByPlayer){
-    public boolean hit(boolean hitByPlayer){
-        boolean temp = super.hit(hitByPlayer);
+    public boolean hit(boolean hitByPlayer, boolean hitByBomb){
+        boolean temp = super.hit(hitByPlayer, hitByBomb);
         SoundManager.play(SoundManager.solidHit);
         return temp;
     }

@@ -2,6 +2,7 @@ package game;
 
 import utilities.Vector2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class BigAsteroid extends GenericLargerAsteroid {
@@ -22,7 +23,9 @@ public class BigAsteroid extends GenericLargerAsteroid {
     }
 
 
-
+    protected void updateColour(){
+        this.objectColour = new Color(128-redScale,128+redScale,0,128);
+    }
 
     @Override
     public String toString(){

@@ -6,8 +6,9 @@ public class Action {
     public boolean shoot; //whether or not the ship is shooting
     public boolean theAnyButton; //the 'any' button (true when any button is pressed, false when any button is released)
     public boolean warp;
+    public boolean bomb;
 
-    public boolean noAction(){ return (thrust == 0 && turn == 0 && !shoot && !theAnyButton && !warp); }
+    public boolean noAction(){ return (thrust == 0 && turn == 0 && !shoot && !theAnyButton && !warp && !bomb); }
 
     public boolean theAnyButton(){ return theAnyButton; }
 

@@ -60,7 +60,7 @@ public abstract class Bullet extends GameObject {
         double rot = velocity.angle() + Math.PI / 2;
         g.rotate(rot);
         g.setColor(objectColour);
-        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
+        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
         paintTheArea(g);

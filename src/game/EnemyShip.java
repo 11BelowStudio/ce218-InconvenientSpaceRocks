@@ -85,7 +85,7 @@ public class EnemyShip extends Ship {
             } */
             //Vector2D lineEnd = Vector2D.polar(position.getAngleBetween(playerPos,FRAME_WIDTH,FRAME_HEIGHT),300);
             Vector2D lineEnd = position.getVectorBetween(playerPos,FRAME_WIDTH,FRAME_HEIGHT);
-            //lineEnd.wrap(Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
+            //lineEnd.wrap(FRAME_WIDTH,FRAME_HEIGHT);
             g.drawLine(0,0,(int)lineEnd.x,(int)lineEnd.y);
         }
     }

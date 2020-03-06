@@ -158,7 +158,7 @@ public class EnemyPlayer implements Controller{
     }
 
     private void aimShootAction(){
-        getTargetPosition();
+        //getTargetPosition();
         if (targetPosition != null) {
             Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);
@@ -174,7 +174,7 @@ public class EnemyPlayer implements Controller{
     }
 
     private void aimWarpAction(){
-        getTargetPosition();
+        //getTargetPosition();
         if (targetPosition != null) {
             Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);

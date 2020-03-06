@@ -318,9 +318,9 @@ public class Game {
         //doing collision handling and dealing with the results of the collision handling
         for (int i = 0; i < gameObjects.size(); i++) {
             GameObject temp = gameObjects.get(i);
-            boolean isPlayer = (temp instanceof PlayerShip || temp instanceof PlayerBullet);
-            boolean isEnemy = (temp instanceof EnemyShip || temp instanceof  EnemyBullet);
-            boolean isAsteroid = (temp instanceof GenericAsteroid);
+            boolean isPlayer = isPlayer(temp);
+            boolean isEnemy = isEnemy(temp);
+            boolean isAsteroid = isAsteroid(temp);
 
             if(shipJustAdded && (isAsteroid || isEnemy)){
                 moveObjectAwayFromShip(temp); //will move objects away from the ship if it's just spawned in
@@ -331,9 +331,9 @@ public class Game {
                 for (int j = i+1; j < gameObjects.size(); j++) {
                     GameObject temp2 = gameObjects.get(j);
                     if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
-                        if ((isAsteroid ^ temp2 instanceof GenericAsteroid) ||
-                                (isPlayer ^ (temp2 instanceof PlayerShip || temp2 instanceof PlayerBullet)) ||
-                                (isEnemy ^ (temp2 instanceof EnemyShip || temp2 instanceof EnemyBullet))
+                        if ((isAsteroid ^ isAsteroid(temp2)) ||
+                                (isPlayer ^ isPlayer(temp2)) ||
+                                (isEnemy ^ isEnemy(temp2))
                         ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
                             //can't really do 'if (.class != .class)', as the GenericAsteroid superclass kinda messes with it
                             temp.collisionHandling(temp2);
@@ -411,7 +411,11 @@ public class Game {
             //working out if something is dead because the player hit it or not
             if (g.playerHit){
                 //player earns points if they hit the thing which is now dead
-                score += g.pointValue;
+                int points = g.pointValue;
+                if (g.bombHit){
+                    points = (int) Math.ceil((double)points/ 2);
+                }
+                score += points;
                 pointsToEarnLife -= g.pointValue;
                 if (pointsToEarnLife <= 0){
                     //if player has earned enough points to get a new life
@@ -436,26 +440,28 @@ public class Game {
                 enemyExists = false;
                 enemyPlayer.ded();
                 //no enemy if the enemy got hit
-            } else if (g instanceof MediumAsteroid){
+            } else if (isAsteroid(g)){
+                if (g instanceof MediumAsteroid) {
                 //int i = 0;
-                int numToSpawn = ((MediumAsteroid) g).childrenToSpawn;
-                for (int i = 0; i < numToSpawn; i++) {
-                    if (asteroidStack.isEmpty()){
-                        break;
+                    int numToSpawn = ((MediumAsteroid) g).childrenToSpawn;
+                    for (int i = 0; i < numToSpawn; i++) {
+                        if (asteroidStack.isEmpty()) {
+                            break;
+                        }
+                        Asteroid newAsteroid = asteroidStack.pop();
+                        newAsteroid.revive(g.position);
+                        alive.add(newAsteroid);
                     }
-                    Asteroid newAsteroid = asteroidStack.pop();
-                    newAsteroid.revive(g.position);
-                    alive.add(newAsteroid);
-                }
-            } else if (g instanceof BigAsteroid){
-                int numToSpawn = ((BigAsteroid) g).childrenToSpawn;
-                for (int i = 0; i < numToSpawn; i++) {
-                    if (mediumAsteroidStack.isEmpty()){
-                        break;
+                } else if (g instanceof BigAsteroid) {
+                    int numToSpawn = ((BigAsteroid) g).childrenToSpawn;
+                    for (int i = 0; i < numToSpawn; i++) {
+                        if (mediumAsteroidStack.isEmpty()) {
+                            break;
+                        }
+                        MediumAsteroid newAsteroid = mediumAsteroidStack.pop();
+                        newAsteroid.revive(g.position);
+                        alive.add(newAsteroid);
                     }
-                    MediumAsteroid newAsteroid = mediumAsteroidStack.pop();
-                    newAsteroid.revive(g.position);
-                    alive.add(newAsteroid);
                 }
             }
 
@@ -514,6 +520,11 @@ public class Game {
                     alive.add(temp);
                     SoundManager.fire();
                     ship.fired = false;
+                }
+                if (ship.spawnBomb){
+                    Bomb b = new Bomb(ship.bombLocation);
+                    alive.add(b);
+                    ship.spawnBomb = false;
                 }
             }
 
@@ -638,6 +649,18 @@ public class Game {
             timeForEnemyToRespawn = 100 - currentLevel;
         }
         timeForEnemyToRespawn +=  (int)(Math.random() * 100);
+    }
+
+    private boolean isPlayer(GameObject o){
+        return (o instanceof PlayerShip || o instanceof PlayerBullet || o instanceof Bomb);
+    }
+
+    private boolean isEnemy(GameObject o){
+        return (o instanceof EnemyShip || o instanceof  EnemyBullet);
+    }
+
+    private boolean isAsteroid(GameObject o){
+        return (o instanceof GenericAsteroid);
     }
 
 

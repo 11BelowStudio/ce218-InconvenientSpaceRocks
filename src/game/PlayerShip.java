@@ -41,6 +41,9 @@ public class PlayerShip extends Ship {
     private long gracePeriodExpiresAt;
     //records when the player's grace period will expire
 
+    boolean spawnBomb;
+    Vector2D bombLocation;
+
 
 
 
@@ -89,6 +92,8 @@ public class PlayerShip extends Ship {
         warpDistance = 200;
         MAX_SPEED = 250;
 
+        bombLocation = new Vector2D();
+
 
 
     }
@@ -120,6 +125,16 @@ public class PlayerShip extends Ship {
                 this.objectColour = GODMODE_COLOUR;
                 //intangible = true;
             }
+        }
+        if (ctrl.action().bomb){
+            spawnBomb = true;
+            bombLocation.set(position);
+            System.out.println(position.x + ", " + position.y);
+            ctrl.action().bomb = false;
+            spawnBomb = true;
+        } else{
+            spawnBomb = false;
+            //bombLocation = null;
         }
     }
 

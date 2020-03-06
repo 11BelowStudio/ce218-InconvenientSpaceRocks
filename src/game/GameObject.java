@@ -34,6 +34,8 @@ public abstract class GameObject{
     protected boolean playerHit;
     //records if the player hit it or not
 
+    public boolean bombHit;
+
     public int pointValue;
 
     public Polygon objectPolygon;
@@ -67,6 +69,7 @@ public abstract class GameObject{
         childObjects = null;
         finalIntangible = false;
         collided = false;
+        bombHit = false;
         pointValue = 0;
         texture = (BufferedImage)AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
@@ -82,6 +85,7 @@ public abstract class GameObject{
         childObjects = null;
         finalIntangible = false;
         collided = false;
+        bombHit = false;
     }
 
     public void update(){
@@ -100,12 +104,13 @@ public abstract class GameObject{
     }
 
 
-    public boolean hit(boolean hitByPlayer){
+    public boolean hit(boolean hitByPlayer, boolean hitByBomb){
         if ((!finalIntangible || !stillIntangible) && !intangible){
             //if (!intangible) {
                 //it's dead if it got hit whilst not intangible
                 dead = true;
                 intangible = true;
+                bombHit = hitByBomb;
                 hitLogic(hitByPlayer);
                 return true;
             //}
@@ -155,8 +160,10 @@ public abstract class GameObject{
             if (this.intangible || other.intangible) {
                 this.bounceOff(other);
             } else{
-                this.hit(other instanceof PlayerShip || other instanceof PlayerBullet);
-                other.hit(this instanceof PlayerShip || this instanceof PlayerBullet);
+                boolean otherBomb = (other instanceof Bomb);
+                boolean thisBomb = (this instanceof Bomb);
+                this.hit(other instanceof PlayerShip || other instanceof PlayerBullet || otherBomb, otherBomb);
+                other.hit(this instanceof PlayerShip || this instanceof PlayerBullet || thisBomb, thisBomb);
             }
         }
     }
@@ -205,7 +212,12 @@ public abstract class GameObject{
         //transformedArea.subtract(tempArea);
         g.translate(xTranslate, yTranslate);
         transformedArea.add(tempArea);
-        areaRectangle = transformedArea.getBounds();
+        //areaRectangle = transformedArea.getBounds();
+        Point areaRectLocation = areaRectangle.getLocation();
+        areaRectLocation.translate(xTranslate,yTranslate);
+        //TODO: ensure that the pre-wraparound area is covered too
+        areaRectangle.add(areaRectLocation);
+        //areaRectangle.
         paintTheArea(g);
         g.setTransform(backup);
     }
@@ -244,7 +256,7 @@ public abstract class GameObject{
     public void bounceOff(GameObject other){
         if (other instanceof Bullet){
             other.dead = true;
-        } else if (!other.collided){
+        }  else if (!other.collided) {
             collided = true;
             Vector2D coll = new Vector2D(other.position);
             coll.subtract(position).normalise();
@@ -254,11 +266,18 @@ public abstract class GameObject{
             Vector2D otherV = new Vector2D(other.velocity);
             this.velocity = new Vector2D(thisV.proj(tangent)).add(otherV.proj(coll));
             position.addScaled(velocity, DT);
-
-            other.velocity = new Vector2D(otherV.proj(tangent)).add(thisV.proj(coll));
-            //other.position.addScaled(other.velocity, DT);
+            if (!(other instanceof Bomb)){
+                other.velocity = new Vector2D(otherV.proj(tangent)).add(thisV.proj(coll));
+            }
 
         }
+    }
+
+    public void drawBoundingRect(Graphics2D g){
+        //g.wrapAround(g,areaRectangle);
+        g.setColor(objectColour.brighter());
+        g.fill(areaRectangle);
+        //g.fill(transformedArea.getBounds());
     }
 
 

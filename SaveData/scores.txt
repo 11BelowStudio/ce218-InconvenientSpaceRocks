@@ -17,6 +17,8 @@ idk
 unknown
 154
 unknown
+125
+unknown
 87
 unknown
 72
@@ -37,6 +39,8 @@ unknown
 unknown
 49
 unknown
+49
+unknown
 47
 unknown
 47
@@ -44,6 +48,8 @@ no
 45
  idk
 44
+unknown
+41
 unknown
 35
 unknown
@@ -72,6 +78,14 @@ unknown
 25
 unknown
 24
+unknown
+24
+no
+24
+unknown
+20
+unknown
+12
 indeed
 11
 unknown
@@ -101,9 +115,15 @@ k
 nah
 6
 unknown
+5
+unknown
 4
 unknown
 4
+unknown
+2
+unknown
+0
 unknown
 0
 unknown
