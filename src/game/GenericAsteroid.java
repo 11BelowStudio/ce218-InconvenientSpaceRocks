@@ -14,7 +14,7 @@ public abstract class GenericAsteroid extends GameObject {
     public static final double MAX_SPEED = 150;
 
     //how long it can persist for
-    protected int timeToLive;
+    //protected int timeToLive;
 
     protected double asteroidScale;
 

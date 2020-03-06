@@ -56,19 +56,10 @@ public class Asteroid extends GenericAsteroid {
         pointValue = 1;
         asteroidScale = 0.5;
         objectColour = new Color(255,0,0,128);
-        timeToLive = 100000;
         //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
     }
 
-    @Override
-    public void update(){
-        super.update();
-        timeToLive--;
-        if (timeToLive == 0){
-            dead = true;
-            wasHit = false;
-        }
-    }
+
 
     /*public static Asteroid makeRandomAsteroid() {
 	    return new Asteroid();
