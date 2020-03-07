@@ -187,8 +187,8 @@ public abstract class Ship extends GameObject {
             notIntangible(); //attacking will cause a premature end to the player's intangibility
             canFireNextBulletAt = (System.currentTimeMillis() + BULLET_DELAY);
             //works out when the player is next allowed to fire a bullet
-            childObjects = new ArrayList<>();
-           fireBullet();
+            //childObjects = new ArrayList<>();
+            fireBullet();
         }
     }
 
@@ -199,6 +199,8 @@ public abstract class Ship extends GameObject {
         );
         bulletVelocity = new Vector2D(this.direction).setMag(300);
         fired = true;
+
+        //lastBullet = new PlayerBullet(bulletLocation,bulletVelocity);
     }; //ensures the correct bullet for the type of ship is fired
 
 

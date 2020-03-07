@@ -46,7 +46,7 @@ public abstract class GameObject{
 
     public Rectangle areaRectangle;
 
-    public Rectangle backupRect;
+    public Rectangle boundingRectangle;
 
 
     public BufferedImage texture;
@@ -141,7 +141,7 @@ public abstract class GameObject{
             } else */ //if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
                 //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
 
-                if (this.areaRectangle.intersects(other.areaRectangle)) { //compares some bounding rectangles for the two objects
+                if (this.boundingRectangle.intersects(other.boundingRectangle)) { //compares some bounding rectangles for the two objects
                 //if (this.position.dist(other.position) <= 100){
 
                     //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
@@ -188,23 +188,36 @@ public abstract class GameObject{
         //the transformedArea is the transformedShape parameter but as an Area instead
 
         this.areaRectangle = transformedArea.getBounds();
-        //a simple bounding rectangle for this area
+        //a simple bounding rectangle for this area, before wrapping, used for the texturePaint
 
-        backupRect = transformedArea.getBounds();
+        //backupRect = transformedArea.getBounds();
+        boolean wrapped = false;
 
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
             intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT,false);
+            wrapped = true;
         } else if (transformedShape.intersects(underScreen)){
             //moving stuff under the screen to the top of it
             intersectHandler(g, underScreen, 0, -FRAME_HEIGHT,false);
+            wrapped = true;
         }
         if (transformedShape.intersects(leftScreen)){
             //moving stuff to the left of the screen to the right of it
             intersectHandler(g,  leftScreen, FRAME_WIDTH, 0,true);
+            wrapped = true;
         } else if (transformedShape.intersects(rightScreen)){
             //moving stuff on the right of the screen to the left of it
             intersectHandler(g, rightScreen, -FRAME_WIDTH, 0,true);
+            wrapped = true;
+        }
+
+        if (wrapped){
+            boundingRectangle = transformedArea.getBounds();
+            //bounding box will have changed if wrapped around, should update this as a result
+        } else{
+            boundingRectangle=areaRectangle;
+            //boundingRectangle same as it was beforehand if not wrapped
         }
 
     }
@@ -218,30 +231,16 @@ public abstract class GameObject{
         g.translate(xTranslate, yTranslate);
         tempArea.transform(g.getTransform());
         transformedArea.add(tempArea);
-        //areaRectangle = transformedArea.getBounds();
-        //Point areaRectLocation = areaRectangle.getLocation();
-        //areaRectLocation.translate(xTranslate,yTranslate);
-        //TODO: ensure that the pre-wraparound area is covered too
 
-
-        if (xWrapAround){
-            areaRectangle.x = 0;
-            areaRectangle.width = FRAME_WIDTH;
-        } else{
-            areaRectangle.y = 0;
-            areaRectangle.height = FRAME_HEIGHT;
-        }
-        //areaRectangle.add(tempArea.getBounds().getLocation());
-        //areaRectangle.
-        paintTheArea(g);
         g.setTransform(backup);
     }
 
     protected void paintTheArea(Graphics2D g){
-        g.setPaint(new TexturePaint(texture, backupRect));
+        g.setPaint(new TexturePaint(texture, areaRectangle));
         g.fill(transformedArea); //filling the sprite with the texture
         g.setColor(objectColour);
         g.fill(transformedArea); //now filling it with the overlay
+
     }
 
 
@@ -291,6 +290,7 @@ public abstract class GameObject{
     public void drawBoundingRect(Graphics2D g){
         //g.wrapAround(g,areaRectangle);
         g.setColor(objectColour.brighter());
+        //g.setColor(Color.CYAN);
         g.fill(areaRectangle);
         //g.fill(transformedArea.getBounds());
     }

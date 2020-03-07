@@ -92,10 +92,12 @@ public class Asteroid extends GenericAsteroid {
         //System.out.println(g.getPaint().getClass());
         //Paint tempPaint = g.getPaint();
         //g.setPaint(new TexturePaint(tempImage,new Rectangle(0,0,256,256)));
-        g.setPaint(new TexturePaint(texture,this.areaRectangle));
+        /*
+        g.setPaint(new TexturePaint(texture,transformedArea.getBounds()));
         g.fill(transformedArea);
         g.setColor(objectColour);
-        g.fill(transformedArea);
+        g.fill(transformedArea);*/
+        paintTheArea(g);
         //g.setPaint(tempPaint);
         //g.dispose();
     }
