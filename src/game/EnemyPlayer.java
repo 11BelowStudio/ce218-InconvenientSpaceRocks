@@ -109,7 +109,7 @@ public class EnemyPlayer implements Controller{
 
     private void chaseShootAction (){
         if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH,FRAME_HEIGHT);
+            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH,FRAME_HEIGHT);
             double distanceBetween = vectorBetween.mag();
             double angleDifference = vectorBetween.angle(enemyShip.direction);
             //double targetAngle = vectorBetween.angle();
@@ -160,7 +160,7 @@ public class EnemyPlayer implements Controller{
     private void aimShootAction(){
         //getTargetPosition();
         if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
+            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);
             if (angleDifference >= 0 - (Math.PI /4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.shoot = true;
@@ -176,7 +176,7 @@ public class EnemyPlayer implements Controller{
     private void aimWarpAction(){
         //getTargetPosition();
         if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorBetween(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
+            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
             double angleDifference = vectorBetween.angle(enemyShip.direction);
             if (angleDifference >= 0 - (Math.PI / 4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.warp = true;

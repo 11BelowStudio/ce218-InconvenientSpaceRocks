@@ -1,5 +1,7 @@
 package utilities;
 
+import java.awt.*;
+
 // mutable 2D vectors
 public final class Vector2D {
     public double x, y;
@@ -14,6 +16,11 @@ public final class Vector2D {
     public Vector2D(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Vector2D(Point p){
+        this.x = p.x;
+        this.y = p.y;
     }
 
     // constructor that copies the argument vector
@@ -186,17 +193,17 @@ public final class Vector2D {
     }
 
 
-    public double getAngleBetween(Vector2D v){
+    public double getAngleTo(Vector2D v){
         double xAngle = v.x - x;
         double yAngle = v.y - y;
         return Math.atan2(yAngle,xAngle);
     }
 
-    public Vector2D getVectorBetween(Vector2D v){
-        return Vector2D.polar(getAngleBetween(v),dist(v));
+    public Vector2D getVectorTo(Vector2D v){
+        return Vector2D.polar(getAngleTo(v),dist(v));
     }
 
-    public double getAngleBetween(Vector2D v, double w, double h){
+    public double getAngleTo(Vector2D v, double w, double h){
         double xAngle = v.x - x;
         double yAngle = v.y - y;
         double w2 = w/2;
@@ -216,8 +223,8 @@ public final class Vector2D {
 
     }
 
-    public Vector2D getVectorBetween(Vector2D v, double w, double h){
-        return Vector2D.polar(getAngleBetween(v,w,h),v.dist(this));
+    public Vector2D getVectorTo(Vector2D v, double w, double h){
+        return Vector2D.polar(getAngleTo(v,w,h),v.dist(this));
     }
 
     //projection of this vector in some direction
@@ -226,5 +233,34 @@ public final class Vector2D {
         result.mult(this.dot(d));
         return result;
     }
+
+    public static Vector2D randomVectorFromVector(Vector2D v, double minDist, double maxDist){
+        Vector2D v1 = Vector2D.polar(Math.toRadians(Math.random()*360),(Math.random()*maxDist+minDist)-minDist);
+        v1.add(v);
+        return v1;
+    }
+
+    public static Vector2D randomVectorPointingTo(Vector2D v, double mag){
+        Vector2D v1 = Vector2D.polar(Math.toRadians(Math.random()*360),mag);
+        v1.add(v);
+        double xAngle = v.x - v1.x;
+        double yAngle = v.y - v1.y;
+        return Vector2D.polar(Math.atan2(yAngle,xAngle),mag);
+    }
+
+    public Vector2D flip(){
+        x *= -1;
+        y *= -1;
+        return this;
+    }
+
+    public Point toPoint(){
+        return new Point((int)x,(int)y);
+    }
+
+    public static Vector2D originToPoint(Vector2D v, Point p){
+        return v.getVectorTo(new Vector2D(p));
+    }
+
 
 }

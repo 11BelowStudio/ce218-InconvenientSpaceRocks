@@ -633,9 +633,9 @@ public class Game {
     private void moveObjectAwayFromShip(GameObject o){
         Vector2D vecFromShip;
         if (!ship.dead) { //obtains ship location if the ship isn't dead
-            vecFromShip = getShipPosition().getVectorBetween(o.position, FRAME_WIDTH, FRAME_HEIGHT);
+            vecFromShip = getShipPosition().getVectorTo(o.position, FRAME_WIDTH, FRAME_HEIGHT);
         } else { //obtains distance from ship respawn point if ship is dead
-            vecFromShip = new Vector2D(HALF_WIDTH,HALF_HEIGHT).getVectorBetween(o.position, FRAME_WIDTH, FRAME_HEIGHT);
+            vecFromShip = new Vector2D(HALF_WIDTH,HALF_HEIGHT).getVectorTo(o.position, FRAME_WIDTH, FRAME_HEIGHT);
         }
         //if it's less than 200px away from the ship's location/spawn location, move it so it will be 200px away
         if (vecFromShip.mag() <= 200) {

@@ -195,20 +195,20 @@ public abstract class GameObject{
 
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
-            intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT,false);
+            intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
             wrapped = true;
         } else if (transformedShape.intersects(underScreen)){
             //moving stuff under the screen to the top of it
-            intersectHandler(g, underScreen, 0, -FRAME_HEIGHT,false);
+            intersectHandler(g, underScreen, 0, -FRAME_HEIGHT);
             wrapped = true;
         }
         if (transformedShape.intersects(leftScreen)){
             //moving stuff to the left of the screen to the right of it
-            intersectHandler(g,  leftScreen, FRAME_WIDTH, 0,true);
+            intersectHandler(g,  leftScreen, FRAME_WIDTH, 0);
             wrapped = true;
         } else if (transformedShape.intersects(rightScreen)){
             //moving stuff on the right of the screen to the left of it
-            intersectHandler(g, rightScreen, -FRAME_WIDTH, 0,true);
+            intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
             wrapped = true;
         }
 
@@ -222,7 +222,7 @@ public abstract class GameObject{
 
     }
 
-    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate, boolean xWrapAround) {
+    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate) {
         AffineTransform backup = g.getTransform(); //gets copy of original affine transform
         Area tempArea = (Area)transformedArea.clone(); //copies the transformed area
         tempArea.intersect(new Area(intersectCheckRect)); //get the intersection of it with the intersection rectangle
