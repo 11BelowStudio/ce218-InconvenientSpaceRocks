@@ -3,7 +3,9 @@ package game;
 
 import utilities.Vector2D;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static game.Constants.*;
 
@@ -12,7 +14,7 @@ public class Game {
 
     private GameLevels levelConfigs;
 
-    Keys ctrl;
+    PlayerController ctrl;
     PlayerShip ship;
 
     EnemyShip enemy;
@@ -64,12 +66,17 @@ public class Game {
     private int maxEnemies;
 
 
-    boolean reset;
+    boolean endGame;
 
-    public Game() {
+    public Game(PlayerController ctrl, Dimension d) {
+
+        SoundManager.stopMenu();
+        SoundManager.startGame();
         //levelConfigs = new GameLevels();
-        //ctrl = new Keys();
+        //ctrl = new PlayerController();
         //resetGame();
+
+        ctrl.stopAll();
 
         gameObjects = new ArrayList<>();
         newObjects = new Stack<>();
@@ -110,8 +117,8 @@ public class Game {
 
         enemyList = new ArrayList<>();
         */
-        ctrl = new Keys();
-        ship = new PlayerShip(ctrl,this);
+        this.ctrl = ctrl;
+        ship = new PlayerShip(this.ctrl,this);
         gameObjects.add(ship);
 
         score = 0;
@@ -140,7 +147,7 @@ public class Game {
 
         resetEnemySpawnTimer();
 
-        reset = false;
+        endGame = false;
         /**/
 
         maxEnemies = 3;
@@ -155,8 +162,11 @@ public class Game {
     }
 
 
-    private void resetGame(){
-        reset = true;
+    private void endGame(){
+        endGame = true;
+        SoundManager.stopGame();
+        SoundManager.stopThrust();
+        //SoundManager.startMenu();
         /*
         ship = null;
         if (gameObjects == null) {
@@ -256,7 +266,6 @@ public class Game {
         /*
         enemy = new EnemyShip(enemyPlayer,this);
         enemyPlayer.newEnemy(enemy);
-
         newObjects.add(enemy);
         */
         return newObjects;
@@ -279,6 +288,7 @@ public class Game {
             if (ctrl.action.theAnyButton()) {
                 waitingToRespawn = false;
                 alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
+                ctrl.stopAll();
                 shipJustAdded = true;
                 //creates a new ship if the player can respawn and the player presses any button
             }
@@ -480,7 +490,7 @@ public class Game {
 
 
         if (!gameOver) {
-            reset = false;
+            endGame = false;
 
             /*
             if (enemyList.size() <= maxEnemies && !enemyShips.isEmpty()) {
@@ -557,7 +567,7 @@ public class Game {
             }*/
         } else{
             if (ctrl.action.theAnyButton){
-                resetGame();
+                endGame();
             }
         }
 

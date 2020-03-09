@@ -3,9 +3,9 @@ package game;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Keys extends KeyAdapter implements Controller {
+public class PlayerController extends KeyAdapter implements Controller {
     Action action;
-    public Keys() {
+    public PlayerController() {
         action = new Action();
     }
 
@@ -61,5 +61,9 @@ public class Keys extends KeyAdapter implements Controller {
                 action.bomb = false;
                 break;
         }
+    }
+
+    public void stopAll(){
+        action.stopAll();
     }
 }

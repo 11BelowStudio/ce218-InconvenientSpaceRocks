@@ -95,12 +95,20 @@ public final class Vector2D {
         this.y += v.y;
         return this;
     }
+    public static Vector2D add(Vector2D v1, Vector2D v2){
+        Vector2D result = new Vector2D(v1);
+        return result.add(v2);
+    }
 
     // add values to coordinates
     public Vector2D add(double x, double y) {
         this.x += x;
         this.y += y;
         return this;
+    }
+    public static Vector2D add(Vector2D v, double x, double y){
+        Vector2D result = new Vector2D(v);
+        return result.add(x,y);
     }
 
     // weighted add - surprisingly useful (adds v but multiplied by the factor)
@@ -109,12 +117,20 @@ public final class Vector2D {
         this.y += (v.y*fac);
         return this;
     }
+    public static Vector2D addScaled(Vector2D v1, Vector2D v2, double fac){
+        Vector2D result = new Vector2D(v1);
+        return result.addScaled(v2,fac);
+    }
 
     // subtract argument vector (subtracts that vector from this)
     public Vector2D subtract(Vector2D v) {
         this.x -= v.x;
         this.y -= v.y;
         return this;
+    }
+    public static Vector2D subtract(Vector2D v1, Vector2D v2){
+        Vector2D result = new Vector2D(v1);
+        return result.subtract(v2);
     }
 
     // subtract values from coordinates (subtracts stuff from the respective parameter)
@@ -123,12 +139,20 @@ public final class Vector2D {
         this.y -= y;
         return this;
     }
+    public static Vector2D subtract(Vector2D v, double x, double y){
+        Vector2D result = new Vector2D(v);
+        return result.subtract(x,y);
+    }
 
     // multiply with factor (everything divided by factor)
     public Vector2D mult(double fac) {
         this.x = x*fac;
         this.y = y*fac;
         return this;
+    }
+    public static Vector2D mult(Vector2D v, double fac){
+        Vector2D result = new Vector2D(v);
+        return result.mult(fac);
     }
 
     // rotate by angle given in radians
@@ -140,18 +164,20 @@ public final class Vector2D {
         y = (tempX * Math.sin(angle)) + (tempY * Math.cos(angle));
         return this;
     }
+    public static Vector2D rotate(Vector2D v, double angle){
+        Vector2D result = new Vector2D(v);
+        return result.rotate(angle);
+    }
 
     // "dot product" ("scalar product") with argument vector
     public double dot(Vector2D v) {
         return ((this.x*v.x)+(this.y*v.y));
-
     }
 
     // distance to argument vector
     //Euclidean distance formula (which, for 2d planes, is pretty much pythagoras' theorem)
     public double dist(Vector2D v) {
         return (Math.hypot((x-v.x),(y-v.y)));
-
     }
 
     // normalise vector so that magnitude becomes 1
@@ -165,10 +191,17 @@ public final class Vector2D {
         }
         return this;
     }
+    public static Vector2D normalise(Vector2D v){
+        Vector2D result = new Vector2D(v);
+        return result.normalise();
+    }
 
     public Vector2D setMag(double newMag) {
         this.set(polar(this.angle(),newMag));
         return this;
+    }
+    public static Vector2D setMag(Vector2D v, double newMag){
+        return polar(v.angle(),newMag);
     }
 
     // wrap-around operation, assumes w> 0 and h>0
@@ -179,7 +212,10 @@ public final class Vector2D {
         this.y = (y + h) % h;
         //ditto but for y and height instead
         return this;
-
+    }
+    public static Vector2D wrap(Vector2D v, double w, double h){
+        Vector2D result = new Vector2D(v);
+        return result.wrap(w,h);
     }
 
     // construct vector with given polar coordinates
@@ -187,10 +223,6 @@ public final class Vector2D {
         return new Vector2D(mag*Math.cos(angle),mag*Math.sin(angle));
     }
 
-    //like mult, but creates a new vector to contain the result instead
-    public static Vector2D getMult(Vector2D v, double fac){
-        return new Vector2D(v.x*fac,v.y*fac);
-    }
 
 
     public double getAngleTo(Vector2D v){
@@ -234,7 +266,7 @@ public final class Vector2D {
         return result;
     }
 
-    public static Vector2D randomVectorFromVector(Vector2D v, double minDist, double maxDist){
+    public static Vector2D randomVectorFromOrigin(Vector2D v, double minDist, double maxDist){
         Vector2D v1 = Vector2D.polar(Math.toRadians(Math.random()*360),(Math.random()*maxDist+minDist)-minDist);
         v1.add(v);
         return v1;
@@ -252,6 +284,10 @@ public final class Vector2D {
         x *= -1;
         y *= -1;
         return this;
+    }
+    public static Vector2D flip(Vector2D v){
+        Vector2D result = new Vector2D(v);
+        return result.flip();
     }
 
     public Point toPoint(){

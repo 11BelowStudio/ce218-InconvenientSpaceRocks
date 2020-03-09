@@ -1,7 +1,7 @@
 package utilities;
 
 
-public class AttributeString<T> {
+public class AttributeString<T>{
 
     /*
     This is a utilty class which can be used to show a value with a name for it

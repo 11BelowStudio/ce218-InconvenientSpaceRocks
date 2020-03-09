@@ -51,6 +51,8 @@ public class Constants {
     public static final double DT = DELAY / 1000.0;  // DELAY in seconds
     //public static final double DT = DELAY / 1000.0;
 
+    static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
+
     public static final int MODEL_SPEED = 20;
     public static final long MODEL_DURATION = 20;
 

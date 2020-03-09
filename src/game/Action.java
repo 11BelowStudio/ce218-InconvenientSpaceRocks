@@ -8,7 +8,16 @@ public class Action {
     public boolean warp;
     public boolean bomb;
 
-    public boolean noAction(){ return (thrust == 0 && turn == 0 && !shoot && !theAnyButton && !warp && !bomb); }
+    public boolean escape;
+
+    public void stopAll(){
+        thrust = 0;
+        turn = 0;
+        shoot = false;
+        theAnyButton = false;
+        warp = false;
+        bomb = false;
+    }
 
     public boolean theAnyButton(){ return theAnyButton; }
 

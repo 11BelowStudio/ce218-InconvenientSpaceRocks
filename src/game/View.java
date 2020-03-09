@@ -36,19 +36,46 @@ public class View extends JComponent {
 
     public boolean displayingGame;
 
+    //public boolean fullscreen;
+
+    int viewHeight;
+    int viewWidth;
+
+    public Dimension defaultDimension;
+    public Dimension preferredDimension;
+
     //Rectangle background;
     //int tempx,tempy;
 
-    public View(Game game) {
+    public static final int FRAME_HEIGHT = 600;
+    public static final int FRAME_WIDTH = 800;
+    public static final Dimension FRAME_SIZE = new Dimension(
+            Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
 
-        this.game = game;
+    double xScale;
+    double yScale;
+
+    public View() {
+
+        //fullscreen = false;
+        viewHeight = 600;
+        viewWidth = 800;
+
+        xScale = 1;
+        yScale = 1;
+
+        defaultDimension = FRAME_SIZE;
+
+        preferredDimension = new Dimension(800, 600);
+
+        //this.game = game;
         //gameInfo = new InfoPanel(game);
         //gameInfo = new InfoPanel();
         //this.add(gameInfo,BorderLayout.NORTH);
 
         urDed = YOU_ARE_DED;
 
-        urDedTransform = new AffineTransform(1,0,0,2,HALF_WIDTH,HALF_HEIGHT);
+        urDedTransform = new AffineTransform(1,0,0,1,HALF_WIDTH,HALF_HEIGHT);
 
 
 
@@ -91,6 +118,14 @@ public class View extends JComponent {
         livesString.showValue(0);
     }
 
+    public void setPreferredDimension(Dimension d){
+        preferredDimension = d;
+        xScale = (preferredDimension.width == FRAME_WIDTH? 1 :
+                (double)FRAME_WIDTH/preferredDimension.width);
+        yScale = (preferredDimension.height == FRAME_HEIGHT? 1 :
+                (double)FRAME_HEIGHT/preferredDimension.height);
+    }
+
     public void hideGame(){
         replaceBackground(false);
     }
@@ -110,11 +145,6 @@ public class View extends JComponent {
                 Constants.FRAME_HEIGHT/imHeight);
         bgTransform = new AffineTransform();
         bgTransform.scale(stretchx, stretchy);
-
-
-
-
-
 
     }
 
@@ -147,6 +177,9 @@ public class View extends JComponent {
         //g.translate(tempx--,tempy--);
 
 
+        AffineTransform initialTransform = g.getTransform();
+
+
         // paint the background
         g.setColor(BG_COLOR);
         g.fill(this.getBounds());
@@ -155,6 +188,8 @@ public class View extends JComponent {
         //g.fill(background);
         //bgTransform.translate(-1,-1);
         g.drawImage(bg, bgTransform,null);
+
+        g.scale(xScale,yScale);
         //g.setTransform(backup1);
         //g.setTransform(bgTransform);
         if (displayingGame) {
@@ -206,11 +241,13 @@ public class View extends JComponent {
             }
             g.setTransform(backup);
         }
+        g.setTransform(initialTransform);
         revalidate();
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return Constants.FRAME_SIZE;
+        return preferredDimension;
     }
+
 }
