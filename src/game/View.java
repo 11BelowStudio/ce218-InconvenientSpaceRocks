@@ -16,6 +16,8 @@ public class View extends JComponent {
 
     private Game game;
 
+    private TitleScreen title;
+
     private Image bg;
 
     private final Image gameBG = SPEHSS;
@@ -29,10 +31,6 @@ public class View extends JComponent {
     //private final Image defaultBG = TITLE;
 
     private AffineTransform bgTransform;
-
-    private AttributeString<Integer> scoreString;
-    private AttributeString<Integer> levelString;
-    private AttributeString<Integer> livesString;
 
     public boolean displayingGame;
 
@@ -79,7 +77,8 @@ public class View extends JComponent {
 
 
 
-        hideGame();
+        //hideGame();
+        replaceBackground(false);
 
 
 
@@ -91,8 +90,14 @@ public class View extends JComponent {
     }
 
     public void showGame(Game game){
-        replaceBackground(true);
         this.game = game;
+        replaceBackground(true);
+        displayingGame = true;
+    }
+
+    public void showTitle(TitleScreen t){
+        this.title = t;
+        displayingGame = false;
     }
 
     public void setPreferredDimension(Dimension d){
@@ -116,12 +121,12 @@ public class View extends JComponent {
         }
         double imWidth = bg.getWidth(null);
         double imHeight = bg.getHeight(null);
-        double stretchx = (imWidth > Constants.FRAME_WIDTH? 1 :
+        double stretchX = (imWidth > Constants.FRAME_WIDTH? 1 :
                 Constants.FRAME_WIDTH/imWidth);
-        double stretchy = (imHeight > Constants.FRAME_HEIGHT? 1 :
+        double stretchY = (imHeight > Constants.FRAME_HEIGHT? 1 :
                 Constants.FRAME_HEIGHT/imHeight);
         bgTransform = new AffineTransform();
-        bgTransform.scale(stretchx, stretchy);
+        bgTransform.scale(stretchX, stretchY);
 
     }
 
@@ -142,8 +147,18 @@ public class View extends JComponent {
                     o.draw(g);
                     //basically calls the draw method of each gameObject
                 }
-
                 for (GameObject o: game.hudObjects){
+                    o.draw(g);
+                    //and also the HUD
+                }
+            }
+        } else{
+            synchronized (TitleScreen.class){
+                for (GameObject o : title.gameObjects) {
+                    o.draw(g);
+                    //basically calls the draw method of each gameObject
+                }
+                for (GameObject o: title.hudObjects){
                     o.draw(g);
                     //and also the HUD
                 }

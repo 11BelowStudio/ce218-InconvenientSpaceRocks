@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import static game.Constants.FRAME_HEIGHT;
 import static game.Constants.HALF_WIDTH;
+import static game.GameObject.UP_RADIANS;
 
 public class TitleScreen extends Model {
 
@@ -254,8 +255,13 @@ public class TitleScreen extends Model {
             "edit: we did it, Reddit!"
     };
 
+
+    ArrayList<GameObject> aliveHUD;
+
     TitleScreen(PlayerController ctrl){
         super(ctrl);
+
+        aliveHUD = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             bigAsteroidStack.push(new BigAsteroid());
@@ -269,7 +275,7 @@ public class TitleScreen extends Model {
 
         int distFromBottom = 0;
         for (String s: openingCrawlThing) {
-            hudObjects.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(Math.toRadians(270),100),s));
+            hudObjects.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s));
             distFromBottom += 20;
         }
     }
@@ -277,8 +283,8 @@ public class TitleScreen extends Model {
     @Override
     public void update() {
 
-        ArrayList<GameObject> alive = new ArrayList<>();
-        ArrayList<GameObject> dead = new ArrayList<>();
+        alive.clear();
+        dead.clear();
 
         for (GameObject g: gameObjects) {
             g.update();
@@ -300,13 +306,21 @@ public class TitleScreen extends Model {
             }
         }
 
-        ArrayList<GameObject> aliveHUD = new ArrayList<>();
+        //ArrayList<GameObject> aliveHUD = new ArrayList<>();
 
         for (GameObject h: hudObjects){
             h.update();
             if (!h.dead){
                 aliveHUD.add(h);
             }
+        }
+
+        synchronized (Game.class) {
+            gameObjects.clear();
+            gameObjects.addAll(alive);
+
+            hudObjects.clear();
+            hudObjects.addAll(aliveHUD);
         }
 
     }

@@ -334,11 +334,12 @@ public class Game extends Model  {
     }
 
     public void update(){
+
         alive.clear();
         //list for objects that are still alive
-
         dead.clear();
         //list for objects that are now dead
+
 
         boolean shipJustAdded = false;
 
@@ -424,28 +425,28 @@ public class Game extends Model  {
 
         //doing collision handling
         for (int i = 0; i < alive.size(); i++) {
-            GameObject temp = alive.get(i);
+            GameObject g = alive.get(i);
 
-            if (temp.dead || temp.intangible){
+            if (g.dead || g.intangible){
                 continue; //skip it if it's now dead/is intangible
                 //it'll be dealt with next update.
             }
 
 
-            for (int j = i+1; j < gameObjects.size(); j++) {
-                GameObject temp2 = gameObjects.get(j);
-                if (temp2.dead || temp2.intangible){
+                for (int j = i+1; j < alive.size(); j++) {
+                GameObject g2 = alive.get(j);
+                if (g2.dead || g2.intangible){
                     continue; //skip stuff that's dead/intangible
                 }
 
-                if ((isAsteroid(temp) ^ isAsteroid(temp2)) ||
-                        (isPlayer(temp) ^ isPlayer(temp2)) ||
-                        (isEnemy(temp) ^ isEnemy(temp2))
+                if ((isAsteroid(g) ^ isAsteroid(g2)) ||
+                        (isPlayer(g) ^ isPlayer(g2)) ||
+                        (isEnemy(g) ^ isEnemy(g2))
                 ) {
                     //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
                     // (^ operator is 'xor')
                     //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
-                    temp.collisionHandling(temp2);
+                    g.collisionHandling(g2);
                 }
             }
 
@@ -467,10 +468,70 @@ public class Game extends Model  {
                 currentEnemies++;
             } else {
                 timeForEnemyToRespawn--;
-                System.out.println(timeForEnemyToRespawn);
+                //System.out.println(timeForEnemyToRespawn);
             }
         }
-            //}
+
+        /*
+        for (GameObject g : alive) {
+            //updating everything basically
+
+            g.update();
+
+            if (g.dead){
+                dead.add(g);
+
+                //if it's dead, it gets added back into the stack of stuff basically
+                if (g instanceof GenericAsteroid){
+                    if (g instanceof Asteroid){
+                        asteroidStack.push((Asteroid) g);
+                    } else if (g instanceof MediumAsteroid){
+                        mediumAsteroidStack.push((MediumAsteroid) g);
+                    } else{
+                        assert g instanceof BigAsteroid;
+                        bigAsteroidStack.push((BigAsteroid) g);
+                    }
+                } else if (g instanceof Bullet){
+                    if (g instanceof PlayerBullet){
+                        playerBullets.push((PlayerBullet)g);
+                    } else if (g instanceof EnemyBullet){
+                        enemyBullets.push((EnemyBullet)g);
+                    }
+                } else if (g instanceof EnemyShip) {
+                    enemyShips.push(((EnemyShip) g));
+                    currentEnemies--;
+                }
+            } else{
+                alive.add(g);
+
+                boolean isEnemy = isEnemy(g);
+                boolean isAsteroid = isAsteroid(g);
+
+
+                if(shipJustAdded && (isAsteroid || isEnemy)){
+                    moveObjectAwayFromShip(g); //will move objects away from the ship if it's just spawned in
+                }
+
+                if (!asteroidsRemaining){
+                    if (isAsteroid){
+                        asteroidsRemaining = true;
+                    }
+                }
+
+                if (g instanceof EnemyShip){
+                    if (((EnemyShip) g).fired && !enemyBullets.isEmpty()){
+                        EnemyBullet b = enemyBullets.pop();
+                        b.revive(((EnemyShip) g).bulletLocation, ((EnemyShip) g).bulletVelocity);
+                        alive.add(b);
+                        SoundManager.fire();
+                        ((EnemyShip) g).fired = false;
+                    }
+                }
+            }
+        }
+
+         */
+
 
 
 
@@ -560,40 +621,6 @@ public class Game extends Model  {
 
 
         if (!gameOver) {
-            endGame = false;
-
-            /*
-            if (enemyList.size() <= maxEnemies && !enemyShips.isEmpty()) {
-                //if (Math.random() < 0.125) {
-                    //if (timeForEnemyToRespawn <= 0) {
-                        EnemyShip e = enemyShips.pop();
-                        //moveObjectAwayFromShip(e);
-                        e.getPlayer().newEnemy(e);
-                        alive.add(e);
-                        //newObjects.add(enemy);
-                        //resetEnemySpawnTimer();
-                        //enemyExists = true;
-                    //} else {
-                    //    timeForEnemyToRespawn--;
-                    //}
-                //}
-            }*/
-            /*
-            if (enemyExists){
-            //if (!enemyList.isEmpty()){
-            //for (EnemyShip e: enemyList) {
-                //if (e.fired && !enemyBullets.isEmpty()) {
-                if (enemy.fired && !enemyBullets.isEmpty()){
-                    EnemyBullet temp = enemyBullets.pop();
-                    temp.revive(enemy.bulletLocation, enemy.bulletVelocity);
-                    alive.add(temp);
-                    SoundManager.fire();
-                    enemy.fired = false;
-                }
-            }*/
-            //}
-            //}
-
             if (!ship.dead){
                 if (ship.fired && !playerBullets.isEmpty()){
                     PlayerBullet temp = playerBullets.pop();
@@ -610,32 +637,6 @@ public class Game extends Model  {
             }
 
 
-            //here is a failsafe, just in case an asteroid gets lost.
-            //basically yeets all the asteroids if the count of asteroids hasn't changed in the past 3000 frames
-            //int asteroidCount = 0;
-
-            /*
-            for (GameObject g : alive) {
-                //checking to see if there are any alive asteroids left
-                if (g instanceof GenericAsteroid){
-                    //asteroidsRemaining = true;
-                    //asteroidCount++;
-                }
-            }*/
-            /*
-            if (asteroidCount == lastAsteroidCount) {
-                timeSinceLastAsteroidChange++;
-                if (timeSinceLastAsteroidChange == 3000) {
-                    for (GameObject g : alive) {
-                        if (g instanceof GenericAsteroid) {
-                            g.dead = true;
-                        }
-                    }
-                }
-            } else {
-                lastAsteroidCount = asteroidCount;
-                timeSinceLastAsteroidChange = 0;
-            }*/
         } else{
             if (ctrl.action.theAnyButton){
                 endGame();
@@ -685,7 +686,6 @@ public class Game extends Model  {
             gameObjects.clear();
             gameObjects.addAll(alive);
         }
-        //ship.update();
 
         //System.out.println("Lives: " + lives + "| Score: " + score);
     }
@@ -734,36 +734,4 @@ public class Game extends Model  {
     public int getScore(){
         return score;
     }
-
-
-    /*
-    public static void main(String[] args) throws Exception {
-        BasicGame game = new BasicGame();
-        BasicView view = new BasicView(game);
-        new JEasyFrame(view, "Basic Game");
-        /*
-        for counting frames per second
-
-        int frameCountPerSecond = 0;
-        long startTime = System.nanoTime();
-
-        while (true) {
-            game.update();
-            view.repaint();
-            Thread.sleep(DELAY);
-            /*
-            dont mind this, just counting how many frames there were per second
-
-            frameCountPerSecond++;
-
-            if (System.nanoTime() - startTime >= 1000000000){ //if there's been at least 1000000000 nanoseconds (1 second) since startTime
-                System.out.println("There were " + frameCountPerSecond + " frames in that second");
-                frameCountPerSecond = 0;
-                startTime = System.nanoTime();
-                System.out.println(game.testAsteroid); //getting the details of the testAsteroid asteroid
-            }
-        }
-    }
-
-     */
 }

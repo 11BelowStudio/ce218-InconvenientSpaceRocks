@@ -253,8 +253,10 @@ public abstract class GameObject{
     protected void notIntangible(){
         //basically supposed to make the thing not intangible,
         //however, also means that the thing won't die instantly due to losing intangibility whilst in contact with something
-        if (intangible){
+        if (intangible) {
             this.intangible = false;
+        }
+        /*
             this.finalIntangible = true;
         } else if (stillIntangible) {
             this.intangible = true;
@@ -262,7 +264,7 @@ public abstract class GameObject{
             this.finalIntangible = true;
         } else if (finalIntangible){
             finalIntangible = false;
-        }
+        }*/
     }
 
 

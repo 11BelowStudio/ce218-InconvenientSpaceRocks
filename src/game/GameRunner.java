@@ -15,6 +15,7 @@ public class GameRunner {
     EscapeListener esc;
 
     Game game;
+    TitleScreen title;
     View view;
     HighScoreHandler highScores;
     PlayerController ctrl;
@@ -38,9 +39,13 @@ public class GameRunner {
         view = new View();
         frame.addView(view);
 
+        view.hideGame();
+
         viewDimension = view.getPreferredSize();
 
-        game = new Game(ctrl);
+        //game = new Game(ctrl);
+
+        title = new TitleScreen(ctrl);
 
         repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
@@ -70,12 +75,40 @@ public class GameRunner {
         int score;
         while (true) {
 
-            /* TITLE SCREEN WILL GO HERE  */
+            //title = new TitleScreen(ctrl);
+
+
+            /* TITLE SCREEN WILL GO HERE */
             JOptionPane.showMessageDialog(
                     frame,
                     "press ok to start the blideo bame"
             );
             /* */
+
+            //view.showTitle(title);
+
+
+
+
+            //runGame(title);
+
+            //repaintTimer.start();
+
+            /*
+
+            title = new TitleScreen(ctrl);
+
+            view.showTitle(title);
+
+            frame.pack();
+
+            repaintTimer.start();
+
+            runGame(title);
+
+            /* */
+
+
 
             game = new Game(ctrl);
             //game = new Game();
@@ -90,7 +123,7 @@ public class GameRunner {
 
             System.out.println("* game started *");
 
-            runGame();
+            runGame(game);
 
             //Thread.sleep(DELAY);
 
@@ -112,21 +145,22 @@ public class GameRunner {
         }
     }
 
+    /*
     public void gameStart() {
         try{
             runGame();
         } catch(Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
 
 
-    private void runGame() throws InterruptedException {
+    private void runGame(Model m) throws InterruptedException {
         int missedFrames = 0;
-        while (!game.endGame){
+        while (!m.endGame){
             long startTime = System.currentTimeMillis();
             if (!paused) {
-                game.update();
+                m.update();
             }
             long endTime = System.currentTimeMillis();
             long timeout = DELAY - (endTime - startTime);
