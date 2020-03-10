@@ -20,7 +20,7 @@ public abstract class GameObject{
 
     public double RADIUS; //kept for collision stuff
 
-    public List<GameObject> childObjects; //will hold stuff that is spawned by this object
+
 
     protected boolean intangible;
     //whether or not this game object can be interacted with
@@ -59,6 +59,8 @@ public abstract class GameObject{
 
     public static final double MAX_SPEED = 100;
 
+    public static final double UP_RADIANS = Math.toRadians(270);
+
     boolean collided;
 
     public GameObject(Vector2D p, Vector2D v){
@@ -68,7 +70,6 @@ public abstract class GameObject{
         intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         playerHit = false;
-        childObjects = null;
         finalIntangible = false;
         collided = false;
         bombHit = false;
@@ -84,7 +85,6 @@ public abstract class GameObject{
         intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         playerHit = false;
-        childObjects = null;
         finalIntangible = false;
         collided = false;
         bombHit = false;
@@ -240,7 +240,6 @@ public abstract class GameObject{
         g.fill(transformedArea); //filling the sprite with the texture
         g.setColor(objectColour);
         g.fill(transformedArea); //now filling it with the overlay
-
     }
 
 

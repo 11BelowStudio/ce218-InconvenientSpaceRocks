@@ -6,8 +6,13 @@ import java.util.Stack;
 
 public abstract class Model {
 
+
     public List<GameObject> gameObjects;
     public List<GameObject> hudObjects;
+
+
+    protected List<GameObject> alive;
+    protected List<GameObject> dead;
 
     protected Stack<Asteroid> asteroidStack;
     protected Stack<MediumAsteroid> mediumAsteroidStack;
@@ -27,6 +32,13 @@ public abstract class Model {
         asteroidStack = new Stack<>();
         mediumAsteroidStack = new Stack<>();
         bigAsteroidStack = new Stack<>();
+
+
+        alive = new ArrayList<>();
+        //list for objects that are still alive
+
+        dead = new ArrayList<>();
+        //list for objects that are now dead
     }
 
 

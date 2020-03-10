@@ -17,6 +17,10 @@ bullet stack time
 k
 265
 unknown
+261
+unknown
+253
+unknown
 246
  k
 223
@@ -38,6 +42,10 @@ unknown
 125
 unknown
 111
+no
+99
+k
+94
 unknown
 90
 unknown
@@ -47,7 +55,11 @@ unknown
 unknown
 87
 unknown
+85
+unknown
 81
+unknown
+78
 k
 77
 k
@@ -68,6 +80,8 @@ unknown
 60
 unknown
 60
+ k
+59
 ayy lmao
 58
  
@@ -76,6 +90,8 @@ your name
 54
 unknown
 54
+unknown
+53
 this
 52
 unknown
@@ -121,6 +137,8 @@ unknown
 unknown
 40
 unknown
+40
+unknown
 37
 unknown
 35
@@ -136,6 +154,8 @@ unknown
 32
 yeet
 32
+unknown
+31
 ok
 30
 unknown
@@ -146,6 +166,8 @@ ok
 30
 unknown
 30
+unknown
+29
 unknown
 29
 unknown
@@ -164,6 +186,8 @@ unknown
 27
 unknown
 27
+no
+26
 unknown
 26
 unknown
@@ -198,6 +222,8 @@ indeed
 11
 unknown
 10
+unknown
+9
 no
 9
 unknown

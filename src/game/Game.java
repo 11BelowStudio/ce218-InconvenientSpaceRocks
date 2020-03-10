@@ -85,6 +85,8 @@ public class Game extends Model  {
 
     private StringObject newAsteroidCount;
 
+    boolean spawnIt;
+
     //boolean endGame;
 
     public Game(PlayerController ctrl){
@@ -134,7 +136,9 @@ public class Game extends Model  {
 
         this.ctrl = ctrl;
         ship = new PlayerShip(this.ctrl,this);
-        gameObjects.add(ship);
+        //ship.revive();
+
+        gameObjects.add(ship.reviveAndReturn());
 
         score = 0;
 
@@ -148,11 +152,6 @@ public class Game extends Model  {
 
         waitingToRespawn = false;
         gameOver = false;
-
-        /*
-        enemy = new EnemyShip(this);
-        enemy.ded();*/
-        //enemy.ded();
 
 
         //enemyPlayer = new EnemyPlayer(this);
@@ -191,6 +190,9 @@ public class Game extends Model  {
         hudObjects.add(scoreTextObject = new StringObject(new Vector2D(HALF_WIDTH,20), new Vector2D(),scoreText,StringObject.MIDDLE_ALIGN));
 
         hudObjects.add(livesTextObject = new StringObject(new Vector2D(3*eighthWidth,20), new Vector2D(),livesText,StringObject.LEFT_ALIGN));
+
+
+        spawnIt = false;
 
 
 
@@ -324,16 +326,18 @@ public class Game extends Model  {
             maxEnemies++; //can have another enemy on screen at once every 3 levels
         }
 
+        spawnIt = true;
+
         Collections.shuffle(newAsteroids);
         return newAsteroids;
 
     }
 
     public void update(){
-        List<GameObject> alive = new ArrayList<>();
+        alive.clear();
         //list for objects that are still alive
 
-        List<GameObject> dead = new ArrayList<>();
+        dead.clear();
         //list for objects that are now dead
 
         boolean shipJustAdded = false;
@@ -341,7 +345,7 @@ public class Game extends Model  {
         if (waitingToRespawn && ctrl.action.theAnyButton()) {
             middleTextObject.setText("");
             waitingToRespawn = false;
-            alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
+            alive.add(ship.reviveAndReturn());
             ctrl.stopAll();
             shipJustAdded = true;
             //creates a new ship if the player can respawn and the player presses any button
@@ -363,97 +367,86 @@ public class Game extends Model  {
             //updating everything basically
 
             g.update();
+
+            if (g.dead){
+                dead.add(g);
+
+                //if it's dead, it gets added back into the stack of stuff basically
+                if (g instanceof GenericAsteroid){
+                    if (g instanceof Asteroid){
+                        asteroidStack.push((Asteroid) g);
+                    } else if (g instanceof MediumAsteroid){
+                        mediumAsteroidStack.push((MediumAsteroid) g);
+                    } else{
+                        assert g instanceof BigAsteroid;
+                        bigAsteroidStack.push((BigAsteroid) g);
+                    }
+                } else if (g instanceof Bullet){
+                    if (g instanceof PlayerBullet){
+                        playerBullets.push((PlayerBullet)g);
+                    } else if (g instanceof EnemyBullet){
+                        enemyBullets.push((EnemyBullet)g);
+                    }
+                } else if (g instanceof EnemyShip) {
+                    enemyShips.push(((EnemyShip) g));
+                    currentEnemies--;
+                }
+            } else{
+                alive.add(g);
+
+                boolean isEnemy = isEnemy(g);
+                boolean isAsteroid = isAsteroid(g);
+
+
+                if(shipJustAdded && (isAsteroid || isEnemy)){
+                    moveObjectAwayFromShip(g); //will move objects away from the ship if it's just spawned in
+                }
+
+                if (!asteroidsRemaining){
+                    if (isAsteroid){
+                        asteroidsRemaining = true;
+                    }
+                }
+
+                if (g instanceof EnemyShip){
+                    if (((EnemyShip) g).fired && !enemyBullets.isEmpty()){
+                        EnemyBullet b = enemyBullets.pop();
+                        b.revive(((EnemyShip) g).bulletLocation, ((EnemyShip) g).bulletVelocity);
+                        alive.add(b);
+                        SoundManager.fire();
+                        ((EnemyShip) g).fired = false;
+                    }
+                }
+            }
         }
 
 
 
-        //doing collision handling and dealing with the results of the collision handling
-        for (int i = 0; i < gameObjects.size(); i++) {
-            GameObject temp = gameObjects.get(i);
-            boolean isPlayer = isPlayer(temp);
-            boolean isEnemy = isEnemy(temp);
-            boolean isAsteroid = isAsteroid(temp);
+        //doing collision handling
+        for (int i = 0; i < alive.size(); i++) {
+            GameObject temp = alive.get(i);
 
-            if (!asteroidsRemaining && isAsteroid){
-                asteroidsRemaining = true;
+            if (temp.dead || temp.intangible){
+                continue; //skip it if it's now dead/is intangible
+                //it'll be dealt with next update.
             }
 
 
-            if (temp instanceof EnemyShip){
-                if (((EnemyShip) temp).fired && !enemyBullets.isEmpty()){
-                    EnemyBullet b = enemyBullets.pop();
-                    b.revive(((EnemyShip) temp).bulletLocation, ((EnemyShip) temp).bulletVelocity);
-                    alive.add(b);
-                    SoundManager.fire();
-                    ((EnemyShip) temp).fired = false;
+            for (int j = i+1; j < gameObjects.size(); j++) {
+                GameObject temp2 = gameObjects.get(j);
+                if (temp2.dead || temp2.intangible){
+                    continue; //skip stuff that's dead/intangible
                 }
-            }
 
-            if(shipJustAdded && (isAsteroid || isEnemy)){
-                moveObjectAwayFromShip(temp); //will move objects away from the ship if it's just spawned in
-            }
-
-            if (!temp.intangible || !temp.dead) { //only need to bother checking the collision if this isn't intangible/dead
-                //working out what type of object temp is
-                for (int j = i+1; j < gameObjects.size(); j++) {
-                    GameObject temp2 = gameObjects.get(j);
-                    if (!temp2.intangible || !temp2.dead){ //again, only need to bother if this also isn't intangible/dead
-                        if ((isAsteroid ^ isAsteroid(temp2)) ||
-                                (isPlayer ^ isPlayer(temp2)) ||
-                                (isEnemy ^ isEnemy(temp2))
-                        ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
-                            //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
-                            temp.collisionHandling(temp2);
-                        }
-                    }
+                if ((isAsteroid(temp) ^ isAsteroid(temp2)) ||
+                        (isPlayer(temp) ^ isPlayer(temp2)) ||
+                        (isEnemy(temp) ^ isEnemy(temp2))
+                ) {
+                    //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
+                    // (^ operator is 'xor')
+                    //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
+                    temp.collisionHandling(temp2);
                 }
-            }
-
-
-            if (temp.dead) {
-                //dead objects added to the dead list
-                dead.add(temp);
-
-                //dead asteroids put into the asteroid stacks
-                //and dead bullets put back into the bullet stacks
-
-                //this is done here, and not through the check for the dead objects,
-                //as this allows child asteroids to be prepared for when they are needed
-                if (isAsteroid){
-                    if (temp instanceof Asteroid){
-                        asteroidStack.push((Asteroid) temp);
-                    } else if (temp instanceof MediumAsteroid){
-                        mediumAsteroidStack.push((MediumAsteroid) temp);
-                    } else{
-                        assert temp instanceof BigAsteroid;
-                        bigAsteroidStack.push((BigAsteroid) temp);
-                    }
-                } else if (temp instanceof Bullet){
-                    if (temp instanceof PlayerBullet){
-                        playerBullets.push((PlayerBullet)temp);
-                    } else if (temp instanceof EnemyBullet){
-                        enemyBullets.push((EnemyBullet)temp);
-                    }
-                }
-            } else{
-                //alive objects added to the alive list
-                alive.add(temp);
-            }
-
-
-            if (temp.childObjects != null && !temp.childObjects.isEmpty()){
-                //if the current GameObject has childObjects,
-                //they're all added to 'alive',
-                //before the GameObject's childObjects list is wiped
-                /*
-                for (GameObject c: temp.childObjects){
-                    c.update();
-                    alive.add(c);
-                }*/
-
-                alive.addAll(temp.childObjects);
-
-                temp.childObjects = null;
             }
 
         }
@@ -464,8 +457,8 @@ public class Game extends Model  {
                 //enemy = new EnemyShip(enemyPlayer, this);
                 //enemy = new EnemyShip(this);
                 EnemyShip e = enemyShips.pop();
-                e.revive();
-                moveObjectAwayFromShip(e);
+                //e.revive();
+                moveObjectAwayFromShip(e.reviveAndReturn());
                 //enemyPlayer.newEnemy(enemy);
                 alive.add(e);
                 //newObjects.add(enemy);
@@ -488,7 +481,7 @@ public class Game extends Model  {
         boolean scoreChanged = false;
 
         for (GameObject g: dead){
-            //working out if something is dead because the player hit it or not
+            //working out if something is dead because the player hit it or not, and how to react from there
             if (g.playerHit){
                 scoreChanged = true;
                 //player earns points if they hit the thing which is now dead
@@ -517,15 +510,9 @@ public class Game extends Model  {
                 playerHit = true;
                 livesChanged = true;
 
-            }  else if (g instanceof EnemyShip){
-
-                ((EnemyShip) g).ded();
-                enemyShips.push(((EnemyShip) g));
-                currentEnemies--;
-                //no enemy if the enemy got hit
             } else if (isAsteroid(g)){
+                //spawning in the children of the destroyed asteroid
                 if (g instanceof MediumAsteroid) {
-                //int i = 0;
                     int numToSpawn = ((MediumAsteroid) g).childrenToSpawn;
                     for (int i = 0; i < numToSpawn; i++) {
                         if (asteroidStack.isEmpty()) {
@@ -607,7 +594,7 @@ public class Game extends Model  {
             //}
             //}
 
-            if (ship != null){
+            if (!ship.dead){
                 if (ship.fired && !playerBullets.isEmpty()){
                     PlayerBullet temp = playerBullets.pop();
                     temp.revive(ship.bulletLocation,ship.bulletVelocity);
@@ -656,27 +643,10 @@ public class Game extends Model  {
         }
 
 
-
-
-
-
-
-
-            /*
-            if (!asteroidsRemaining) {
-                //if no asteroids remain, and the player isn't currently dead, the level is done
-                currentLevel++;
-                //moves forward a level
-                newObjects.addAll(setupLevel());
-                //adds the asteroids for the next level
-                ship.giveImmunity();
-                objectWait = 10;
-                //gives the player some temporary immunity,
-                //so they have some time to react to the new obstacles
-            }*/
-
             if (newObjects.isEmpty()) {
+                //if there are no more new objects to spawn for this level
                 if (levelStarting){
+                    //clears the text that appears when the level is starting if this text was still being displayed
                     middleTextObject.setText("");
                     newAsteroidCount.setText("");
                     levelStarting = false;
@@ -693,20 +663,18 @@ public class Game extends Model  {
                     //so they have some time to react to the new obstacles
                 }
             } else{
-                //System.out.println(newObjects.size() + " new objects left");
-                /*
-                if (newObjects.peek().dead){
-                    newObjects.pop();
-                }*/
-
-                GameObject newObject = newObjects.pop();
-                //for (GameObject newObject : newObjects) {
-                moveObjectAwayFromShip(newObject);
-                alive.add(newObject);
-                objectWait = 10;
-                newAsteroidCount.setText(String.valueOf(newObjects.size()));
-                //}
-                //newObjects.clear();
+                //will be spawning the asteroids in
+                //tbh the only reason for the 1 update delay between adding asteroids is so you can see them coming
+                if (spawnIt) {
+                    //adds the top GameObject from newObjects to 'alive'
+                    GameObject newObject = newObjects.pop();
+                    moveObjectAwayFromShip(newObject);
+                    alive.add(newObject);
+                    spawnIt = false;
+                    newAsteroidCount.setText(String.valueOf(newObjects.size()));
+                } else{
+                    spawnIt = true;
+                }
 
             }
 
@@ -723,7 +691,7 @@ public class Game extends Model  {
     }
 
     Vector2D getShipPosition(){
-        if (ship == null){
+        if (ship.dead && !gameOver){
             return new Vector2D(Math.random() * FRAME_WIDTH,Math.random() * FRAME_HEIGHT);
         } else{
             return ship.position;
@@ -748,7 +716,7 @@ public class Game extends Model  {
         if (currentLevel < 100) {
             timeForEnemyToRespawn = 100 - currentLevel;
         }
-        timeForEnemyToRespawn +=  (int)(Math.random() * 100);
+        timeForEnemyToRespawn +=  (int)(Math.random() * 100) + (int)(Math.random() * 100);
     }
 
     private boolean isPlayer(GameObject o){

@@ -16,8 +16,9 @@ public class EnemyBullet extends Bullet {
         super();
     }
 
-    public void update(){
-        super.update();
-        objectColour = new Color(255 - (timeToLive/2),255 - (3*timeToLive),255 - (5*timeToLive),128);
+
+    @Override
+    protected void updateColour() {
+        objectColour = new Color(255 - (timeToLive/2),255 - (3*timeToLive),255 - (5*timeToLive));//, 128);
     }
 }

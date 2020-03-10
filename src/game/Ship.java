@@ -38,6 +38,8 @@ public abstract class Ship extends GameObject {
     //recording if there is thrust
     protected boolean thrusting;
 
+    protected Color thrustColour;
+
     protected long BULLET_DELAY;
     //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
 
@@ -69,10 +71,11 @@ public abstract class Ship extends GameObject {
 
 
 
-    public Ship(Vector2D p, Vector2D v, Controller ctrl, Game game){
+    public Ship(Vector2D p, Vector2D v, Vector2D d, Controller ctrl, Game game){
         super(p,v);
         this.game = game;
-        direction = Vector2D.polar(Math.toRadians(270),1);
+        direction = Vector2D.polar(UP_RADIANS,1);
+
         //the most recent bullet that has been fired
         lastBullet = null;
         canFireNextBulletAt = System.currentTimeMillis();
@@ -99,6 +102,7 @@ public abstract class Ship extends GameObject {
 
         warpDistance = 100;
 
+        thrustColour = Color.red;
 
     }
 
@@ -106,7 +110,6 @@ public abstract class Ship extends GameObject {
         super.revive(p,v);
         this.direction = d;
         lastBullet = null;
-        canFireNextBulletAt = System.currentTimeMillis();
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         canWarpAt = System.currentTimeMillis();
         canFireNextBulletAt = System.currentTimeMillis();
@@ -114,7 +117,6 @@ public abstract class Ship extends GameObject {
         bulletVelocity = null;
         fired = false;
         intangible = true;
-
     }
 
     public void revive() {
@@ -122,6 +124,12 @@ public abstract class Ship extends GameObject {
                 Vector2D.polar((Math.random() * Math.PI * 2), Math.random() * MAX_SPEED),
                 Vector2D.polar((Math.random() * Math.PI * 2),1));
 
+    }
+
+    //basically like revive, but actually returns this object
+    public Ship reviveAndReturn(){
+        this.revive();
+        return this;
     }
 
     public void update(){
@@ -187,41 +195,41 @@ public abstract class Ship extends GameObject {
             notIntangible(); //attacking will cause a premature end to the player's intangibility
             canFireNextBulletAt = (System.currentTimeMillis() + BULLET_DELAY);
             //works out when the player is next allowed to fire a bullet
-            //childObjects = new ArrayList<>();
             fireBullet();
         }
     }
 
     protected void fireBullet(){
-        bulletLocation = new Vector2D(
-                (position.x + ((2 * RADIUS) * (direction.x))),
-                (position.y + ((2 * RADIUS) * (direction.y)))
-        );
-        bulletVelocity = new Vector2D(this.direction).setMag(300);
+
+        //spawns the bullet 2*radius away from position
+        bulletLocation = Vector2D.addScaled(position,direction,2*RADIUS);
+        bulletLocation.wrap(FRAME_WIDTH,FRAME_HEIGHT);
+        //obligatory wraparound
+
+
+        //bullet will be going in the direction the ship is facing, but at 300 magnitude
+        bulletVelocity = Vector2D.setMag(direction,300);
         fired = true;
 
-        //lastBullet = new PlayerBullet(bulletLocation,bulletVelocity);
-    }; //ensures the correct bullet for the type of ship is fired
+
+    }
 
 
     public void draw(Graphics2D g){
-
-        //definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
-        //definedRect = g.getTransform().createTransformedShape(definedRect).getBounds();
-        drawLineToPlayer(g);
+        //drawLineToPlayer(g);
         double rot = direction.angle() + Math.PI / 2;
         g.rotate(rot);
-        //AffineTransform translatedRotated = g.getTransform(); //gets backup of the scale before drawing scale was done
-        //g.scale(DRAWING_SCALE, DRAWING_SCALE);
-        //g.scale(RADIUS, RADIUS);
-        drawDetails(g);
-        //g.fillPolygon(objectPolygon);
-        //g.fillPolygon(objectPolygon = new Polygon(hitboxX, hitboxY, hitboxX.length));
-        //g.setTransform(translatedRotated);
-        //g.fillPolygon(objectPolygon);
-        //objectPolygon.translate((int)position.x,(int)position.y);
+
+        //drawDetails(g);
+
+
+        if (thrusting) {
+            //colours in the thrust polygon
+            g.setColor(thrustColour);
+            g.fillPolygon(thrustPolygon);
+        }
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
@@ -229,11 +237,12 @@ public abstract class Ship extends GameObject {
         paintTheArea(g);
     }
 
-    protected abstract void drawDetails(Graphics2D g);
 
     protected void drawLineToPlayer(Graphics2D g){
     }
 
+    //casually using the definedRect, not the bounding box, to render the texturepaint psuedo-sprite correctly
+    //(le lack of an image editor with transparency has arrived
     @Override
     protected void paintTheArea(Graphics2D g){
         g.setPaint(new TexturePaint(texture,definedRect));

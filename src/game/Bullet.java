@@ -10,9 +10,8 @@ public abstract class Bullet extends GameObject {
 
     int timeToLive;
 
-    double distanceToGo;
 
-    int frameCount;
+
 
     public Bullet(){
         this(new Vector2D(1,1),new Vector2D(300,1));
@@ -21,12 +20,11 @@ public abstract class Bullet extends GameObject {
     public Bullet(Vector2D p, Vector2D v){
         super(p,v);
         timeToLive = 50;
-        distanceToGo = 30;
+
         RADIUS = 5;
         hitboxX = new int[]{0,1,-1};
         hitboxY = new int[]{-1,1,1};
 
-        frameCount = 0;
 
         objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,0.5);
 
@@ -34,11 +32,8 @@ public abstract class Bullet extends GameObject {
 
     public void revive(Vector2D p, Vector2D d){
         super.revive(p,d);
-        //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,0.5);
         timeToLive = 50;
-        distanceToGo = 30;
-        RADIUS = 5;
-        frameCount = 0;
+        updateColour();
     }
 
     @Override
@@ -48,6 +43,7 @@ public abstract class Bullet extends GameObject {
         if (timeToLive == 0){
             dead = true;
         }
+        updateColour();
     }
 
 
@@ -66,8 +62,18 @@ public abstract class Bullet extends GameObject {
         paintTheArea(g);
     }
 
+    protected void paintTheArea(Graphics2D g){
+        //g.setPaint(new TexturePaint(texture, areaRectangle));
+        //g.fill(transformedArea); //filling the sprite with the texture
+        g.setColor(objectColour);
+        g.fill(transformedArea); //now filling it with the overlay
+    }
+
     @Override
     public void bounceOff(GameObject other){
         this.dead = true;
     }
+
+    protected abstract void updateColour();
+
 }

@@ -39,10 +39,6 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
     @Override
     protected void setSpecifics(){
-        //hitChildren = 2;
-        //decayChildren = 5;
-        //childObjects = new ArrayList<>(decayChildren);
-        childObjects = null;
         timeToLive = (int)(Math.random() * 512) + 512;
     }
 

@@ -6,32 +6,30 @@ import static game.Constants.*;
 
 public class EnemyPlayer implements Controller{
 
+    private static final int MAX_POS_UPDATE_DELAY = 20;
+
+    private static final int MAX_ACTION_DELAY = 10;
+
     private Game game;
     private EnemyShip enemyShip;
-    private Boolean alive;
     private int playerType;
     private Action action;
-    private final int positionUpdateRange = 15;
     private int framesUntilUpdatingEnemyPosition;
-    private final int maxActionDelay = 10;
     private int actionDelay;
     private boolean canAct;
+    private boolean acted;
     private Vector2D targetPosition;
 
-    public EnemyPlayer(Game g, EnemyShip e){
-        this(g);
-        enemyShip = e;
-        alive = true;
-        playerType = (int)(Math.random() * 5);
-    }
+    private double distanceBetween;
+    private double angleDifference;
+
 
     public EnemyPlayer(Game g){
         game = g;
-        alive = false;
-        enemyShip = null;
         action = new Action();
+        acted = true;
+        canAct();
         nextUpdateIn();
-        nextActionIn();
     }
 
     public void setEnemyShip(EnemyShip e){
@@ -40,72 +38,63 @@ public class EnemyPlayer implements Controller{
 
 
     public void revive(){
-    //public void newEnemy(){
-        alive = true;
         playerType = (int)(Math.random() * 5);
         System.out.println("Enemy "+ playerType);
         getTargetPosition();
         nextUpdateIn();
-        nextActionIn();
-    }
-
-    public void ded(){
-        //enemyShip = null;
-        alive = false;
+        acted = true;
+        canAct();
     }
 
     private void nextUpdateIn(){
-        framesUntilUpdatingEnemyPosition = (int)(Math.random() * positionUpdateRange);
+        framesUntilUpdatingEnemyPosition = (int)(Math.random() * MAX_POS_UPDATE_DELAY);
     }
 
     private void nextActionIn(){
-        actionDelay = (int)(Math.random()* maxActionDelay);
+        actionDelay = (int)(Math.random()* MAX_ACTION_DELAY);
     }
 
     private void canAct(){
-        if (actionDelay != 0){
-            actionDelay--;
+        if (acted){
+            acted = false;
+            nextActionIn();
+        } else if (canAct || actionDelay > 0){
             canAct = false;
+            actionDelay--;
         } else{
             canAct = true;
         }
     }
 
     private void getTargetPosition(){
-        if (framesUntilUpdatingEnemyPosition != 0){
+        if (framesUntilUpdatingEnemyPosition > 0){
             framesUntilUpdatingEnemyPosition--;
         } else{
             targetPosition = game.getShipPosition();
+            nextUpdateIn();
         }
     }
 
     @Override
     public Action action() {
-        getTargetPosition();
         canAct();
-        if (alive) {
-            switch (playerType) {
-                case 0:
-                    rotateShootAction();
-                    break;
-                case 1:
-                    chaseShootAction();
-                    break;
-                case 2:
-                    aimShootAction();
-                    break;
-                case 3:
-                    aimWarpAction();
-                    break;
-                case 4:
-                default:
-                    randomAction();
-                    break;
-            }
-        } else{
-            action.shoot = true;
-            action.thrust = 0;
-            action.turn = 0;
+        switch (playerType) {
+            case 0:
+                rotateShootAction();
+                break;
+            case 1:
+                chaseShootAction();
+                break;
+            case 2:
+                aimShootAction();
+                break;
+            case 3:
+                aimWarpAction();
+                break;
+            case 4:
+            default:
+                randomAction();
+                break;
         }
         return action;
     }
@@ -114,40 +103,29 @@ public class EnemyPlayer implements Controller{
         action.shoot = (Math.random() > 0.8);
         action.turn = 1;
         thrustIfSlowerThan(10);
-        //return action;
     }
 
     private void chaseShootAction (){
-        if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH,FRAME_HEIGHT);
-            double distanceBetween = vectorBetween.mag();
-            double angleDifference = vectorBetween.angle(enemyShip.direction);
-            //double targetAngle = vectorBetween.angle();
-            //System.out.println("enemy ship info");
+        if (analysePosition()) {
             if (distanceBetween < 300) {
                 if (distanceBetween < 150) {
-
                     if (angleDifference >= 0 - (Math.PI /16) && angleDifference <= (Math.PI / 16) && canAct) {
                         action.shoot = true;
-                        nextActionIn();
+                        acted = true;
                     } else {
                         action.shoot = false;
                     }
-                    //if (distanceBetween < 100){
+
                     action.thrust = 0;
                 } else{
                     action.thrust = 1;
                 }
             } else {
-                action.warp = true;
-                action.thrust = 1;
-                action.shoot = false;
+                randomAction();
             }
-            turnToPlayer(angleDifference);
+            turnToPlayer();
         } else {
-            action.turn = (int) (Math.random() * 3) - 1;
-            action.thrust = 1;
-            action.shoot = false;
+            randomAction();
         }
         //return action;
     }
@@ -168,37 +146,35 @@ public class EnemyPlayer implements Controller{
     }
 
     private void aimShootAction(){
-        //getTargetPosition();
-        if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
-            double angleDifference = vectorBetween.angle(enemyShip.direction);
+        if (analysePosition()) {
             if (angleDifference >= 0 - (Math.PI /4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.shoot = true;
-                nextActionIn();
+                acted = true;
             } else {
                 action.shoot = false;
             }
-            turnToPlayer(angleDifference);
+            turnToPlayer();
+        } else{
+            randomAction();
         }
         thrustIfSlowerThan(20);
     }
 
     private void aimWarpAction(){
-        //getTargetPosition();
-        if (targetPosition != null) {
-            Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
-            double angleDifference = vectorBetween.angle(enemyShip.direction);
+        if (analysePosition()) {
             if (angleDifference >= 0 - (Math.PI / 4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.warp = true;
-                nextActionIn();
+                acted = true;
             } else {
                 action.warp = false;
-                turnToPlayer(angleDifference);
+                turnToPlayer();
             }
+        } else{
+            randomAction();
         }
     }
 
-    private void turnToPlayer(double angleDifference){
+    private void turnToPlayer(){
         if (angleDifference > 0 ) {
             action.turn = -1;
         } else if (angleDifference < 0) {
@@ -206,6 +182,17 @@ public class EnemyPlayer implements Controller{
         } else{
             action.turn = 0;
         }
+    }
+
+    private boolean analysePosition(){
+        getTargetPosition();
+        if (targetPosition == null){
+            return false;
+        }
+        Vector2D vectorBetween = enemyShip.position.getVectorTo(targetPosition, FRAME_WIDTH, FRAME_HEIGHT);
+        distanceBetween = vectorBetween.mag();
+        angleDifference = vectorBetween.angle(enemyShip.direction);
+        return true;
     }
 
 }
