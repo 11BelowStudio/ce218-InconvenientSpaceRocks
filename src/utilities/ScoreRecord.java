@@ -38,6 +38,8 @@ public class ScoreRecord implements Comparable {
         return theScore;
     } //returns 'theScore' of this ScoreRecord
 
+    String getName(){ return name; } //returns the 'name' of this ScoreRecord
+
 
     @Override
     public String toString(){

@@ -14,7 +14,28 @@ public class StringObject extends GameObject {
     private String thisString;
 
     private int alignment;
+
+    private Font theFont;
+
     static final int LEFT_ALIGN = 0; static final int RIGHT_ALIGN = 1; static final int MIDDLE_ALIGN = 2;
+
+
+    boolean clicked;
+
+
+    private Rectangle areaRectangle;
+
+
+    static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
+
+    static final Font medium_sans = new Font("Comic sans MS", Font.PLAIN,40);
+
+    static final Font big_sans = new Font("Comic sans MS", Font.PLAIN,50);
+
+    StringObject(Vector2D p, Vector2D v, String s, int a, Font f){
+        this(p,v,s,a);
+        theFont = f;
+    }
 
     StringObject(Vector2D p, Vector2D v, String s, int a){
         this(p,v,a);
@@ -45,32 +66,56 @@ public class StringObject extends GameObject {
         alignment = 0;
         thisString = "";
         objectColour = Color.WHITE;
+        dead = false;
+        theFont = sans;
+        areaRectangle = new Rectangle();
     }
 
     @Override
-    public void revive(Vector2D p, Vector2D v) {
+    public StringObject revive(Vector2D p, Vector2D v) {
         super.revive(p,v);
+        return this;
     }
 
-    public void revive(){
-        revive(new Vector2D(),new Vector2D());
+    public StringObject revive(){
+        return revive(position,velocity);
     }
+
+    public StringObject killThis(){
+        this.kill();
+        return this;
+    }
+
+    public String getString(){ return thisString; }
+
 
     public void revive(String s){
         revive(new Vector2D(),new Vector2D());
         thisString = s;
     }
 
+    public boolean isClicked(Point p){
+        if (areaRectangle.contains(p)){
+            clicked = true;
+        }
+        return clicked;
+    }
+
+    public void notClicked(){
+        clicked = false;
+    }
+
     @Override
     public void draw(Graphics2D g) {
         if (!dead) {
             Font tempFont = g.getFont();
-            g.setFont(sans);
+            g.setFont(theFont);
             AffineTransform at = g.getTransform();
             g.translate(position.x, position.y);
             g.setColor(objectColour);
             FontMetrics metrics = g.getFontMetrics(g.getFont());
             int w = metrics.stringWidth(thisString);
+            int h = metrics.getHeight();
             switch (alignment){
                 case 0:
                     g.drawString(thisString,0,0);
@@ -84,6 +129,7 @@ public class StringObject extends GameObject {
             }
             g.setTransform(at);
             g.setFont(tempFont);
+            areaRectangle = new Rectangle((int)position.x - w/2, (int)position.y - h/2,w,h);
         }
     }
 
@@ -100,13 +146,9 @@ public class StringObject extends GameObject {
     public void update(){
         if (position.y < 0){
             dead = true;
-        }
-        if (!dead) {
+        } else {
             position.addScaled(velocity, DT);
         }
     }
 
-    public void yeet(){
-        this.dead = true;
-    }
 }

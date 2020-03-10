@@ -34,6 +34,8 @@ public class View extends JComponent {
 
     public boolean displayingGame;
 
+    boolean displayingTitle;
+
     //public boolean fullscreen;
 
     int viewHeight;
@@ -66,6 +68,9 @@ public class View extends JComponent {
 
         preferredDimension = new Dimension(800, 600);
 
+        displayingGame = false;
+        displayingTitle = false;
+
         //this.game = game;
         //gameInfo = new InfoPanel(game);
         //gameInfo = new InfoPanel();
@@ -91,13 +96,18 @@ public class View extends JComponent {
 
     public void showGame(Game game){
         this.game = game;
+        //this.title = null;
         replaceBackground(true);
         displayingGame = true;
+        displayingTitle = false;
     }
 
     public void showTitle(TitleScreen t){
         this.title = t;
+        //this.game = null;
+        replaceBackground(false);
         displayingGame = false;
+        displayingTitle = true;
     }
 
     public void setPreferredDimension(Dimension d){
@@ -152,7 +162,7 @@ public class View extends JComponent {
                     //and also the HUD
                 }
             }
-        } else{
+        } else if (displayingTitle){
             synchronized (TitleScreen.class){
                 for (GameObject o : title.gameObjects) {
                     o.draw(g);

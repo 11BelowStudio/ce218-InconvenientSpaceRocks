@@ -1,20 +1,16 @@
 package game;
 
-import utilities.HighScoreHandler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
-import java.rmi.server.ExportException;
 
-import static game.Constants.DELAY;
 
 
 public class GameFrame extends JFrame {
 
 
     public GameFrame() {
-        this.setTitle("blideo bame");
+        this.setTitle("Inconvenient Space Rocks (In Space!)");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 

@@ -2,8 +2,10 @@ package game;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class PlayerController extends KeyAdapter implements Controller {
+public class PlayerController extends KeyAdapter implements Controller, MouseListener {
     Action action;
     public PlayerController() {
         action = new Action();
@@ -71,5 +73,35 @@ public class PlayerController extends KeyAdapter implements Controller {
 
     public void stopAll(){
         action.stopAll();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        action.theAnyButton = true;
+        if (e.getSource() instanceof GameFrame){
+            action.mousePressed = true;
+            action.mousePressLocation = e.getPoint();
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        action.theAnyButton = false;
+        action.mousePressed = false;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

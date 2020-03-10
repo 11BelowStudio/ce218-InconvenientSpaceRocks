@@ -1,5 +1,7 @@
 package game;
 
+import java.awt.*;
+
 public class Action {
     public int thrust; // 0 = off, 1 = on
     public int turn; // -1 = left turn, 0 = no turn, 1 = right turn
@@ -7,6 +9,10 @@ public class Action {
     public boolean theAnyButton; //the 'any' button (true when any button is pressed, false when any button is released)
     public boolean warp;
     public boolean bomb;
+
+    public boolean mousePressed;
+
+    public Point mousePressLocation;
 
 
     public boolean p;
@@ -22,6 +28,8 @@ public class Action {
         bomb = false;
 
         p = false;
+
+        mousePressed = false;
     }
 
     public boolean theAnyButton(){ return theAnyButton; }

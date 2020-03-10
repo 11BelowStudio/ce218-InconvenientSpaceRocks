@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import static game.Constants.*;
 
@@ -78,7 +77,7 @@ public abstract class GameObject{
         objectColour = new Color(255,255,255,32);
     }
 
-    public void revive(Vector2D p, Vector2D v){
+    public GameObject revive(Vector2D p, Vector2D v){
         this.position.set(p);
         this.velocity.set(v);
         dead = false;
@@ -88,6 +87,7 @@ public abstract class GameObject{
         finalIntangible = false;
         collided = false;
         bombHit = false;
+        return this;
     }
 
     public void update(){
@@ -157,6 +157,8 @@ public abstract class GameObject{
         }
         return false;
     }
+
+
     void collisionHandling(GameObject other) {
         if (this.getClass() != other.getClass() && this.overlap(other)) {
             if (this.intangible || other.intangible) {
@@ -171,11 +173,6 @@ public abstract class GameObject{
     }
 
 
-    void capSpeed(){
-        if (velocity.mag() > MAX_SPEED){
-            velocity.setMag(MAX_SPEED);
-        }
-    }
 
     /*
     public Shape transformObjectPolygon(AffineTransform at){
@@ -294,6 +291,11 @@ public abstract class GameObject{
         //g.setColor(Color.CYAN);
         g.fill(areaRectangle);
         //g.fill(transformedArea.getBounds());
+    }
+
+
+    public void kill(){
+        this.dead = true;
     }
 
 

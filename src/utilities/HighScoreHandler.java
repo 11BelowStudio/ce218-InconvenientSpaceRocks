@@ -187,6 +187,20 @@ public class HighScoreHandler {
         showHighScores(thisScore,yourPos);
     }
 
+    public ArrayList<String> longwindedLeaderboard(){
+        ArrayList<String> leaderboard = new ArrayList<>();
+        int currentPos = 1;
+        for (ScoreRecord sr: highScores) {
+            leaderboard.add("");
+            leaderboard.add(String.valueOf(currentPos));
+            leaderboard.add(sr.getName());
+            leaderboard.add(sr.getScore().toString());
+            currentPos++;
+        }
+        return leaderboard;
+
+    }
+
 
     public void showHighScores(){ //package-private btw
         //pretty much just creates a JOptionPane to show a record of the top 5 scores, using the scoresToString method of this

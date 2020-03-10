@@ -35,6 +35,7 @@ public class GameRunner {
         highScores = new HighScoreHandler("SaveData/scores.txt",frame, false);
         ctrl = new PlayerController();
         frame.addKeyListener(ctrl);
+        frame.addMouseListener(ctrl);
 
         view = new View();
         frame.addView(view);
@@ -68,17 +69,19 @@ public class GameRunner {
 
     private void mainLoop() throws InterruptedException {
 
+        /*
         JOptionPane.showMessageDialog(
                 frame,
                 "press ok to start the blideo bame"
         );
+        */
         int score;
         while (true) {
 
             //title = new TitleScreen(ctrl);
 
 
-            /* TITLE SCREEN WILL GO HERE */
+            /* TITLE SCREEN WILL GO HERE
             JOptionPane.showMessageDialog(
                     frame,
                     "press ok to start the blideo bame"
@@ -111,9 +114,13 @@ public class GameRunner {
 
 
             game = new Game(ctrl);
-            //game = new Game();
-            //this.addKeyListener(game.ctrl);
-            view.showGame(game);
+
+            title = new TitleScreen(ctrl);
+
+            //view.showGame(game);
+
+            view.showTitle(title);
+
             //view.setVisible(true);
             frame.pack();
             System.out.println("* setup done *");
@@ -121,17 +128,38 @@ public class GameRunner {
 
             repaintTimer.start();
 
-            System.out.println("* game started *");
+            System.out.println("* title started *");
+
+            //runGame(game);
+
+            runTitle(title);
+
+            repaintTimer.stop();
+
+
+            System.out.println("* title stopped *");
+
+            game = new Game(ctrl);
+
+            view.showGame(game);
+
+            frame.pack();
+
+            repaintTimer.start();
 
             runGame(game);
+
 
             //Thread.sleep(DELAY);
 
             System.out.println("* game stopped *");
 
+            highScores.recordHighScore(game.getScore());
+
+            /*
             if ((score = game.getScore()) != -1){ //if this is -1, it's the intro cutscene, not the game
                 highScores.recordHighScore(score);
-            }
+            }*/
 
             repaintTimer.stop();
             //repaintTimer = null;
@@ -155,30 +183,42 @@ public class GameRunner {
     }*/
 
 
-    private void runGame(Model m) throws InterruptedException {
-        int missedFrames = 0;
-        while (!m.endGame){
-            long startTime = System.currentTimeMillis();
-            if (!paused) {
-                m.update();
+    private void runGame(Game g) throws InterruptedException {
+        SoundManager.startGame();
+        while (!g.endGame){
+            runLoop(g);
+        }
+        SoundManager.stopThrust();
+        SoundManager.stopGame();
+    }
+
+    private void runTitle(TitleScreen t) throws InterruptedException{
+        SoundManager.startMenu();
+        while (!t.endGame){
+            if (ctrl.action.mousePressed){
+                if (t.clicked(ctrl.action.mousePressLocation)){
+                    t.showHighScores(highScores.longwindedLeaderboard());
+                }
             }
-            long endTime = System.currentTimeMillis();
-            long timeout = DELAY - (endTime - startTime);
-            if (timeout > 0){
-                Thread.sleep(timeout);
-            }/* else{
+            runLoop(t);
+        }
+        SoundManager.stopMenu();
+    }
+
+    private void runLoop(Model m) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        if (!paused) {
+            m.update();
+        }
+        long endTime = System.currentTimeMillis();
+        long timeout = DELAY - (endTime - startTime);
+        if (timeout > 0){
+            Thread.sleep(timeout);
+        }/* else{
                 missedFrames++;
             }
             System.out.println(missedFrames);
             /* */
-        }
-
-        //Thread.sleep(DELAY);
-
-        //repaintTimer.stop();
-
-        //game.update();
-        //view.repaint();
     }
 
     public void quitPrompt(){

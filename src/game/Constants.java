@@ -29,7 +29,7 @@ public class Constants {
     public static final int HALF_HEIGHT = 300; //(FRAME_HEIGHT/2);
     public static final int HALF_WIDTH =  400; //(FRAME_WIDTH/2);
 
-    public static final int boundingRect = 300; //300
+    public static final int boundingRect = 400; //300
 
     public static final Rectangle leftScreen = new Rectangle(-boundingRect,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
     //public static final Rectangle leftScreen = new Rectangle(-HALF_WIDTH-boundingRect,-HALF_HEIGHT-boundingRect, boundingRect,FRAME_HEIGHT+boundingRect);
@@ -66,7 +66,7 @@ public class Constants {
             SHIP = ImageManager.loadImage("shipV2");
             SPACE_ROCK = ImageManager.loadImage("inconvenientSpaceRockTM");
             TITLE = ImageManager.loadImage("titleImage");
-            DEFAULT_VIEW = ImageManager.loadImage("defaultView");
+            DEFAULT_VIEW = ImageManager.loadImage("default");
             YOU_ARE_DED = ImageManager.loadImage("urdedlmao");
             ENEMY_SHIP = ImageManager.loadImage("enemyShip");
         } catch (IOException e) { e.printStackTrace(); }

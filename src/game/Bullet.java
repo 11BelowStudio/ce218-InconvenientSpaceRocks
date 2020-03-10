@@ -30,10 +30,11 @@ public abstract class Bullet extends GameObject {
 
     }
 
-    public void revive(Vector2D p, Vector2D d){
+    public Bullet revive(Vector2D p, Vector2D d){
         super.revive(p,d);
         timeToLive = 50;
         updateColour();
+        return this;
     }
 
     @Override

@@ -2,289 +2,100 @@ package game;
 
 import utilities.Vector2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-import static game.Constants.FRAME_HEIGHT;
-import static game.Constants.HALF_WIDTH;
+import static game.Constants.*;
 import static game.GameObject.UP_RADIANS;
 
 public class TitleScreen extends Model {
 
-    static String[] openingCrawlThing = new String[]{
-            "Like last thursday or something,",
-            "in that one corner of the universe with the rocks,",
-            "you know, near that hyperspace bypass,",
-            "the one that smells of MS paint, that one.",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "TITLE SCREEN OPENING CRAWL THING",
-            "Episode 2562361.632*e+352",
-            "THE LACK OF IDEAS",
-            "",
-            "",
-            "pretend this says something deep",
-            "like idk some sort of epic story",
-            "about some intergalactic war in space",
-            "(tbh they really should make a film",
-            "about something like that at some point.",
-            "actually, that's a rather good idea tbh",
-            "imma take a note of it and then",
-            "do it when no-one is looking",
-            "and then get really really rich from it",
-            "I'm thinking of calling it",
-            "'Luminous spheroid of plasma Conflict'",
-            "let me know if you think that sounds like a nice film name)",
-            "Anywho, back to the point at hand",
-            "uhh...",
-            "",
-            "",
-            "",
-            "oh yeah!",
-            "",
-            "Inconvenient Space Rocks!",
-            "yeah there's a bunch of rocks in space",
-            "and they're being very inconvenient.",
-            "pls shoot them for us k thx bye",
-            "and also dont die",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "you know you can just press any key to skip this, right?",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "bruh",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "According to all known laws of aviation, there is no way that a rock should be able to fly",
-            "unless it weighs 90kg.",
-            "in which case you can get a trebuchet to make it fly 300 metres forward",
-            "but that's besides the point because how the hecc did these rocks get up here",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "why are you still here? just to suffer?",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "still here?",
-            "ok so press p when starting a level",
-            "its fun ;)",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "uwu",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "upvotes to the left",
-            "edit: we did it, Reddit!"
-    };
+
+
+
+
+    private boolean readyToSpawnAsteroid;
+
+    private boolean readyToSpawnShip;
 
 
     ArrayList<GameObject> aliveHUD;
+
+
+    boolean showingIntro;
+    boolean menuOnscreen;
+    boolean showingScores;
+
+    StringObject titleText;
+    StringObject subtitleText;
+
+    StringObject play;
+
+    StringObject showScores;
 
     TitleScreen(PlayerController ctrl){
         super(ctrl);
 
         aliveHUD = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             bigAsteroidStack.push(new BigAsteroid());
         }
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 45; i++) {
             mediumAsteroidStack.push(new MediumAsteroid());
         }
-        for (int i = 0; i < 150; i++){
+        for (int i = 0; i < 135; i++){
             asteroidStack.push(new Asteroid());
         }
 
-        int distFromBottom = 0;
-        for (String s: openingCrawlThing) {
-            hudObjects.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s));
-            distFromBottom += 20;
+        for (int i = 0; i < 25; i++) {
+            enemyBullets.push(new EnemyBullet());
         }
+
+        for (int i = 0; i < 5; i++) {
+            EnemyShip e = new EnemyShip(this);
+            enemyShips.push(e);
+        }
+
+        titleText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT/2),new Vector2D(),"INCONVENIENT SPACE ROCKS",StringObject.MIDDLE_ALIGN,StringObject.big_sans);
+        titleText.kill();
+
+        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,5*(HALF_HEIGHT/8)), new Vector2D(),"(In Space!)",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        subtitleText.kill();
+
+        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        play.kill();
+
+        showScores = new StringObject(new Vector2D(HALF_WIDTH,3*(HALF_HEIGHT/2)),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        showScores.kill();
+
+        int distFromBottom = 30;
+        for (String s: LiterallyJustTheOpeningCreditsThing.openingCreditsThing) {
+            hudObjects.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,25),s,StringObject.MIDDLE_ALIGN));
+            distFromBottom += 22;
+        }
+
+        readyToSpawnAsteroid = true;
+        readyToSpawnShip = false;
+
+        showingIntro = true;
+        menuOnscreen = false;
+        showingScores = false;
+
+
+        /*
+        mediumAsteroidsToYeet = 0;
+        smallAsteroidsToYeet = 0;*/
     }
 
     @Override
     public void update() {
 
-        alive.clear();
-        dead.clear();
+
+        /*
+        mediumAsteroidsToYeet = 0;
+        smallAsteroidsToYeet = 0;*/
+
 
         for (GameObject g: gameObjects) {
             g.update();
@@ -292,36 +103,189 @@ public class TitleScreen extends Model {
                 dead.add(g);
                 if (g instanceof BigAsteroid){
                     bigAsteroidStack.push((BigAsteroid) g);
+                    //mediumAsteroidsToYeet += 5;
                 } else if(g instanceof MediumAsteroid){
                     mediumAsteroidStack.push((MediumAsteroid) g);
+                    //mediumAsteroidsToYeet--;
+                    //smallAsteroidsToYeet += 5;
                 } else if (g instanceof Asteroid){
                     asteroidStack.push((Asteroid) g);
+                    //smallAsteroidsToYeet--;
+                } else if (g instanceof EnemyShip){
+                    enemyShips.push((EnemyShip) g);
+                } else if (g instanceof EnemyBullet){
+                    enemyBullets.push((EnemyBullet) g);
                 }
             } else{
-                if (g instanceof Asteroid && Math.random() < 0.05){
-                    asteroidStack.push((Asteroid) g);
+                if (Math.random() < 0.00005 && (isAsteroid(g) || g instanceof EnemyShip)){
+                    dead.add(g);
                 } else {
                     alive.add(g);
                 }
             }
         }
 
+
+        for (int i = 0; i < alive.size(); i++) {
+            GameObject g = alive.get(i);
+
+            if (g.dead || g.intangible){
+                continue; //skip it if it's now dead/is intangible
+                //it'll be dealt with next update.
+            }
+
+
+            for (int j = i+1; j < alive.size(); j++) {
+                GameObject g2 = alive.get(j);
+                if (g2.dead || g2.intangible){
+                    continue; //skip stuff that's dead/intangible
+                }
+
+                if ((isAsteroid(g) ^ isAsteroid(g2)) ||
+                        (isEnemy(g) ^ isEnemy(g2))
+                ) {
+                    //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
+                    // (^ operator is 'xor')
+                    //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
+                    g.collisionHandling(g2);
+                }
+            }
+
+            if (g instanceof EnemyShip){
+                if (((EnemyShip) g).fired && !enemyBullets.isEmpty()){
+                    EnemyBullet b = enemyBullets.pop();
+                    b.revive(((EnemyShip) g).bulletLocation, ((EnemyShip) g).bulletVelocity);
+                    alive.add(b);
+                    SoundManager.fire();
+                    ((EnemyShip) g).fired = false;
+                }
+            }
+
+        }
+
+
+        boolean yeetEverything = ((showingIntro || showingScores) && ctrl.action.theAnyButton);
+
+
+        if (yeetEverything) {
+            for (GameObject h : hudObjects) {
+                h.kill();
+            }
+        } else{
+            for (GameObject h : hudObjects) {
+                h.update();
+                if (!h.dead) {
+                    aliveHUD.add(h);
+                }
+            }
+        }
+
+
+        if (aliveHUD.isEmpty()){
+            if (menuOnscreen) {
+                /*
+                titleText.kill();
+                subtitleText.kill();
+                play.kill();
+                showScores.kill();*/
+                menuOnscreen = false;
+            } else {
+
+                showingScores = false;
+                showingIntro = false;
+                aliveHUD.add(titleText.revive());
+                aliveHUD.add(subtitleText.revive());
+                aliveHUD.add(play.revive());
+                aliveHUD.add(showScores.revive());
+                menuOnscreen = true;
+            }
+        }
+
+        for(GameObject g: dead){
+            if (isGenericLargerAsteroid(g)){
+                spawnChildren((GenericLargerAsteroid)g);
+            }
+        }
+
+
+        if (Math.random() < 0.001){
+            readyToSpawnAsteroid = true;
+        }
+        if (readyToSpawnAsteroid && !bigAsteroidStack.isEmpty()){
+            alive.add(bigAsteroidStack.pop().revive());
+            readyToSpawnAsteroid = false;
+        }
+
+        if (Math.random() < 0.005){
+            readyToSpawnShip = true;
+        }
+
+        if (readyToSpawnShip && !enemyShips.isEmpty()){
+            alive.add(enemyShips.pop().revive());
+            readyToSpawnShip = false;
+        }
+
         //ArrayList<GameObject> aliveHUD = new ArrayList<>();
 
+
+        /*
         for (GameObject h: hudObjects){
             h.update();
             if (!h.dead){
                 aliveHUD.add(h);
             }
-        }
+        }*/
 
-        synchronized (Game.class) {
+        synchronized (TitleScreen.class) {
             gameObjects.clear();
             gameObjects.addAll(alive);
 
             hudObjects.clear();
             hudObjects.addAll(aliveHUD);
+
+            alive.clear();
+            aliveHUD.clear();
+            dead.clear();
         }
 
+    }
+
+    public boolean clicked(Point p){
+        if (menuOnscreen) {
+            if (play.isClicked(p)) {
+                gameOver = true;
+                endGame = true;
+                return false;
+            } else if (showScores.isClicked(p)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    Vector2D getShipPosition() {
+        if (!gameObjects.isEmpty()){
+            int range = gameObjects.size();
+            return (gameObjects.get((int)(Math.random() * range-2)+1).position);
+        }
+        return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
+    }
+
+    public void showHighScores(ArrayList<String> scoresToShow){
+        titleText.kill();
+        subtitleText.kill();
+        play.kill();
+        showScores.kill();
+        menuOnscreen = false;
+        showingScores = true;
+
+        aliveHUD.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
+
+        int distFromBottom = 60;
+        for (String s: scoresToShow) {
+            aliveHUD.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s,StringObject.MIDDLE_ALIGN));
+            distFromBottom += 22;
+        }
     }
 }

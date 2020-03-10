@@ -10,7 +10,7 @@ public class EnemyPlayer implements Controller{
 
     private static final int MAX_ACTION_DELAY = 10;
 
-    private Game game;
+    private Model model;
     private EnemyShip enemyShip;
     private int playerType;
     private Action action;
@@ -24,8 +24,8 @@ public class EnemyPlayer implements Controller{
     private double angleDifference;
 
 
-    public EnemyPlayer(Game g){
-        game = g;
+    public EnemyPlayer(Model m){
+        model = m;
         action = new Action();
         acted = true;
         canAct();
@@ -39,7 +39,7 @@ public class EnemyPlayer implements Controller{
 
     public void revive(){
         playerType = (int)(Math.random() * 5);
-        System.out.println("Enemy "+ playerType);
+        //System.out.println("Enemy "+ playerType);
         getTargetPosition();
         nextUpdateIn();
         acted = true;
@@ -70,7 +70,7 @@ public class EnemyPlayer implements Controller{
         if (framesUntilUpdatingEnemyPosition > 0){
             framesUntilUpdatingEnemyPosition--;
         } else{
-            targetPosition = game.getShipPosition();
+            targetPosition = model.getShipPosition();
             nextUpdateIn();
         }
     }

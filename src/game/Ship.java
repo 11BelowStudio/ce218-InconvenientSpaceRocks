@@ -46,7 +46,6 @@ public abstract class Ship extends GameObject {
     protected long canFireNextBulletAt;
     //when the player can fire their next bullet
 
-    public Game game;
 
     public Bullet lastBullet;
 
@@ -71,9 +70,8 @@ public abstract class Ship extends GameObject {
 
 
 
-    public Ship(Vector2D p, Vector2D v, Vector2D d, Controller ctrl, Game game){
+    public Ship(Vector2D p, Vector2D v, Vector2D d, Controller ctrl){
         super(p,v);
-        this.game = game;
         direction = Vector2D.polar(UP_RADIANS,1);
 
         //the most recent bullet that has been fired
@@ -106,7 +104,7 @@ public abstract class Ship extends GameObject {
 
     }
 
-    public void revive(Vector2D p, Vector2D v, Vector2D d){
+    public Ship revive(Vector2D p, Vector2D v, Vector2D d){
         super.revive(p,v);
         this.direction = d;
         lastBullet = null;
@@ -117,12 +115,14 @@ public abstract class Ship extends GameObject {
         bulletVelocity = null;
         fired = false;
         intangible = true;
+        return this;
     }
 
-    public void revive() {
+    public Ship revive() {
         revive(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
                 Vector2D.polar((Math.random() * Math.PI * 2), Math.random() * MAX_SPEED),
                 Vector2D.polar((Math.random() * Math.PI * 2),1));
+        return this;
 
     }
 
@@ -218,11 +218,10 @@ public abstract class Ship extends GameObject {
     public void draw(Graphics2D g){
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
-        //drawLineToPlayer(g);
+
         double rot = direction.angle() + Math.PI / 2;
         g.rotate(rot);
 
-        //drawDetails(g);
 
 
         if (thrusting) {
@@ -233,16 +232,15 @@ public abstract class Ship extends GameObject {
         Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
-        //g.setPaint(new TexturePaint(texture,this.areaRectangle));
+
         paintTheArea(g);
     }
 
 
-    protected void drawLineToPlayer(Graphics2D g){
-    }
+
 
     //casually using the definedRect, not the bounding box, to render the texturepaint psuedo-sprite correctly
-    //(le lack of an image editor with transparency has arrived
+    //(le lack of an image editor with transparency has arrived)
     @Override
     protected void paintTheArea(Graphics2D g){
         g.setPaint(new TexturePaint(texture,definedRect));

@@ -48,13 +48,15 @@ public abstract class GenericAsteroid extends GameObject {
         setShared();
     }
 
-    public void revive(){
+    public GenericAsteroid revive(){
         revive(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT));
+        return this;
     }
 
-    public void revive(Vector2D p){
+    public GenericAsteroid revive(Vector2D p){
         super.revive(p,Vector2D.polar(Math.random() * 2 * PI, Math.random() * MAX_SPEED));
         setShared();
+        return this;
     }
 
     @Override

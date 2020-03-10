@@ -29,10 +29,10 @@ public class PlayerShip extends Ship {
 
 
 
-    public PlayerShip(Controller ctrl, Game game) {
+    public PlayerShip(Controller ctrl) {
         //super(new Vector2D(0,0),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
 
-        super(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1), ctrl, game);
+        super(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1), ctrl);
 
         //super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
 
@@ -80,13 +80,14 @@ public class PlayerShip extends Ship {
 
 
     @Override
-    public void revive() {
+    public PlayerShip revive() {
         super.revive(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(GameObject.UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1));
         gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
         objectColour = SHIP_COLOUR;
         texture = (BufferedImage)Constants.SHIP;
         BULLET_DELAY = 250;
         warpDistance = 200;
+        return this;
     }
 
     /*
@@ -134,7 +135,7 @@ public class PlayerShip extends Ship {
     @Override
     protected void notIntangible(){
         super.notIntangible();
-        System.out.println("no more godmode for u"); //debug message
+        //System.out.println("no more godmode for u"); //debug message
         this.objectColour = SHIP_COLOUR; //goes back to normal colour
     }
 

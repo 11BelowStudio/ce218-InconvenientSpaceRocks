@@ -1,11 +1,9 @@
 package game;
 
-import utilities.PolygonUtilities;
 import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 
 public class Bomb extends GameObject {
@@ -29,12 +27,13 @@ public class Bomb extends GameObject {
     }
 
     @Override
-    public void revive(Vector2D p, Vector2D v) {
+    public Bomb revive(Vector2D p, Vector2D v) {
         super.revive(p, v);
         scaling = RADIUS*2;
         //this.objectPolygon = PolygonUtilities.prettyMuchACircle(hitboxX, hitboxY, scaling);
         timeToLive = 40;
         objectColour = new Color(255,255,0,128);
+        return this;
     }
 
     @Override
