@@ -15,8 +15,8 @@ public class PlayerController extends KeyAdapter implements Controller {
     }
 
     public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
         action.theAnyButton = true;
+        int key = e.getKeyCode();
         switch (key) {
             case KeyEvent.VK_UP:
                 action.thrust = 1;
@@ -36,13 +36,16 @@ public class PlayerController extends KeyAdapter implements Controller {
             case KeyEvent.VK_B:
                 action.bomb = true;
                 break;
+            case KeyEvent.VK_P:
+                action.p = true;
+                break;
         }
     }
 
     public void keyReleased(KeyEvent e) {
         //these are all off when the key is released
-        int key = e.getKeyCode();
         action.theAnyButton = false;
+        int key = e.getKeyCode();
         switch (key) {
             case KeyEvent.VK_UP:
                 action.thrust = 0;
@@ -59,6 +62,9 @@ public class PlayerController extends KeyAdapter implements Controller {
                 break;
             case KeyEvent.VK_B:
                 action.bomb = false;
+                break;
+            case KeyEvent.VK_P:
+                action.p = false;
                 break;
         }
     }

@@ -18,6 +18,13 @@ public class EnemyPlayer implements Controller{
     private boolean canAct;
     private Vector2D targetPosition;
 
+    public EnemyPlayer(Game g, EnemyShip e){
+        this(g);
+        enemyShip = e;
+        alive = true;
+        playerType = (int)(Math.random() * 5);
+    }
+
     public EnemyPlayer(Game g){
         game = g;
         alive = false;
@@ -27,10 +34,13 @@ public class EnemyPlayer implements Controller{
         nextActionIn();
     }
 
+    public void setEnemyShip(EnemyShip e){
+        enemyShip = e;
+    }
 
-    public void newEnemy(EnemyShip s){
+
+    public void revive(){
     //public void newEnemy(){
-        enemyShip = s;
         alive = true;
         playerType = (int)(Math.random() * 5);
         System.out.println("Enemy "+ playerType);

@@ -22,9 +22,9 @@ public class View extends JComponent {
 
     private final Image defaultBG = DEFAULT_VIEW;
 
-    private Image urDed;
+    //private Image urDed;
 
-    private AffineTransform urDedTransform;
+    //private AffineTransform urDedTransform;
 
     //private final Image defaultBG = TITLE;
 
@@ -73,34 +73,14 @@ public class View extends JComponent {
         //gameInfo = new InfoPanel();
         //this.add(gameInfo,BorderLayout.NORTH);
 
-        urDed = YOU_ARE_DED;
+        //urDed = YOU_ARE_DED;
 
-        urDedTransform = new AffineTransform(1,0,0,1,HALF_WIDTH,HALF_HEIGHT);
+        //urDedTransform = new AffineTransform(1,0,0,1,HALF_WIDTH-128,HALF_HEIGHT-32);
 
 
 
         hideGame();
-        /*
 
-        bg = defaultBG;
-
-        displayingGame = false;
-
-
-        double imWidth = bg.getWidth(null);
-        double imHeight = bg.getHeight(null);
-        double stretchx = (imWidth > Constants.FRAME_WIDTH? 1 :
-                Constants.FRAME_WIDTH/imWidth);
-        double stretchy = (imHeight > Constants.FRAME_HEIGHT? 1 :
-                Constants.FRAME_HEIGHT/imHeight);
-        bgTransform = new AffineTransform();
-        bgTransform.scale(stretchx, stretchy);
-        */
-
-
-        scoreString = new AttributeString<>("Score: ",0);
-        levelString = new AttributeString<>("Level: ",0);
-        livesString = new AttributeString<>("Lives: ",0);
 
 
         //tempx = 0;
@@ -113,9 +93,6 @@ public class View extends JComponent {
     public void showGame(Game game){
         replaceBackground(true);
         this.game = game;
-        scoreString.showValue(0);
-        levelString.showValue(0);
-        livesString.showValue(0);
     }
 
     public void setPreferredDimension(Dimension d){
@@ -148,99 +125,31 @@ public class View extends JComponent {
 
     }
 
-
-    void updateScore(int newScore){
-        scoreString.showValue(newScore);
-    }
-
-    void updateLevel(int newLevel){
-        levelString.showValue(newLevel);
-    }
-
-    void updateLives(int newLives){
-        livesString.showValue(newLives);
-    }
-
-    void updateAll(int newScore, int newLevel, int newLives){
-        updateScore(newScore);
-        updateLevel(newLevel);
-        updateLives(newLives);
-    }
-
-
     @Override
     public void paintComponent(Graphics g0) {
         Graphics2D g = (Graphics2D) g0;
-
-        //AffineTransform backup1 = g.getTransform();
-
-        //g.translate(tempx--,tempy--);
-
-
         AffineTransform initialTransform = g.getTransform();
 
-
-        // paint the background
         g.setColor(BG_COLOR);
         g.fill(this.getBounds());
-        //Rectangle background = new Rectangle(0, 0, getWidth(), getHeight());
-        //g.setPaint(new TexturePaint(spehss,background));
-        //g.fill(background);
-        //bgTransform.translate(-1,-1);
         g.drawImage(bg, bgTransform,null);
 
         g.scale(xScale,yScale);
-        //g.setTransform(backup1);
-        //g.setTransform(bgTransform);
+        AffineTransform backup = g.getTransform();
         if (displayingGame) {
-            g.setColor(Color.white);
-            int eighthWidth = getWidth() / 8;
-
-            //g.fillRect(-1000,-1000,2000,2000);
-
-            AffineTransform backup = g.getTransform();
-
-
             synchronized (Game.class) {
-
-
                 for (GameObject o : game.gameObjects) {
                     o.draw(g);
-                    //o.drawBoundingRect(g);
                     //basically calls the draw method of each gameObject
                 }
-                //}
+
+                for (GameObject o: game.hudObjects){
+                    o.draw(g);
+                    //and also the HUD
+                }
             }
-
-            g.setTransform(backup);
-            //game.ship.draw(g);
-            g.setColor(Color.white);
-            /*
-            gameInfo.updateAll(game.score,game.currentLevel,game.lives);
-            gameInfo.paint(g);
-            g.setColor(Color.white);
-            g.drawString(gameInfo.scoreLabel.getText(),(getWidth()/8),10);
-            g.drawString(gameInfo.levelLabel.getText(),3*(getWidth()/8),10);
-            g.drawString(gameInfo.livesLabel.getText(), 6*(getWidth()/8),10);
-             */
-
-            //g.scale(2,2);
-            updateAll(game.score, game.currentLevel, game.lives);
-            //int eighthWidth = getWidth()/8;
-            g.drawString(scoreString.toString(), eighthWidth, 10);
-            g.drawString(levelString.toString(), (int) (3.5 * eighthWidth), 10);
-            g.drawString(livesString.toString(), 6 * eighthWidth, 10);
-
-            //gameInfo.updateAll(game.score,game.currentLevel,game.lives);
-
-            if (game.gameOver) {
-                g.drawString("GAME OVER YEAH", (int) (3.5 * eighthWidth), getHeight() / 2);
-                g.drawImage(urDed,urDedTransform,null);
-            } else if (game.waitingToRespawn) {
-                g.drawString("press any key to respawn", (int) (3 * eighthWidth), getHeight() / 2);
-            }
-            g.setTransform(backup);
         }
+        g.setTransform(backup);
         g.setTransform(initialTransform);
         revalidate();
     }

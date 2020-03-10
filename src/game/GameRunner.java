@@ -36,12 +36,11 @@ public class GameRunner {
         frame.addKeyListener(ctrl);
 
         view = new View();
-        //frame.add(view, BorderLayout.CENTER);
         frame.addView(view);
 
         viewDimension = view.getPreferredSize();
 
-        game = new Game(ctrl, viewDimension);
+        game = new Game(ctrl);
 
         repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
@@ -68,7 +67,7 @@ public class GameRunner {
                 frame,
                 "press ok to start the blideo bame"
         );
-
+        int score;
         while (true) {
 
             /* TITLE SCREEN WILL GO HERE  */
@@ -78,7 +77,7 @@ public class GameRunner {
             );
             /* */
 
-            game = new Game(ctrl, viewDimension);
+            game = new Game(ctrl);
             //game = new Game();
             //this.addKeyListener(game.ctrl);
             view.showGame(game);
@@ -97,7 +96,9 @@ public class GameRunner {
 
             System.out.println("* game stopped *");
 
-            highScores.recordHighScore(game.score);
+            if ((score = game.getScore()) != -1){ //if this is -1, it's the intro cutscene, not the game
+                highScores.recordHighScore(score);
+            }
 
             repaintTimer.stop();
             //repaintTimer = null;

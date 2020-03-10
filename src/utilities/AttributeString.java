@@ -26,9 +26,11 @@ public class AttributeString<T>{
         updateText();
     }
 
-    public void showValue(T value){
+
+    public String showValue(T value){
         this.value = value;
         updateText();
+        return theString;
     }
     //updates the text on the label to show the new value, and updates the associated value attribute
 

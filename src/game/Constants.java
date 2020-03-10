@@ -56,18 +56,19 @@ public class Constants {
     public static final int MODEL_SPEED = 20;
     public static final long MODEL_DURATION = 20;
 
-    public static Image AN_TEXTURE, SPEHSS, SHIP, SPACE_ROCK, TITLE, DEFAULT_VIEW, YOU_ARE_DED;//ASTEROID1, MILKYWAY1;
+    public static Image AN_TEXTURE, SPEHSS, SHIP, SPACE_ROCK, TITLE, DEFAULT_VIEW, YOU_ARE_DED, ENEMY_SHIP;//ASTEROID1, MILKYWAY1;
     static {
         try {
             //ASTEROID1 = ImageManager.loadImage("asteroid1");
             //MILKYWAY1 = ImageManager.loadImage("milkyway1");
             AN_TEXTURE = ImageManager.loadImage("anTexture");
-            SPEHSS = ImageManager.loadImage("spehss");
-            SHIP = ImageManager.loadImage("shipV1");
+            SPEHSS = ImageManager.loadImage("spehss2");
+            SHIP = ImageManager.loadImage("shipV2");
             SPACE_ROCK = ImageManager.loadImage("inconvenientSpaceRockTM");
             TITLE = ImageManager.loadImage("titleImage");
             DEFAULT_VIEW = ImageManager.loadImage("defaultView");
             YOU_ARE_DED = ImageManager.loadImage("urdedlmao");
+            ENEMY_SHIP = ImageManager.loadImage("enemyShip");
         } catch (IOException e) { e.printStackTrace(); }
     }
 }

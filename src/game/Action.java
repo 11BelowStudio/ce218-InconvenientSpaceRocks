@@ -8,6 +8,9 @@ public class Action {
     public boolean warp;
     public boolean bomb;
 
+
+    public boolean p;
+
     public boolean escape;
 
     public void stopAll(){
@@ -17,18 +20,12 @@ public class Action {
         theAnyButton = false;
         warp = false;
         bomb = false;
+
+        p = false;
     }
 
     public boolean theAnyButton(){ return theAnyButton; }
 
     public Action(){}
 
-    public Action(boolean funTimes){
-        if (funTimes){
-            //thrust = 1;
-            //turn = 1;
-            //shoot = true;
-            //theAnyButton = true;
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package game;
 
 
+import utilities.AttributeString;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -9,12 +10,14 @@ import java.util.List;
 
 import static game.Constants.*;
 
-public class Game {
+public class Game extends Model  {
     public List<GameObject> gameObjects;
+
+    public List<GameObject> hudObjects;
 
     private GameLevels levelConfigs;
 
-    PlayerController ctrl;
+    //PlayerController ctrl;
     PlayerShip ship;
 
     EnemyShip enemy;
@@ -31,9 +34,8 @@ public class Game {
 
     boolean waitingToRespawn;
 
-    boolean gameOver;
 
-    private EnemyPlayer enemyPlayer;
+    //private EnemyPlayer enemyPlayer;
 
     int timeForEnemyToRespawn;
 
@@ -60,15 +62,33 @@ public class Game {
 
     private Stack<EnemyShip> enemyShips;
 
-    private List<EnemyShip> enemyList;
+    //private List<EnemyShip> enemyList;
+
+    private StringObject middleTextObject;
+
+
+    private AttributeString<Integer> scoreText;
+    private StringObject scoreTextObject;
+
+    private AttributeString<Integer> livesText;
+    private StringObject livesTextObject;
+
+    private AttributeString<Integer> levelText;
+    private StringObject levelTextObject;
 
 
     private int maxEnemies;
 
+    private int currentEnemies;
 
-    boolean endGame;
+    private boolean levelStarting;
 
-    public Game(PlayerController ctrl, Dimension d) {
+    private StringObject newAsteroidCount;
+
+    //boolean endGame;
+
+    public Game(PlayerController ctrl){
+        super(ctrl);
 
         SoundManager.stopMenu();
         SoundManager.startGame();
@@ -82,22 +102,22 @@ public class Game {
         newObjects = new Stack<>();
         //newObjects = new ArrayList<>();
 
-        levelConfigs = new GameLevels();
+        //levelConfigs = new GameLevels();
 
         asteroidStack = new Stack<>();
-        for (int i = 0; i < 120; i++) {
+        for (int i = 0; i < 150; i++) {
             asteroidStack.push(new Asteroid());
         }
         mediumAsteroidStack = new Stack<>();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 45; i++) {
             mediumAsteroidStack.push(new MediumAsteroid());
         }
         bigAsteroidStack = new Stack<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 15; i++) {
             bigAsteroidStack.push(new BigAsteroid());
         }
         playerBullets = new Stack<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             playerBullets.push(new PlayerBullet());
         }
         enemyBullets = new Stack<>();
@@ -105,18 +125,13 @@ public class Game {
             enemyBullets.push(new EnemyBullet());
         }
 
-        /*
-        enemyShips = new Stack<>();
-        for (int i = 0; i < 3; i++) {
-            //EnemyPlayer ep = new EnemyPlayer(this);
 
-            EnemyShip es = new EnemyShip(ep,this);
-            ep.newEnemy(es);
-            enemyShips.push(es);
+        enemyShips = new Stack<>();
+        for (int i = 0; i < 5; i++) {
+            EnemyShip e = new EnemyShip(this);
+            enemyShips.push(e);
         }
 
-        enemyList = new ArrayList<>();
-        */
         this.ctrl = ctrl;
         ship = new PlayerShip(this.ctrl,this);
         gameObjects.add(ship);
@@ -134,9 +149,13 @@ public class Game {
         waitingToRespawn = false;
         gameOver = false;
 
-        enemy = null;
+        /*
+        enemy = new EnemyShip(this);
+        enemy.ded();*/
+        //enemy.ded();
 
-        enemyPlayer = new EnemyPlayer(this);
+
+        //enemyPlayer = new EnemyPlayer(this);
 
         //enemy = new EnemyShip(enemyPlayer,this);
         //enemyPlayer.newEnemy(enemy);
@@ -145,12 +164,35 @@ public class Game {
 
         timeSinceLastAsteroidChange = 0;
 
+        maxEnemies = 1;
+        currentEnemies = 0;
+
         resetEnemySpawnTimer();
 
         endGame = false;
         /**/
 
-        maxEnemies = 3;
+        maxEnemies = 1;
+
+        hudObjects = new ArrayList<>();
+
+        hudObjects.add(middleTextObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),StringObject.MIDDLE_ALIGN));
+
+        hudObjects.add(newAsteroidCount = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(), StringObject.MIDDLE_ALIGN));
+
+        levelText = new AttributeString<>("Level: ",currentLevel);
+        scoreText = new AttributeString<>("Score: ",score);
+        livesText = new AttributeString<>("Lives: ",lives);
+
+
+        int eighthWidth = HALF_WIDTH/2;
+        hudObjects.add(levelTextObject = new StringObject(new Vector2D(eighthWidth,20), new Vector2D(),levelText,StringObject.RIGHT_ALIGN));
+
+        hudObjects.add(scoreTextObject = new StringObject(new Vector2D(HALF_WIDTH,20), new Vector2D(),scoreText,StringObject.MIDDLE_ALIGN));
+
+        hudObjects.add(livesTextObject = new StringObject(new Vector2D(3*eighthWidth,20), new Vector2D(),livesText,StringObject.LEFT_ALIGN));
+
+
 
 
         //setupLevel();
@@ -215,60 +257,75 @@ public class Game {
 
 
 
-    private ArrayList<GameObject> setupLevel(){
+    private ArrayList<GameObject> setupLevel(boolean ohNoes){
 
         SoundManager.play(SoundManager.intimidating);
+        //intimidation noises
 
-        ArrayList<GameObject> newObjects = new ArrayList<>();
+        levelTextObject.setText(levelText.showValue(currentLevel));
+        //updates the level text shown to player
 
-        ArrayList<Integer> thisLevel = levelConfigs.getLevelConfig(currentLevel);
+        ArrayList<GameObject> newAsteroids = new ArrayList<>();
+        //list of new asteroids
 
+        ArrayList<Integer> thisLevel;
+        //will store the configuration for this level
+
+        levelStarting = true;
+        if (ohNoes){
+        //if (true) {
+            thisLevel = GameLevels.ohHecc;
+            middleTextObject.setText("RIGHT THATS IT IMMA ASTEROID IN UR P");
+
+
+            levelTextObject.setText("Level: oh noes");
+
+            //maximum asteroids of all types.
+
+            //have fun.
+        } else{
+            thisLevel = GameLevels.getLevelConfig(currentLevel);
+            middleTextObject.setText("INCOMING");
+            //works out how many of each to spawn
+        }
+
+        //le midget asteroids have arrived
         for (int i = 0; i < thisLevel.get(0); i++) {
-            //asteroids.add(BasicAsteroid.makeRandomAsteroid());
-            //gameObjects.add(new Asteroid());
             if (asteroidStack.isEmpty()) {
                 break;
             } else{
                 Asteroid newAsteroid = asteroidStack.pop();
                 newAsteroid.revive();
-                newObjects.add(newAsteroid);
+                newAsteroids.add(newAsteroid);
             }
         }
 
         for (int i = 0; i < thisLevel.get(1); i++) {
-            //asteroids.add(BasicAsteroid.makeRandomAsteroid());
-            //gameObjects.add(new Asteroid());
             if (mediumAsteroidStack.isEmpty()){
                 break;
             } else {
                 MediumAsteroid newAsteroid = mediumAsteroidStack.pop();
                 newAsteroid.revive();
-                newObjects.add(newAsteroid);
+                newAsteroids.add(newAsteroid);
             }
         }
 
         for (int i = 0; i < thisLevel.get(2); i++) {
-            //asteroids.add(BasicAsteroid.makeRandomAsteroid());
-            //gameObjects.add(new Asteroid());
             if (bigAsteroidStack.isEmpty()) {
                 break;
             } else{
                 BigAsteroid newAsteroid = bigAsteroidStack.pop();
                 newAsteroid.revive();
-                newObjects.add(newAsteroid);
+                newAsteroids.add(newAsteroid);
             }
         }
 
-        maxEnemies += (currentLevel % 3);
+        if (currentLevel % 3 == 0){
+            maxEnemies++; //can have another enemy on screen at once every 3 levels
+        }
 
-        Collections.shuffle(newObjects);
-
-        /*
-        enemy = new EnemyShip(enemyPlayer,this);
-        enemyPlayer.newEnemy(enemy);
-        newObjects.add(enemy);
-        */
-        return newObjects;
+        Collections.shuffle(newAsteroids);
+        return newAsteroids;
 
     }
 
@@ -281,33 +338,18 @@ public class Game {
 
         boolean shipJustAdded = false;
 
-        boolean enemyExists = (enemy != null);
-
-        if (waitingToRespawn){
-            //if waiting for the player to respawn
-            if (ctrl.action.theAnyButton()) {
-                waitingToRespawn = false;
-                alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
-                ctrl.stopAll();
-                shipJustAdded = true;
-                //creates a new ship if the player can respawn and the player presses any button
-            }
-        }  else if (!enemyExists) {
-            //if (Math.random() < 0.125) {
-                if (timeForEnemyToRespawn <= 0) {
-                    enemy = new EnemyShip(enemyPlayer, this);
-                    moveObjectAwayFromShip(enemy);
-                    enemyPlayer.newEnemy(enemy);
-                    alive.add(enemy);
-                    //newObjects.add(enemy);
-                    resetEnemySpawnTimer();
-                    //enemyExists = true;
-                } else{
-                    timeForEnemyToRespawn--;
-                    System.out.println(timeForEnemyToRespawn);
-                }
-            //}
+        if (waitingToRespawn && ctrl.action.theAnyButton()) {
+            middleTextObject.setText("");
+            waitingToRespawn = false;
+            alive.add(ship = new PlayerShip(ctrl, this, ship.direction));
+            ctrl.stopAll();
+            shipJustAdded = true;
+            //creates a new ship if the player can respawn and the player presses any button
         }
+
+        //boolean enemyExists = false;
+
+
 
         boolean asteroidsRemaining = false;
         //
@@ -316,8 +358,6 @@ public class Game {
         //    and set ship bullet field to null
         // 3. clear list of game objects
         // 4. add all elements from the alive list to the list of game objects
-        ///
-        //List<MediumAsteroid> genericLargerAsteroids = new ArrayList<>();
 
         for (GameObject g : gameObjects) {
             //updating everything basically
@@ -325,12 +365,29 @@ public class Game {
             g.update();
         }
 
+
+
         //doing collision handling and dealing with the results of the collision handling
         for (int i = 0; i < gameObjects.size(); i++) {
             GameObject temp = gameObjects.get(i);
             boolean isPlayer = isPlayer(temp);
             boolean isEnemy = isEnemy(temp);
             boolean isAsteroid = isAsteroid(temp);
+
+            if (!asteroidsRemaining && isAsteroid){
+                asteroidsRemaining = true;
+            }
+
+
+            if (temp instanceof EnemyShip){
+                if (((EnemyShip) temp).fired && !enemyBullets.isEmpty()){
+                    EnemyBullet b = enemyBullets.pop();
+                    b.revive(((EnemyShip) temp).bulletLocation, ((EnemyShip) temp).bulletVelocity);
+                    alive.add(b);
+                    SoundManager.fire();
+                    ((EnemyShip) temp).fired = false;
+                }
+            }
 
             if(shipJustAdded && (isAsteroid || isEnemy)){
                 moveObjectAwayFromShip(temp); //will move objects away from the ship if it's just spawned in
@@ -345,7 +402,7 @@ public class Game {
                                 (isPlayer ^ isPlayer(temp2)) ||
                                 (isEnemy ^ isEnemy(temp2))
                         ) { //only need to bother handing collisions if both are different classes (^ operator is 'xor')
-                            //can't really do 'if (.class != .class)', as the GenericAsteroid superclass kinda messes with it
+                            //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
                             temp.collisionHandling(temp2);
                         }
                     }
@@ -368,31 +425,19 @@ public class Game {
                     } else if (temp instanceof MediumAsteroid){
                         mediumAsteroidStack.push((MediumAsteroid) temp);
                     } else{
+                        assert temp instanceof BigAsteroid;
                         bigAsteroidStack.push((BigAsteroid) temp);
                     }
                 } else if (temp instanceof Bullet){
                     if (temp instanceof PlayerBullet){
                         playerBullets.push((PlayerBullet)temp);
                     } else if (temp instanceof EnemyBullet){
-                        //assert temp instanceof EnemyBullet;
                         enemyBullets.push((EnemyBullet)temp);
                     }
-                } else if (isEnemy){
-                    EnemyShip e = (EnemyShip) temp;
-                    e.getPlayer().ded();
-                    enemy = null;
-                    /*
-                    enemyShips.push(e);
-                    enemyList.remove(e);
-                     */
                 }
-
             } else{
                 //alive objects added to the alive list
                 alive.add(temp);
-                if (!asteroidsRemaining && isAsteroid){
-                    asteroidsRemaining = true;
-                }
             }
 
 
@@ -413,13 +458,39 @@ public class Game {
 
         }
 
+        if (currentEnemies < maxEnemies && !enemyShips.isEmpty()) {
+            //if (Math.random() < 0.125) {
+            if (timeForEnemyToRespawn <= 0) {
+                //enemy = new EnemyShip(enemyPlayer, this);
+                //enemy = new EnemyShip(this);
+                EnemyShip e = enemyShips.pop();
+                e.revive();
+                moveObjectAwayFromShip(e);
+                //enemyPlayer.newEnemy(enemy);
+                alive.add(e);
+                //newObjects.add(enemy);
+                resetEnemySpawnTimer();
+                //enemyExists = true;
+                currentEnemies++;
+            } else {
+                timeForEnemyToRespawn--;
+                System.out.println(timeForEnemyToRespawn);
+            }
+        }
+            //}
+
 
 
         boolean playerHit = false; //recording if the player was hit or not
 
+        boolean livesChanged = false;
+
+        boolean scoreChanged = false;
+
         for (GameObject g: dead){
             //working out if something is dead because the player hit it or not
             if (g.playerHit){
+                scoreChanged = true;
                 //player earns points if they hit the thing which is now dead
                 int points = g.pointValue;
                 if (g.bombHit){
@@ -433,6 +504,7 @@ public class Game {
                     lives++; //lives incremented
                     pointsToEarnLife += LIFE_COST; //need to earn another LIFE_COST points to earn a new life
                     //points above the threshold effectively roll over
+                    livesChanged = true;
                 }
                 ship.giveImmunity();
                 //also given some temporary immunity for free,
@@ -443,12 +515,13 @@ public class Game {
                 System.out.println("ur ded lol");
                 lives--;
                 playerHit = true;
+                livesChanged = true;
 
             }  else if (g instanceof EnemyShip){
-                enemy = null;
-                //((EnemyShip) g).getPlayer().ded();
-                enemyExists = false;
-                enemyPlayer.ded();
+
+                ((EnemyShip) g).ded();
+                enemyShips.push(((EnemyShip) g));
+                currentEnemies--;
                 //no enemy if the enemy got hit
             } else if (isAsteroid(g)){
                 if (g instanceof MediumAsteroid) {
@@ -476,12 +549,22 @@ public class Game {
             }
 
         }
+        if (scoreChanged){
+            scoreTextObject.setText(scoreText.showValue(score));
+        }
+        if (livesChanged){
+            livesTextObject.setText(livesText.showValue(lives));
+        }
         if (playerHit){
+            levelStarting = false;
+            ctrl.stopAll();
             if (lives > 0) {
                 waitingToRespawn = true;
                 SoundManager.play(SoundManager.ohno);
+                middleTextObject.setText("PRESS THE ANY BUTTON TO RESPAWN");
             } else{
                 System.out.println("GAME OVER YEAH!");
+                middleTextObject.setText("GAME OVER!");
                 SoundManager.play(SoundManager.andYouFailed);
                 gameOver = true;
             }
@@ -508,6 +591,7 @@ public class Game {
                     //}
                 //}
             }*/
+            /*
             if (enemyExists){
             //if (!enemyList.isEmpty()){
             //for (EnemyShip e: enemyList) {
@@ -519,7 +603,7 @@ public class Game {
                     SoundManager.fire();
                     enemy.fired = false;
                 }
-            }
+            }*/
             //}
             //}
 
@@ -592,11 +676,16 @@ public class Game {
             }*/
 
             if (newObjects.isEmpty()) {
+                if (levelStarting){
+                    middleTextObject.setText("");
+                    newAsteroidCount.setText("");
+                    levelStarting = false;
+                }
                 if (!asteroidsRemaining && !gameOver) {
                     //if no asteroids remain, and the player isn't currently dead, the level is done
                     currentLevel++;
                     //moves forward a level
-                    newObjects.addAll(setupLevel());
+                    newObjects.addAll(setupLevel(ctrl.action.p));
                     //adds the asteroids for the next level
                     ship.giveImmunity();
                     objectWait = 0;
@@ -604,7 +693,7 @@ public class Game {
                     //so they have some time to react to the new obstacles
                 }
             } else{
-                System.out.println(newObjects.size() + " new objects left");
+                //System.out.println(newObjects.size() + " new objects left");
                 /*
                 if (newObjects.peek().dead){
                     newObjects.pop();
@@ -615,6 +704,7 @@ public class Game {
                 moveObjectAwayFromShip(newObject);
                 alive.add(newObject);
                 objectWait = 10;
+                newAsteroidCount.setText(String.valueOf(newObjects.size()));
                 //}
                 //newObjects.clear();
 
@@ -671,6 +761,10 @@ public class Game {
 
     private boolean isAsteroid(GameObject o){
         return (o instanceof GenericAsteroid);
+    }
+
+    public int getScore(){
+        return score;
     }
 
 
