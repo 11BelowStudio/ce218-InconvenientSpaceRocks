@@ -1,6 +1,11 @@
 package game;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class LiterallyJustTheOpeningCreditsThing {
+
+    //TODO: replace this with something that reads from a file I guess
 
     static String[] openingCreditsThing = new String[]{
             "Like last thursday or something,",
@@ -312,5 +317,7 @@ public class LiterallyJustTheOpeningCreditsThing {
             "upvotes to the left",
             "edit: we did it, Reddit!"
     };
+
+    static ArrayList<String> openingArrayList = new ArrayList<>(Arrays.asList(openingCreditsThing));
 
 }

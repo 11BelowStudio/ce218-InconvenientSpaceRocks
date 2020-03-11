@@ -4,7 +4,7 @@ import utilities.Vector2D;
 
 import static game.Constants.*;
 
-public class EnemyPlayer implements Controller{
+public class EnemyController extends ControllerAdapter{
 
     private static final int MAX_POS_UPDATE_DELAY = 20;
 
@@ -13,7 +13,7 @@ public class EnemyPlayer implements Controller{
     private Model model;
     private EnemyShip enemyShip;
     private int playerType;
-    private Action action;
+    //private Action action;
     private int framesUntilUpdatingEnemyPosition;
     private int actionDelay;
     private boolean canAct;
@@ -24,7 +24,7 @@ public class EnemyPlayer implements Controller{
     private double angleDifference;
 
 
-    public EnemyPlayer(Model m){
+    public EnemyController(Model m){
         model = m;
         action = new Action();
         acted = true;
@@ -38,7 +38,7 @@ public class EnemyPlayer implements Controller{
 
 
     public void revive(){
-        playerType = (int)(Math.random() * 5);
+        playerType = (int)(Math.random() * 6);
         //System.out.println("Enemy "+ playerType);
         getTargetPosition();
         nextUpdateIn();
@@ -81,19 +81,28 @@ public class EnemyPlayer implements Controller{
         switch (playerType) {
             case 0:
                 rotateShootAction();
+                //enemy go spinny
                 break;
             case 1:
                 chaseShootAction();
+                //enemy goes aggro, chasing after player and shooting them
                 break;
             case 2:
                 aimShootAction();
+                //enemy just aims and shoots at the player, not much movement
                 break;
             case 3:
                 aimWarpAction();
+                //*teleports inside you* nothing personell kid
                 break;
             case 4:
+                noAction();
+                //am sleep
+                break;
+            case 5:
             default:
                 randomAction();
+                //the 'infinte monkeys' approach
                 break;
         }
         return action;
@@ -194,5 +203,11 @@ public class EnemyPlayer implements Controller{
         angleDifference = vectorBetween.angle(enemyShip.direction);
         return true;
     }
+
+    public void noAction(){
+        action.noAction();
+    }
+
+    public void noClick(){};
 
 }

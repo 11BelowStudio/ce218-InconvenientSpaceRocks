@@ -1,5 +1,6 @@
 package game;
 
+import utilities.HighScoreHandler;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -19,24 +20,32 @@ public class TitleScreen extends Model {
     private boolean readyToSpawnShip;
 
 
-    ArrayList<GameObject> aliveHUD;
+    private ArrayList<GameObject> scrollingTextToAdd;
 
 
-    boolean showingIntro;
-    boolean menuOnscreen;
-    boolean showingScores;
+    //private boolean showingIntro;
+    private boolean menuOnscreen;
+    //private boolean showingScores;
 
-    StringObject titleText;
-    StringObject subtitleText;
+    private boolean showScrollingText;
 
-    StringObject play;
+    private boolean setupScrollingText;
 
-    StringObject showScores;
+    private StringObject titleText;
+    private StringObject subtitleText;
 
-    TitleScreen(PlayerController ctrl){
-        super(ctrl);
+    private StringObject play;
 
-        aliveHUD = new ArrayList<>();
+    private StringObject showScores;
+
+    private boolean yeetHUD; //whether or not the HUD should be yote
+
+    TitleScreen(PlayerController ctrl, HighScoreHandler hs){
+        super(ctrl, hs);
+
+        //aliveHUD = new ArrayList<>();
+
+        scrollingTextToAdd = new ArrayList<>();
 
         for (int i = 0; i < 15; i++) {
             bigAsteroidStack.push(new BigAsteroid());
@@ -69,18 +78,28 @@ public class TitleScreen extends Model {
         showScores = new StringObject(new Vector2D(HALF_WIDTH,3*(HALF_HEIGHT/2)),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
         showScores.kill();
 
+        /*
         int distFromBottom = 30;
         for (String s: LiterallyJustTheOpeningCreditsThing.openingCreditsThing) {
-            hudObjects.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,25),s,StringObject.MIDDLE_ALIGN));
+            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,25),s,StringObject.MIDDLE_ALIGN));
             distFromBottom += 22;
-        }
+        }*/
+
+        //showingIntro = false;
+        //showingScores = false;
 
         readyToSpawnAsteroid = true;
         readyToSpawnShip = false;
 
-        showingIntro = true;
         menuOnscreen = false;
-        showingScores = false;
+
+        setupScrollingText = true;
+
+        showScrollingText = false;
+
+        yeetHUD = false;
+
+        createScrollingText(LiterallyJustTheOpeningCreditsThing.openingArrayList,30,25);
 
 
         /*
@@ -88,14 +107,49 @@ public class TitleScreen extends Model {
         smallAsteroidsToYeet = 0;*/
     }
 
+
+    public void revive(){
+        super.revive();
+
+        //aliveHUD.clear();
+        scrollingTextToAdd.clear();
+
+        for (int i = 0; i < 15; i++) {
+            bigAsteroidStack.push(new BigAsteroid());
+        }
+        for (int i = 0; i < 45; i++) {
+            mediumAsteroidStack.push(new MediumAsteroid());
+        }
+        for (int i = 0; i < 135; i++){
+            asteroidStack.push(new Asteroid());
+        }
+        for (int i = 0; i < 25; i++) {
+            enemyBullets.push(new EnemyBullet());
+        }
+        for (int i = 0; i < 5; i++) {
+            EnemyShip e = new EnemyShip(this);
+            enemyShips.push(e);
+        }
+
+        titleText.kill();
+        subtitleText.kill();
+        play.kill();
+        showScores.kill();
+
+        readyToSpawnAsteroid = true;
+        readyToSpawnShip = false;
+        menuOnscreen = false;
+        setupScrollingText = true;
+        showScrollingText = false;
+        yeetHUD = false;
+
+        createScrollingText(LiterallyJustTheOpeningCreditsThing.openingArrayList,30,25);
+
+        yeetHUD = false;
+    }
+
     @Override
     public void update() {
-
-
-        /*
-        mediumAsteroidsToYeet = 0;
-        smallAsteroidsToYeet = 0;*/
-
 
         for (GameObject g: gameObjects) {
             g.update();
@@ -142,7 +196,7 @@ public class TitleScreen extends Model {
                 }
 
                 if ((isAsteroid(g) ^ isAsteroid(g2)) ||
-                        (isEnemy(g) ^ isEnemy(g2))
+                        (isEnemyObject(g) ^ isEnemyObject(g2))
                 ) {
                     //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
                     // (^ operator is 'xor')
@@ -152,25 +206,24 @@ public class TitleScreen extends Model {
             }
 
             if (g instanceof EnemyShip){
-                if (((EnemyShip) g).fired && !enemyBullets.isEmpty()){
-                    EnemyBullet b = enemyBullets.pop();
-                    b.revive(((EnemyShip) g).bulletLocation, ((EnemyShip) g).bulletVelocity);
-                    alive.add(b);
-                    SoundManager.fire();
-                    ((EnemyShip) g).fired = false;
-                }
+                enemyFire((EnemyShip) g);
             }
 
         }
 
 
-        boolean yeetEverything = ((showingIntro || showingScores) && ctrl.action.theAnyButton);
+        //boolean yeetEverything = (  ((showingIntro || showingScores) && ctrl.theAnyButton()));
+
+        //yeetHUD = ((showScrollingText && ctrl.theAnyButton()) || (setupScrollingText ));
 
 
-        if (yeetEverything) {
+
+
+        if (yeetHUD) {
             for (GameObject h : hudObjects) {
                 h.kill();
             }
+            yeetHUD = false;
         } else{
             for (GameObject h : hudObjects) {
                 h.update();
@@ -182,23 +235,26 @@ public class TitleScreen extends Model {
 
 
         if (aliveHUD.isEmpty()){
-            if (menuOnscreen) {
-                /*
-                titleText.kill();
-                subtitleText.kill();
-                play.kill();
-                showScores.kill();*/
-                menuOnscreen = false;
-            } else {
-
-                showingScores = false;
-                showingIntro = false;
+            if (showScrollingText) {
+                //showingScores = false;
+                //showingIntro = false;
+                showScrollingText = false;
                 aliveHUD.add(titleText.revive());
                 aliveHUD.add(subtitleText.revive());
                 aliveHUD.add(play.revive());
                 aliveHUD.add(showScores.revive());
                 menuOnscreen = true;
+
+            } else if (setupScrollingText){
+                aliveHUD.addAll(scrollingTextToAdd);
+                menuOnscreen = false;
+                setupScrollingText = false;
+                //scrollingTextToAdd.clear();
+                showScrollingText = true;
+                ctrl.noAction();
             }
+        } else if (showScrollingText && ctrl.theAnyButton()){
+            yeetHUD = true;
         }
 
         for(GameObject g: dead){
@@ -236,6 +292,8 @@ public class TitleScreen extends Model {
             }
         }*/
 
+
+        /*
         synchronized (TitleScreen.class) {
             gameObjects.clear();
             gameObjects.addAll(alive);
@@ -246,21 +304,32 @@ public class TitleScreen extends Model {
             alive.clear();
             aliveHUD.clear();
             dead.clear();
+        } /* */
+
+        cleanLists();
+
+        if (ctrl.isClicked()){
+            clicked(ctrl.clickLocation());
+            //ctrl.noClick();
         }
 
     }
 
-    public boolean clicked(Point p){
+    protected void clicked(Point p){
+
         if (menuOnscreen) {
             if (play.isClicked(p)) {
-                gameOver = true;
-                endGame = true;
-                return false;
+                //menuOnscreen = false;
+                //gameOver = true;
+                //endGame = true;
+                endThis();
+
             } else if (showScores.isClicked(p)){
-                return true;
+                System.out.println("clicked showScores!");
+                yeetHUD = true;
+                showHighScores();
             }
         }
-        return false;
     }
 
     @Override
@@ -272,20 +341,43 @@ public class TitleScreen extends Model {
         return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
     }
 
-    public void showHighScores(ArrayList<String> scoresToShow){
-        titleText.kill();
-        subtitleText.kill();
-        play.kill();
-        showScores.kill();
-        menuOnscreen = false;
-        showingScores = true;
+    private void showHighScores(){
+        //titleText.kill();
+        //subtitleText.kill();
+        //play.kill();
+        //showScores.kill();
+        yeetHUD = true;
 
-        aliveHUD.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
+        //menuOnscreen = false;
+        showScrollingText = false;
+        //setupScrollingText = true;
+        //setupScores = true;
+        //showingScores = true;
 
+        scrollingTextToAdd.clear();
+
+        createScrollingText(highScores.longwindedLeaderboard(),60,100);
+
+        /*
         int distFromBottom = 60;
-        for (String s: scoresToShow) {
-            aliveHUD.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s,StringObject.MIDDLE_ALIGN));
+        for (String s: highScores.longwindedLeaderboard()) {
+            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s,StringObject.MIDDLE_ALIGN));
             distFromBottom += 22;
         }
+        setupScrollingText = true;*/
+
+        scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
+    }
+
+    private void createScrollingText(ArrayList<String> theText, int distFromBottom, double scrollSpeed){
+        scrollingTextToAdd.clear();
+        yeetHUD = true;
+        showScrollingText = false;
+        for (String s: theText){
+            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,scrollSpeed),s,StringObject.MIDDLE_ALIGN));
+            //distFromBottom += distBetweenLines;
+            distFromBottom += 22;
+        }
+        setupScrollingText =true;
     }
 }

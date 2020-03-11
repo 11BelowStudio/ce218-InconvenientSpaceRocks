@@ -18,6 +18,8 @@ public class View extends JComponent {
 
     private TitleScreen title;
 
+    //TODO: generify this so it works with a single 'Model' object, not a 'Game' and 'TitleScreen' object
+
     private Image bg;
 
     private final Image gameBG = SPEHSS;
@@ -152,7 +154,8 @@ public class View extends JComponent {
         g.scale(xScale,yScale);
         AffineTransform backup = g.getTransform();
         if (displayingGame) {
-            synchronized (Game.class) {
+            /* */
+            synchronized (Model.class) {
                 for (GameObject o : game.gameObjects) {
                     o.draw(g);
                     //basically calls the draw method of each gameObject
@@ -162,9 +165,22 @@ public class View extends JComponent {
                     //and also the HUD
                 }
             }
+            /*
+            synchronized (Model.class) {
+                for (GameObject o : game.gameObjects) {
+                    o.draw(g);
+                    //basically calls the draw method of each gameObject
+                }
+                for (GameObject o: game.hudObjects){
+                    o.draw(g);
+                    //and also the HUD
+                }
+            }
+            /* */
         } else if (displayingTitle){
-            synchronized (TitleScreen.class){
-                for (GameObject o : title.gameObjects) {
+            /* */
+            synchronized (Model.class) {
+                for (GameObject o :title.gameObjects) {
                     o.draw(g);
                     //basically calls the draw method of each gameObject
                 }
@@ -173,6 +189,18 @@ public class View extends JComponent {
                     //and also the HUD
                 }
             }
+            /*
+            synchronized (Model.class) {
+                for (GameObject o : game.gameObjects) {
+                    o.draw(g);
+                    //basically calls the draw method of each gameObject
+                }
+                for (GameObject o: game.hudObjects){
+                    o.draw(g);
+                    //and also the HUD
+                }
+            }
+            /* */
         }
         g.setTransform(backup);
         g.setTransform(initialTransform);

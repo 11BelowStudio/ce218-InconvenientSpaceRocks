@@ -1,5 +1,22 @@
 package game;
 
+import java.awt.*;
+
 public interface Controller {
-    public Action action();
+    Action action();
+
+    void noAction();
+
+    void revive();
+
+    void noClick();
+
+    void setEnemyShip(EnemyShip e);
+
+    boolean theAnyButton();
+
+    boolean isClicked();
+
+    Point clickLocation();
+
 }

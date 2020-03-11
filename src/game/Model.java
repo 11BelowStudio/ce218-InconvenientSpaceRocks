@@ -1,5 +1,6 @@
 package game;
 
+import utilities.HighScoreHandler;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -11,11 +12,13 @@ public abstract class Model {
 
 
     public List<GameObject> gameObjects;
-    public List<GameObject> hudObjects;
-
 
     protected List<GameObject> alive;
     protected List<GameObject> dead;
+
+
+    public List<GameObject> hudObjects;
+    protected List<GameObject> aliveHUD;
 
     protected Stack<Asteroid> asteroidStack;
     protected Stack<MediumAsteroid> mediumAsteroidStack;
@@ -24,58 +27,80 @@ public abstract class Model {
     protected Stack<EnemyShip> enemyShips;
     protected Stack<EnemyBullet> enemyBullets;
 
+    protected Stack<PlayerBullet> playerBullets;
+
     boolean endGame;
     boolean gameOver;
 
     PlayerController ctrl;
 
-    Model(PlayerController ctrl){
+    HighScoreHandler highScores;
+
+    Model(PlayerController ctrl, HighScoreHandler hs){
+
         this.ctrl = ctrl;
-        ctrl.stopAll();
+        ctrl.noAction();
+
+        this.highScores = hs;
+
         gameObjects = new ArrayList<>();
         hudObjects = new ArrayList<>();
+
+        alive = new ArrayList<>();
+        //list for objects that are still alive
+        dead = new ArrayList<>();
+        //list for objects that are now dead
+        aliveHUD = new ArrayList<>();
+        //list for HUD objects that are now dead
 
         asteroidStack = new Stack<>();
         mediumAsteroidStack = new Stack<>();
         bigAsteroidStack = new Stack<>();
 
         enemyShips = new Stack<>();
-
         enemyBullets = new Stack<>();
 
+        playerBullets = new Stack<>();
 
 
-
-        alive = new ArrayList<>();
-        //list for objects that are still alive
-
-        dead = new ArrayList<>();
-        //list for objects that are now dead
+        endGame = false;
+        gameOver = false;
     }
 
+    public void revive(){
+        ctrl.noAction();
+        gameObjects.clear();
+        hudObjects.clear();
 
-    public int getScore(){
-        return -1;
+        asteroidStack.clear();
+        mediumAsteroidStack.clear();
+
+        enemyShips.clear();
+        enemyBullets.clear();
+
+        playerBullets.clear();
+
+        alive.clear();
+        dead.clear();
+        aliveHUD.clear();
+
+        endGame = false;
+        gameOver = false;
     }
+
 
     public abstract void update();
 
-    public boolean clicked(Point p){return false;}
+    protected void clicked(Point p){}
 
 
     abstract Vector2D getShipPosition();
 
-    protected static boolean isPlayer(GameObject o){
-        return (o instanceof PlayerShip || o instanceof PlayerBullet || o instanceof Bomb);
-    }
+    protected static boolean isPlayerObject(GameObject o){ return (o instanceof PlayerShip || o instanceof PlayerBullet || o instanceof Bomb); }
 
-    protected static boolean isEnemy(GameObject o){
-        return (o instanceof EnemyShip || o instanceof  EnemyBullet);
-    }
+    protected static boolean isEnemyObject(GameObject o){ return (o instanceof EnemyShip || o instanceof  EnemyBullet); }
 
-    protected static boolean isAsteroid(GameObject o){
-        return (o instanceof GenericAsteroid);
-    }
+    protected static boolean isAsteroid(GameObject o){ return (o instanceof GenericAsteroid); }
 
     protected static boolean isGenericLargerAsteroid(GameObject o){ return (o instanceof GenericLargerAsteroid);}
 
@@ -102,6 +127,37 @@ public abstract class Model {
                 newAsteroid.revive(g.position);
                 alive.add(newAsteroid);
             }
+        }
+    }
+
+    protected void enemyFire(EnemyShip e){
+        if (e.fired && !enemyBullets.isEmpty()){
+            EnemyBullet b = enemyBullets.pop();
+            b.revive(e.bulletLocation, e.bulletVelocity);
+            alive.add(b);
+            SoundManager.fire();
+            e.fired = false;
+        }
+    }
+
+    protected void endThis(){
+        endGame = true;
+    }
+
+    protected void cleanLists(){
+        synchronized (Model.class){
+            gameObjects.clear();
+            gameObjects.addAll(alive);
+
+            gameObjects.clear();
+            gameObjects.addAll(alive);
+
+            hudObjects.clear();
+            hudObjects.addAll(aliveHUD);
+
+            alive.clear();
+            aliveHUD.clear();
+            dead.clear();
         }
     }
 }

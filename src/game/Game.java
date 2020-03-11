@@ -2,64 +2,55 @@ package game;
 
 
 import utilities.AttributeString;
+import utilities.HighScoreHandler;
 import utilities.Vector2D;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import static game.Constants.*;
 
 public class Game extends Model  {
-    //public List<GameObject> gameObjects;
-
-    //public List<GameObject> hudObjects;
-
-
-    //PlayerController ctrl;
-    PlayerShip ship;
+    private PlayerShip ship;
 
 
     int score;
 
     int lives;
 
-    private final int LIFE_COST = 100;
+    private static final int LIFE_COST = 100;
 
-    int pointsToEarnLife;
+    private int pointsToEarnLife;
 
     int currentLevel;
 
-    boolean waitingToRespawn;
+    private boolean waitingToRespawn;
 
+    private int timeForEnemyToRespawn;
 
-    //private EnemyPlayer enemyPlayer;
-
-    int timeForEnemyToRespawn;
-
-    int enemyRespawnChance;
-
-    //Stack<GameObject> newObjects;
     private Stack<GameObject> newObjects;
 
+    //private Stack<PlayerBullet> playerBullets;
 
 
-    private Stack<PlayerBullet> playerBullets;
+    //private StringObject middleTextObject;
+    private StringObject respawnPromptObject;
+    private StringObject newLevelObject;
+    private StringObject secretNewLevelObject;
+
+    //private StringObject newAsteroidCount;
+    private StringObject gameOverText;
+
+    private AttributeStringObject<Integer> newAsteroidCount;
 
 
-    //private List<EnemyShip> enemyList;
+    private AttributeStringObject<Integer> scoreDisplay;
 
-    private StringObject middleTextObject;
+    private AttributeStringObject<Integer> livesDisplay;
+
+    private AttributeStringObject<Integer> levelDisplay;
 
 
-    private AttributeString<Integer> scoreText;
-    private StringObject scoreTextObject;
 
-    private AttributeString<Integer> livesText;
-    private StringObject livesTextObject;
-
-    private AttributeString<Integer> levelText;
-    private StringObject levelTextObject;
 
 
     private int maxEnemies;
@@ -68,22 +59,17 @@ public class Game extends Model  {
 
     private boolean levelStarting;
 
-    private StringObject newAsteroidCount;
-
-    private StringObject gameOverText;
 
     private boolean spawnIt;
 
     //boolean endGame;
 
-    public Game(PlayerController ctrl){
-        super(ctrl);
+    //TODO: 'revive()' method. also work on the Bomb
 
-        //levelConfigs = new GameLevels();
-        //ctrl = new PlayerController();
-        //resetGame();
+    public Game(PlayerController ctrl, HighScoreHandler hs){
+        super(ctrl, hs);
 
-        ctrl.stopAll();
+        this.ctrl.noAction();
 
         //gameObjects = new ArrayList<>();
         newObjects = new Stack<>();
@@ -119,7 +105,7 @@ public class Game extends Model  {
             playerBullets.push(new PlayerBullet());
         }
 
-        this.ctrl = ctrl;
+
         ship = new PlayerShip(this.ctrl);
         //ship.revive();
 
@@ -132,8 +118,7 @@ public class Game extends Model  {
         pointsToEarnLife = LIFE_COST;
 
         currentLevel = 0;
-        //currentLevel = 8;
-        //currentLevel = 100;
+
 
         waitingToRespawn = false;
         gameOver = false;
@@ -152,34 +137,35 @@ public class Game extends Model  {
 
         resetEnemySpawnTimer();
 
-        endGame = false;
+        //endGame = false;
         /**/
 
         maxEnemies = 1;
 
-        hudObjects = new ArrayList<>();
+        //hudObjects = new ArrayList<>();
 
-        hudObjects.add(middleTextObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),StringObject.MIDDLE_ALIGN));
+        //hudObjects.add(middleTextObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),StringObject.MIDDLE_ALIGN));
 
-        hudObjects.add(newAsteroidCount = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(), StringObject.MIDDLE_ALIGN));
+        hudObjects.add(respawnPromptObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"PRESS THE ANY BUTTON TO RESPAWN!",StringObject.MIDDLE_ALIGN).killThis());
 
-        levelText = new AttributeString<>("Level: ",currentLevel);
-        scoreText = new AttributeString<>("Score: ",score);
-        livesText = new AttributeString<>("Lives: ",lives);
+        hudObjects.add(newLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"INCOMING!",StringObject.MIDDLE_ALIGN).killThis());
 
+        hudObjects.add(secretNewLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"right thats it imma asteroid in ur p",StringObject.MIDDLE_ALIGN).killThis());
 
         int eighthWidth = HALF_WIDTH/2;
-        hudObjects.add(levelTextObject = new StringObject(new Vector2D(eighthWidth,20), new Vector2D(),levelText,StringObject.RIGHT_ALIGN));
 
-        hudObjects.add(scoreTextObject = new StringObject(new Vector2D(HALF_WIDTH,20), new Vector2D(),scoreText,StringObject.MIDDLE_ALIGN));
+        hudObjects.add(levelDisplay = new AttributeStringObject<>(new Vector2D(eighthWidth,20), new Vector2D(),"Level: ",currentLevel,StringObject.RIGHT_ALIGN));
+        hudObjects.add(scoreDisplay = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,20), new Vector2D(),"Score: ",score,StringObject.MIDDLE_ALIGN));
+        hudObjects.add(livesDisplay = new AttributeStringObject<>(new Vector2D(3*eighthWidth,20), new Vector2D(),"Lives: ",lives,StringObject.LEFT_ALIGN));
 
-        hudObjects.add(livesTextObject = new StringObject(new Vector2D(3*eighthWidth,20), new Vector2D(),livesText,StringObject.LEFT_ALIGN));
+        hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).killThis());
 
 
         hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).killThis());
 
 
         spawnIt = false;
+
 
     }
 
@@ -189,7 +175,10 @@ public class Game extends Model  {
         SoundManager.play(SoundManager.intimidating);
         //intimidation noises
 
-        levelTextObject.setText(levelText.showValue(currentLevel));
+        //levelTextObject.setText(levelText.showValue(currentLevel));
+        levelDisplay.showValue(currentLevel);
+
+        //levelTextObject.showValue(currentLevel);
         //updates the level text shown to player
 
         ArrayList<GameObject> newAsteroids = new ArrayList<>();
@@ -201,14 +190,14 @@ public class Game extends Model  {
         levelStarting = true;
         if (ohNoes){
             thisLevel = GameLevels.ohHecc;
-            middleTextObject.setText("RIGHT THATS IT IMMA ASTEROID IN UR P");
+            //middleTextObject.setText("RIGHT THATS IT IMMA ASTEROID IN UR P");
 
-            levelTextObject.setText("Level: oh noes");
+            //levelTextObject.setText("Level: oh noes");
             //maximum asteroids of all types.
             //have fun.
         } else{
             thisLevel = GameLevels.getLevelConfig(currentLevel);
-            middleTextObject.setText("INCOMING");
+            //middleTextObject.setText("INCOMING");
             //works out how many of each to spawn
         }
 
@@ -264,11 +253,12 @@ public class Game extends Model  {
 
         boolean shipJustAdded = false;
 
-        if (waitingToRespawn && ctrl.action.theAnyButton()) {
-            middleTextObject.setText("");
+        if (waitingToRespawn && ctrl.theAnyButton()) {
+            //middleTextObject.setText("");
+            respawnPromptObject.kill();
             waitingToRespawn = false;
             alive.add(ship.reviveAndReturn());
-            ctrl.stopAll();
+            ctrl.noAction();
             shipJustAdded = true;
             //creates a new ship if the player can respawn and the player presses any button
         }
@@ -290,11 +280,21 @@ public class Game extends Model  {
 
             g.update();
 
+            boolean isAsteroid = isAsteroid(g);
+
+            if (!asteroidsRemaining){
+                if (isAsteroid){
+                    asteroidsRemaining = true;
+                }
+            }
+
             if (g.dead){
                 dead.add(g);
 
                 //if it's dead, it gets added back into the stack of stuff basically
-                if (g instanceof GenericAsteroid){
+
+
+                if (isAsteroid){
                     if (g instanceof Asteroid){
                         asteroidStack.push((Asteroid) g);
                     } else if (g instanceof MediumAsteroid){
@@ -316,28 +316,11 @@ public class Game extends Model  {
             } else{
                 alive.add(g);
 
-                boolean isEnemy = isEnemy(g);
-                boolean isAsteroid = isAsteroid(g);
+                boolean isEnemy = isEnemyObject(g);
 
 
                 if(shipJustAdded && (isAsteroid || isEnemy)){
                     moveObjectAwayFromShip(g); //will move objects away from the ship if it's just spawned in
-                }
-
-                if (!asteroidsRemaining){
-                    if (isAsteroid){
-                        asteroidsRemaining = true;
-                    }
-                }
-
-                if (g instanceof EnemyShip){
-                    if (((EnemyShip) g).fired && !enemyBullets.isEmpty()){
-                        EnemyBullet b = enemyBullets.pop();
-                        b.revive(((EnemyShip) g).bulletLocation, ((EnemyShip) g).bulletVelocity);
-                        alive.add(b);
-                        SoundManager.fire();
-                        ((EnemyShip) g).fired = false;
-                    }
                 }
             }
         }
@@ -361,14 +344,20 @@ public class Game extends Model  {
                 }
 
                 if ((isAsteroid(g) ^ isAsteroid(g2)) ||
-                        (isPlayer(g) ^ isPlayer(g2)) ||
-                        (isEnemy(g) ^ isEnemy(g2))
+                        (isPlayerObject(g) ^ isPlayerObject(g2)) ||
+                        (isEnemyObject(g) ^ isEnemyObject(g2))
                 ) {
                     //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
                     // (^ operator is 'xor')
-                    //can't really do 'if (.class != .class)', as the superclasses kinda mess around with it
+                    //can't really do 'if (.class != .class)' as the superclasses kinda mess around with it,
+                    //so yeah the Model class has some static methods for sorting that out
                     g.collisionHandling(g2);
                 }
+            }
+
+            if (g instanceof EnemyShip){
+                enemyFire((EnemyShip) g);
+                //enemy ships attempt to shoot (if they're presently deadn't). bullets dealt with next update.
             }
 
         }
@@ -425,11 +414,11 @@ public class Game extends Model  {
             }
             if (g instanceof PlayerShip){
                 //if the ship is here, the player is mcfricking dead
-                System.out.println("ur ded lol");
+                //System.out.println("ur ded lol");
                 lives--;
                 playerHit = true;
                 livesChanged = true;
-
+                //will handle the respawning/not respawning once all the destruction is sorted
             } else if (isGenericLargerAsteroid(g)) {
                 //spawning in the children of the destroyed asteroid
                 spawnChildren((GenericLargerAsteroid) g);
@@ -437,23 +426,35 @@ public class Game extends Model  {
 
         }
         if (scoreChanged){
-            scoreTextObject.setText(scoreText.showValue(score));
+
+            //scoreTextObject.setText(scoreText.showValue(score));
+            scoreDisplay.showValue(score);
+            //scoreTextObject.showValue(score);
         }
         if (livesChanged){
-            livesTextObject.setText(livesText.showValue(lives));
+            //livesTextObject.setText(livesText.showValue(lives));
+
+            livesDisplay.showValue(lives);
+
+            //livesTextObject.showValue(lives);
         }
         if (playerHit){
             //levelStarting = false;
-            ctrl.stopAll();
+            ctrl.noAction();
+            //newAsteroidCount.kill();
+            newLevelObject.kill();
+            secretNewLevelObject.kill();
             if (lives > 0) {
                 waitingToRespawn = true;
                 SoundManager.play(SoundManager.ohno);
-                middleTextObject.setText("PRESS THE ANY BUTTON TO RESPAWN");
+                //middleTextObject.setText("PRESS THE ANY BUTTON TO RESPAWN");
+                aliveHUD.add(respawnPromptObject.revive());
             } else{
                 System.out.println("GAME OVER YEAH!");
+                newAsteroidCount.kill();
                 //middleTextObject.setText("GAME OVER!");
-                middleTextObject.kill();
-                gameOverText.revive();
+                //middleTextObject.kill();
+                aliveHUD.add(gameOverText.revive());
                 SoundManager.play(SoundManager.andYouFailed);
                 gameOver = true;
             }
@@ -476,56 +477,87 @@ public class Game extends Model  {
                     ship.spawnBomb = false;
                 }
             }
-
-
         } else{
-            if (ctrl.action.theAnyButton){
-                endGame = true;
-            }
+            endThis();
         }
 
 
-            if (newObjects.isEmpty()) {
-                //if there are no more new objects to spawn for this level
-                if (levelStarting){
-                    //clears the text that appears when the level is starting if this text was still being displayed
-                    middleTextObject.setText("");
-                    newAsteroidCount.setText("");
-                    levelStarting = false;
-                }
-                if (!asteroidsRemaining && !gameOver) {
-                    //if no asteroids remain, and the player isn't currently dead, the level is done
-                    currentLevel++;
-                    //moves forward a level
-                    newObjects.addAll(setupLevel(ctrl.action.p));
-                    //adds the asteroids for the next level
-                    ship.giveImmunity();
-                    //gives the player some temporary immunity,
-                    //so they have some time to react to the new obstacles
-                }
-            } else{
-                //will be spawning the asteroids in
-                //tbh the only reason for the 1 update delay between adding asteroids is so you can see them coming
-                if (spawnIt) {
-                    //adds the top GameObject from newObjects to 'alive'
-                    GameObject newObject = newObjects.pop();
-                    moveObjectAwayFromShip(newObject);
-                    alive.add(newObject);
-                    spawnIt = false;
-                    newAsteroidCount.setText(String.valueOf(newObjects.size()));
-                } else{
-                    spawnIt = true;
-                }
-
+        if (newObjects.isEmpty()) {
+            //if there are no more new objects to spawn for this level
+            if (levelStarting){
+                //clears the text that appears when the level is starting if this text was still being displayed
+                //middleTextObject.setText("");
+                //newAsteroidCount.setText("");
+                newLevelObject.kill();
+                secretNewLevelObject.kill();
+                newAsteroidCount.kill();
+                levelStarting = false;
             }
+            if (!asteroidsRemaining && !gameOver) {
+                //if no asteroids remain, and the player isn't currently dead, the level is done
+                currentLevel++;
+                //moves forward a level
+                boolean secret = ctrl.action().p;
+                newObjects.addAll(setupLevel(secret));
+                //adds the asteroids for the next level
+
+                if (secret){
+                    aliveHUD.add(secretNewLevelObject.revive());
+                } else{
+                    aliveHUD.add(newLevelObject.revive());
+                }
+                newAsteroidCount.showValue(newObjects.size());
+                aliveHUD.add(newAsteroidCount.revive());
+                //revives and displays the appropriate new level text
+
+                ship.giveImmunity();
+                //gives the player some temporary immunity,
+                //so they have some time to react to the new obstacles
+            }
+        } else{
+            //will be spawning the asteroids in
+            //tbh the only reason for the 1 update delay between adding asteroids is so you can see them coming
+            if (spawnIt) {
+                //adds the top GameObject from newObjects to 'alive'
+                GameObject newObject = newObjects.pop();
+                moveObjectAwayFromShip(newObject);
+                alive.add(newObject);
+                spawnIt = false;
+                newAsteroidCount.showValue(newObjects.size());
+            } else{
+                spawnIt = true;
+            }
+
+        }
+
+
+        for (GameObject h : hudObjects) {
+            h.update();
+            if (!h.dead) {
+                aliveHUD.add(h);
+            }
+        }
 
 
         //}
 
+        cleanLists();
+
+        /*
         synchronized (Game.class) {
             gameObjects.clear();
             gameObjects.addAll(alive);
-        }
+
+            gameObjects.clear();
+            gameObjects.addAll(alive);
+
+            hudObjects.clear();
+            hudObjects.addAll(aliveHUD);
+
+            alive.clear();
+            aliveHUD.clear();
+            dead.clear();
+        } /* */
 
         //System.out.println("Lives: " + lives + "| Score: " + score);
     }
@@ -537,6 +569,15 @@ public class Game extends Model  {
         } else{
             return ship.position;
         }
+    }
+
+    @Override
+    protected void endThis() {
+        if (ctrl.theAnyButton()) {
+            highScores.recordHighScore(score);
+            endGame = true;
+        }
+
     }
 
     private void moveObjectAwayFromShip(GameObject o){
@@ -557,11 +598,7 @@ public class Game extends Model  {
         if (currentLevel < 100) {
             timeForEnemyToRespawn = 100 - currentLevel;
         }
-        timeForEnemyToRespawn +=  (int)(Math.random() * 100) + (int)(Math.random() * 100);
+        timeForEnemyToRespawn +=  (int)(Math.random() * 100) * (int)(Math.random() * 100);
     }
 
-
-    public int getScore(){
-        return score;
-    }
 }

@@ -20,10 +20,10 @@ public class StringObject extends GameObject {
     static final int LEFT_ALIGN = 0; static final int RIGHT_ALIGN = 1; static final int MIDDLE_ALIGN = 2;
 
 
-    boolean clicked;
-
-
     private Rectangle areaRectangle;
+
+
+    private AttributeString attributeString;
 
 
     static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
@@ -46,15 +46,7 @@ public class StringObject extends GameObject {
         setText(s);
     }
 
-    StringObject(Vector2D p, Vector2D v, AttributeString s, int a){
-        this(p,v,a);
-        setText(s.toString());
-    }
 
-    StringObject(Vector2D p, Vector2D v, AttributeString s){
-        this(p,v);
-        setText(s.toString());
-    }
 
     StringObject(Vector2D p, Vector2D v, int a){
         this(p,v);
@@ -70,6 +62,7 @@ public class StringObject extends GameObject {
         theFont = sans;
         areaRectangle = new Rectangle();
     }
+
 
     @Override
     public StringObject revive(Vector2D p, Vector2D v) {
@@ -89,21 +82,16 @@ public class StringObject extends GameObject {
     public String getString(){ return thisString; }
 
 
-    public void revive(String s){
+    public StringObject revive(String s){
         revive(new Vector2D(),new Vector2D());
         thisString = s;
+        return this;
     }
 
     public boolean isClicked(Point p){
-        if (areaRectangle.contains(p)){
-            clicked = true;
-        }
-        return clicked;
+        return ((!dead) && (areaRectangle.contains(p)));
     }
 
-    public void notClicked(){
-        clicked = false;
-    }
 
     @Override
     public void draw(Graphics2D g) {
@@ -135,10 +123,6 @@ public class StringObject extends GameObject {
 
     public void setText(String s){
         thisString = s;
-    }
-
-    public void setText(AttributeString as){
-        thisString = as.toString();
     }
 
 

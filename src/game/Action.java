@@ -10,26 +10,24 @@ public class Action {
     public boolean warp;
     public boolean bomb;
 
-    public boolean mousePressed;
+    public boolean clicked;
 
-    public Point mousePressLocation;
+    public Point clickLocation;
 
 
     public boolean p;
 
     public boolean escape;
 
-    public void stopAll(){
+    public void noAction(){
         thrust = 0;
         turn = 0;
         shoot = false;
         theAnyButton = false;
         warp = false;
         bomb = false;
-
         p = false;
-
-        mousePressed = false;
+        clicked = false;
     }
 
     public boolean theAnyButton(){ return theAnyButton; }

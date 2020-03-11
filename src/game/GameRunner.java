@@ -46,7 +46,9 @@ public class GameRunner {
 
         //game = new Game(ctrl);
 
-        title = new TitleScreen(ctrl);
+        title = new TitleScreen(ctrl, highScores);
+
+        view.showTitle(title);
 
         repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
@@ -113,9 +115,10 @@ public class GameRunner {
 
 
 
-            game = new Game(ctrl);
+            //game = new Game(ctrl, highScores);
 
-            title = new TitleScreen(ctrl);
+            //title = new TitleScreen(ctrl, highScores);
+            title.revive();
 
             //view.showGame(game);
 
@@ -139,7 +142,7 @@ public class GameRunner {
 
             System.out.println("* title stopped *");
 
-            game = new Game(ctrl);
+            game = new Game(ctrl,highScores);
 
             view.showGame(game);
 
@@ -150,16 +153,8 @@ public class GameRunner {
             runGame(game);
 
 
-            //Thread.sleep(DELAY);
-
             System.out.println("* game stopped *");
 
-            highScores.recordHighScore(game.getScore());
-
-            /*
-            if ((score = game.getScore()) != -1){ //if this is -1, it's the intro cutscene, not the game
-                highScores.recordHighScore(score);
-            }*/
 
             repaintTimer.stop();
             //repaintTimer = null;
@@ -195,11 +190,12 @@ public class GameRunner {
     private void runTitle(TitleScreen t) throws InterruptedException{
         SoundManager.startMenu();
         while (!t.endGame){
+            /*
             if (ctrl.action.mousePressed){
                 if (t.clicked(ctrl.action.mousePressLocation)){
                     t.showHighScores(highScores.longwindedLeaderboard());
                 }
-            }
+            }*/
             runLoop(t);
         }
         SoundManager.stopMenu();
