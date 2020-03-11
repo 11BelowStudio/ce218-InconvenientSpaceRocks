@@ -1,7 +1,5 @@
 package game;
 
-
-import utilities.AttributeString;
 import utilities.HighScoreHandler;
 import utilities.Vector2D;
 
@@ -10,18 +8,18 @@ import java.util.*;
 import static game.Constants.*;
 
 public class Game extends Model  {
+
     private PlayerShip ship;
 
+    private int score;
 
-    int score;
-
-    int lives;
+    private int lives;
 
     private static final int LIFE_COST = 100;
 
     private int pointsToEarnLife;
 
-    int currentLevel;
+    private int currentLevel;
 
     private boolean waitingToRespawn;
 
@@ -29,128 +27,90 @@ public class Game extends Model  {
 
     private Stack<GameObject> newObjects;
 
-    //private Stack<PlayerBullet> playerBullets;
+    private Stack<Bomb> bombStack;
 
-
-    //private StringObject middleTextObject;
     private StringObject respawnPromptObject;
     private StringObject newLevelObject;
     private StringObject secretNewLevelObject;
-
-    //private StringObject newAsteroidCount;
     private StringObject gameOverText;
 
     private AttributeStringObject<Integer> newAsteroidCount;
 
-
     private AttributeStringObject<Integer> scoreDisplay;
-
     private AttributeStringObject<Integer> livesDisplay;
-
     private AttributeStringObject<Integer> levelDisplay;
 
+    private AttributeStringObject<Integer> bombStatus;
 
-
-
+    private int bombCooldown;
 
     private int maxEnemies;
-
     private int currentEnemies;
 
     private boolean levelStarting;
 
-
     private boolean spawnIt;
 
-    //boolean endGame;
-
-    //TODO: 'revive()' method. also work on the Bomb
 
     public Game(PlayerController ctrl, HighScoreHandler hs){
         super(ctrl, hs);
 
-        this.ctrl.noAction();
+        ///this.ctrl.noAction();
 
-        //gameObjects = new ArrayList<>();
         newObjects = new Stack<>();
-        //newObjects = new ArrayList<>();
 
-        //levelConfigs = new GameLevels();
-
-        //asteroidStack = new Stack<>();
+        //filling the stacks of predefined objects
         for (int i = 0; i < 150; i++) {
             asteroidStack.push(new Asteroid());
         }
-        //mediumAsteroidStack = new Stack<>();
         for (int i = 0; i < 45; i++) {
             mediumAsteroidStack.push(new MediumAsteroid());
         }
-        //bigAsteroidStack = new Stack<>();
         for (int i = 0; i < 15; i++) {
             bigAsteroidStack.push(new BigAsteroid());
         }
-
         for (int i = 0; i < 15; i++) {
             enemyBullets.push(new EnemyBullet());
         }
-
         for (int i = 0; i < 5; i++) {
             EnemyShip e = new EnemyShip(this);
             enemyShips.push(e);
         }
 
 
+        //player is not present in the intro, so player bullet stack and the player ship are only in here
         playerBullets = new Stack<>();
         for (int i = 0; i < 4; i++) {
             playerBullets.push(new PlayerBullet());
         }
 
+        bombStack = new Stack<>();
+        bombStack.push(new Bomb());
+
 
         ship = new PlayerShip(this.ctrl);
-        //ship.revive();
-
         gameObjects.add(ship.reviveAndReturn());
 
         score = 0;
-
         lives = 3;
-
         pointsToEarnLife = LIFE_COST;
-
         currentLevel = 0;
-
-
         waitingToRespawn = false;
-        gameOver = false;
-
-
-        //enemyPlayer = new EnemyPlayer(this);
-
-        //enemy = new EnemyShip(enemyPlayer,this);
-        //enemyPlayer.newEnemy(enemy);
-
-
-
-
         maxEnemies = 1;
         currentEnemies = 0;
 
         resetEnemySpawnTimer();
-
-        //endGame = false;
-        /**/
-
         maxEnemies = 1;
 
-        //hudObjects = new ArrayList<>();
 
-        //hudObjects.add(middleTextObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),StringObject.MIDDLE_ALIGN));
+        hudObjects.add(respawnPromptObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"PRESS THE ANY BUTTON TO RESPAWN!",StringObject.MIDDLE_ALIGN).kill());
 
-        hudObjects.add(respawnPromptObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"PRESS THE ANY BUTTON TO RESPAWN!",StringObject.MIDDLE_ALIGN).killThis());
+        hudObjects.add(newLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"INCOMING!",StringObject.MIDDLE_ALIGN).kill());
 
-        hudObjects.add(newLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"INCOMING!",StringObject.MIDDLE_ALIGN).killThis());
+        hudObjects.add(secretNewLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"right thats it imma asteroid in ur p",StringObject.MIDDLE_ALIGN).kill());
 
-        hudObjects.add(secretNewLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"right thats it imma asteroid in ur p",StringObject.MIDDLE_ALIGN).killThis());
+        hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).kill());
+        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
 
         int eighthWidth = HALF_WIDTH/2;
 
@@ -158,13 +118,78 @@ public class Game extends Model  {
         hudObjects.add(scoreDisplay = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,20), new Vector2D(),"Score: ",score,StringObject.MIDDLE_ALIGN));
         hudObjects.add(livesDisplay = new AttributeStringObject<>(new Vector2D(3*eighthWidth,20), new Vector2D(),"Lives: ",lives,StringObject.LEFT_ALIGN));
 
-        hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).killThis());
+        hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).kill());
 
 
-        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).killThis());
+        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
 
+
+        /*
+        TODO:
+            * Some sort of display to show bomb usability
+            * Method of earning bombs (1 bomb per level, max of 3 in storage? (keeping limit of 1 active at one time ofc))
+            * Exploding bombs lethal to player, bombs on timer do not interact with player
+        */
+
+
+    }
+
+    public void revive(){
+        super.revive();
+
+        newObjects.clear();
+        playerBullets.clear();
+        bombStack.clear();
+
+
+        for (int i = 0; i < 150; i++) {
+            asteroidStack.push(new Asteroid());
+        }
+        for (int i = 0; i < 45; i++) {
+            mediumAsteroidStack.push(new MediumAsteroid());
+        }
+        for (int i = 0; i < 15; i++) {
+            bigAsteroidStack.push(new BigAsteroid());
+        }
+        for (int i = 0; i < 15; i++) {
+            enemyBullets.push(new EnemyBullet());
+        }
+        for (int i = 0; i < 5; i++) {
+            EnemyShip e = new EnemyShip(this);
+            enemyShips.push(e);
+        }
+        for (int i = 0; i < 4; i++) {
+            playerBullets.push(new PlayerBullet());
+        }
+
+        bombStack.push(new Bomb());
+
+        gameObjects.add(ship.reviveAndReturn());
+
+        score = 0;
+        lives = 3;
+        pointsToEarnLife = LIFE_COST;
+        currentLevel = 0;
+        waitingToRespawn = false;
+        maxEnemies = 1;
+        currentEnemies = 0;
+
+        resetEnemySpawnTimer();
+        maxEnemies = 1;
+
+        respawnPromptObject.kill();
+        newLevelObject.kill();
+        secretNewLevelObject.kill();
+
+        newAsteroidCount.kill();
+        gameOverText.kill();
+
+        hudObjects.add(levelDisplay.showValue(currentLevel));
+        hudObjects.add(livesDisplay.showValue(lives));
+        hudObjects.add(scoreDisplay.showValue(score));
 
         spawnIt = false;
+
 
 
     }
@@ -312,6 +337,8 @@ public class Game extends Model  {
                 } else if (g instanceof EnemyShip) {
                     enemyShips.push(((EnemyShip) g));
                     currentEnemies--;
+                } else if (g instanceof Bomb){
+                    bombStack.push((Bomb)g);
                 }
             } else{
                 alive.add(g);
@@ -471,9 +498,10 @@ public class Game extends Model  {
                     SoundManager.fire();
                     ship.fired = false;
                 }
-                if (ship.spawnBomb){
-                    Bomb b = new Bomb(ship.bombLocation);
-                    alive.add(b);
+                if (ship.spawnBomb && !bombStack.isEmpty()){
+                    //Bomb b = new Bomb(ship.bombLocation);
+                    //Bomb b = bombStack.pop().revive(ship.bombLocation,ship.bombLocation);
+                    alive.add(bombStack.pop().revive(ship.bombPosition,ship.bombVelocity));
                     ship.spawnBomb = false;
                 }
             }
@@ -564,8 +592,8 @@ public class Game extends Model  {
 
     @Override
     Vector2D getShipPosition(){
-        if (ship.dead && !gameOver){
-            return new Vector2D(Math.random() * FRAME_WIDTH,Math.random() * FRAME_HEIGHT);
+        if (ship.dead){
+            return super.getShipPosition();
         } else{
             return ship.position;
         }

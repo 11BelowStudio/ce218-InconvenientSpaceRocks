@@ -319,55 +319,25 @@ public class TitleScreen extends Model {
 
         if (menuOnscreen) {
             if (play.isClicked(p)) {
-                //menuOnscreen = false;
-                //gameOver = true;
-                //endGame = true;
                 endThis();
-
             } else if (showScores.isClicked(p)){
-                System.out.println("clicked showScores!");
                 yeetHUD = true;
-                showHighScores();
+                showScrollingText = false;
+                scrollingTextToAdd.clear();
+                createScrollingText(highScores.longwindedLeaderboard(),60,100);
+                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
             }
         }
     }
 
-    @Override
+    /*@Override
     Vector2D getShipPosition() {
         if (!gameObjects.isEmpty()){
             int range = gameObjects.size();
             return (gameObjects.get((int)(Math.random() * range-2)+1).position);
         }
         return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
-    }
-
-    private void showHighScores(){
-        //titleText.kill();
-        //subtitleText.kill();
-        //play.kill();
-        //showScores.kill();
-        yeetHUD = true;
-
-        //menuOnscreen = false;
-        showScrollingText = false;
-        //setupScrollingText = true;
-        //setupScores = true;
-        //showingScores = true;
-
-        scrollingTextToAdd.clear();
-
-        createScrollingText(highScores.longwindedLeaderboard(),60,100);
-
-        /*
-        int distFromBottom = 60;
-        for (String s: highScores.longwindedLeaderboard()) {
-            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,100),s,StringObject.MIDDLE_ALIGN));
-            distFromBottom += 22;
-        }
-        setupScrollingText = true;*/
-
-        scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
-    }
+    }*/
 
     private void createScrollingText(ArrayList<String> theText, int distFromBottom, double scrollSpeed){
         scrollingTextToAdd.clear();

@@ -23,46 +23,17 @@ public class PlayerShip extends Ship {
     //records when the player's grace period will expire
 
     boolean spawnBomb;
-    Vector2D bombLocation;
+    Vector2D bombPosition;
+    Vector2D bombVelocity;
 
 
 
 
 
     public PlayerShip(Controller ctrl) {
-        //super(new Vector2D(0,0),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
-
         super(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1), ctrl);
 
-        //super(new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2),Vector2D.polar(Math.toRadians(270),0), ctrl, game);
-
-        //position = new Vector2D(FRAME_WIDTH/2,FRAME_HEIGHT/2);
-        //direction = Vector2D.polar(Math.toRadians(270),1);
-        //velocity = Vector2D.polar(direction.angle(),0);
-
-        /*
-        //declaring the ship shape
-        hitboxX = new int[] {0,2,0,-2};
-        hitboxY = new int[] {1,2,-2,2};
-
-        this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
-
-        //ensures that the ship's hitbox and texture is scaled correctly
-        RADIUS = DRAWING_SCALE*2;
-
-        definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
-
-         */
-
-        //declaring the thrust triangle shape
-
-
-
         gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
-
-
-
-        //intangible = true;
 
         objectColour = SHIP_COLOUR;
 
@@ -72,10 +43,9 @@ public class PlayerShip extends Ship {
 
         warpDistance = 200;
 
-        bombLocation = new Vector2D();
+        bombPosition = new Vector2D();
 
-
-
+        objectType = PLAYER_OBJECT;
     }
 
 
@@ -110,9 +80,11 @@ public class PlayerShip extends Ship {
             }
         }
         if (ctrl.action().bomb){
-            spawnBomb = true;
-            bombLocation.set(position);
-            System.out.println(position.x + ", " + position.y);
+            Vector2D reverseDirection = Vector2D.flip(direction);
+            bombPosition.set(Vector2D.addScaled(position,reverseDirection,RADIUS*1.5));
+            bombPosition.wrap(FRAME_WIDTH,FRAME_HEIGHT);
+            //System.out.println(position.x + ", " + position.y);
+            bombVelocity = Vector2D.flip(velocity).mult(0.5);
             ctrl.action().bomb = false;
             spawnBomb = true;
         } else{

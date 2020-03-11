@@ -10,9 +10,6 @@ public abstract class Bullet extends GameObject {
 
     int timeToLive;
 
-
-
-
     public Bullet(){
         this(new Vector2D(1,1),new Vector2D(300,1));
     }
@@ -24,7 +21,6 @@ public abstract class Bullet extends GameObject {
         RADIUS = 5;
         hitboxX = new int[]{0,1,-1};
         hitboxY = new int[]{-1,1,1};
-
 
         objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,0.5);
 

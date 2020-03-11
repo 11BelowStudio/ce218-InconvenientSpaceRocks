@@ -19,6 +19,13 @@ public abstract class GameObject{
 
     public double RADIUS; //kept for collision stuff
 
+    int objectType;
+
+    protected static final int UNKNOWN_OBJECT = 0;
+    protected static final int PLAYER_OBJECT = 1;
+    protected static final int ENEMY_OBJECT = 2;
+    protected static final int ASTEROID = 3;
+
 
 
     protected boolean intangible;
@@ -63,6 +70,7 @@ public abstract class GameObject{
     boolean collided;
 
     public GameObject(Vector2D p, Vector2D v){
+        RADIUS = 10;
         position = p;
         velocity = v;
         dead = false;
@@ -75,6 +83,7 @@ public abstract class GameObject{
         pointValue = 0;
         texture = (BufferedImage)AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
+        objectType = UNKNOWN_OBJECT;
     }
 
     public GameObject revive(Vector2D p, Vector2D v){
@@ -106,17 +115,17 @@ public abstract class GameObject{
     }
 
 
-    public boolean hit(boolean hitByPlayer, boolean hitByBomb){
-        if ((!finalIntangible || !stillIntangible) && !intangible){
+    public void hit(boolean hitByPlayer){
+        //if ((!finalIntangible || !stillIntangible) && !intangible){
             //if (!intangible) {
                 //it's dead if it got hit whilst not intangible
-                dead = true;
-                intangible = true;
-                bombHit = hitByBomb;
-                hitLogic(hitByPlayer);
-                return true;
+        dead = true;
+        intangible = true;
+        //bombHit = hitByBomb;
+        hitLogic(hitByPlayer);
+                //return true;
             //}
-        } return false;
+        //} //return false;
 
         /* else {
             stillIntangible = true;
@@ -136,41 +145,31 @@ public abstract class GameObject{
     public boolean overlap(GameObject other){
         // overlap detection based on areas
         try {
-            /*if (this.intangible || other.intangible) {
-                return false;
-            } else */ //if (this.position.dist(other.position) <= 100) { //if (!(this instanceof GenericAsteroid  && other instanceof  GenericAsteroid)) {
-                //else if (this instanceof GenericAsteroid  && (other instanceof Ship || other instanceof Bullet)) {
+            if (this.boundingRectangle.intersects(other.boundingRectangle)) { //compares some bounding rectangles for the two objects
 
-                if (this.boundingRectangle.intersects(other.boundingRectangle)) { //compares some bounding rectangles for the two objects
-                //if (this.position.dist(other.position) <= 100){
-
-                    //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
-                    Area thisArea = new Area(this.transformedArea);
-                    thisArea.intersect(other.transformedArea);
-                    return !thisArea.isEmpty();
-                //}
+                //If the areas of the two gameObjects involved in the collision overlap in any way, they've collided
+                Area thisArea = new Area(this.transformedArea);
+                thisArea.intersect(other.transformedArea);
+                return !thisArea.isEmpty();
             }
-        } catch(NullPointerException e){
-            System.out.println(e);
-            System.out.println("This: " + this.toString());
-            System.out.println("Other: " + other.toString());
-        }
+        } catch(NullPointerException ignored){} //if the hitboxes haven't been set up, they haven't collided
         return false;
     }
 
 
     void collisionHandling(GameObject other) {
-        if (this.getClass() != other.getClass() && this.overlap(other)) {
+        if (this.objectType != other.objectType && this.overlap(other)) {
             if (this.intangible || other.intangible) {
                 this.bounceOff(other);
-            } else{
-                boolean otherBomb = (other instanceof Bomb);
-                boolean thisBomb = (this instanceof Bomb);
-                this.hit(other instanceof PlayerShip || other instanceof PlayerBullet || otherBomb, otherBomb);
-                other.hit(this instanceof PlayerShip || this instanceof PlayerBullet || thisBomb, thisBomb);
+            } else if (!(this.bombCollision(other) || other.bombCollision(this))){
+                //if the collision did not involve active bombs, the normal collision stuff happens
+                this.hit(other.objectType == PLAYER_OBJECT);
+                other.hit(objectType == PLAYER_OBJECT);
             }
         }
     }
+
+    boolean bombCollision(GameObject other){ return false; } //bomb class overrides this with one that returns true.
 
 
 
@@ -192,20 +191,20 @@ public abstract class GameObject{
 
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
-            intersectHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
+            wraparoundHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
             wrapped = true;
         } else if (transformedShape.intersects(underScreen)){
             //moving stuff under the screen to the top of it
-            intersectHandler(g, underScreen, 0, -FRAME_HEIGHT);
+            wraparoundHandler(g, underScreen, 0, -FRAME_HEIGHT);
             wrapped = true;
         }
         if (transformedShape.intersects(leftScreen)){
             //moving stuff to the left of the screen to the right of it
-            intersectHandler(g,  leftScreen, FRAME_WIDTH, 0);
+            wraparoundHandler(g,  leftScreen, FRAME_WIDTH, 0);
             wrapped = true;
         } else if (transformedShape.intersects(rightScreen)){
             //moving stuff on the right of the screen to the left of it
-            intersectHandler(g, rightScreen, -FRAME_WIDTH, 0);
+            wraparoundHandler(g, rightScreen, -FRAME_WIDTH, 0);
             wrapped = true;
         }
 
@@ -219,17 +218,14 @@ public abstract class GameObject{
 
     }
 
-    private void intersectHandler(Graphics2D g, Rectangle intersectCheckRect, int xTranslate, int yTranslate) {
+    private void wraparoundHandler(Graphics2D g, Rectangle wraparoundCheckRect, int xTranslate, int yTranslate) {
         AffineTransform backup = g.getTransform(); //gets copy of original affine transform
         Area tempArea = (Area)transformedArea.clone(); //copies the transformed area
-        tempArea.intersect(new Area(intersectCheckRect)); //get the intersection of it with the intersection rectangle
-        //transformedArea.subtract(tempArea);
-        //tempArea.subtract(transformedArea);
-        g.translate(xTranslate, yTranslate);
-        tempArea.transform(g.getTransform());
-        transformedArea.add(tempArea);
-
-        g.setTransform(backup);
+        tempArea.intersect(new Area(wraparoundCheckRect)); //get the intersection of it with the wraparound rectangle
+        g.translate(xTranslate, yTranslate); //moves it to the opposite edge of the playable area
+        tempArea.transform(g.getTransform()); //and then applies the transformation that was applied to the main object
+        transformedArea.add(tempArea); //adds it to the object's area
+        g.setTransform(backup); //reverts to backup
     }
 
     protected void paintTheArea(Graphics2D g){
@@ -294,9 +290,11 @@ public abstract class GameObject{
     }
 
 
-    public void kill(){
+    public GameObject kill(){
         this.dead = true;
+        return this;
     }
+
 
 
 

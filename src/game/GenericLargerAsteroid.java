@@ -4,7 +4,6 @@ import utilities.Vector2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 
 public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
@@ -57,10 +56,9 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     //calls spawnChildren() when this is hit
     @Override
     //public void hit(boolean hitByPlayer){
-    public boolean hit(boolean hitByPlayer, boolean hitByBomb){
-        boolean temp = super.hit(hitByPlayer, hitByBomb);
+    public void hit(boolean hitByPlayer){
+        super.hit(hitByPlayer);
         spawnChildren();
-        return temp;
     }
 
     protected int howManyChildren(){

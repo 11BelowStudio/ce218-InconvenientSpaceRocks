@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static game.Constants.FRAME_HEIGHT;
+import static game.Constants.FRAME_WIDTH;
+
 public abstract class Model {
 
 
@@ -17,7 +20,7 @@ public abstract class Model {
     protected List<GameObject> dead;
 
 
-    public List<GameObject> hudObjects;
+    protected List<GameObject> hudObjects;
     protected List<GameObject> aliveHUD;
 
     protected Stack<Asteroid> asteroidStack;
@@ -94,7 +97,13 @@ public abstract class Model {
     protected void clicked(Point p){}
 
 
-    abstract Vector2D getShipPosition();
+    Vector2D getShipPosition(){
+        if (!gameObjects.isEmpty()){
+            int range = gameObjects.size();
+            return (gameObjects.get((int)(Math.random() * range-2)+1).position);
+        }
+        return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
+    }
 
     protected static boolean isPlayerObject(GameObject o){ return (o instanceof PlayerShip || o instanceof PlayerBullet || o instanceof Bomb); }
 
@@ -113,19 +122,22 @@ public abstract class Model {
                 if (asteroidStack.isEmpty()) {
                     break;
                 }
+                /*
                 Asteroid newAsteroid = asteroidStack.pop();
                 newAsteroid.revive(g.position);
-                alive.add(newAsteroid);
+                alive.add(newAsteroid);*/
+                alive.add(asteroidStack.pop().revive(g.position));
             }
         } else if (g instanceof BigAsteroid) {
             int numToSpawn = ((BigAsteroid) g).childrenToSpawn;
             for (int i = 0; i < numToSpawn; i++) {
                 if (mediumAsteroidStack.isEmpty()) {
                     break;
-                }
+                }/*
                 MediumAsteroid newAsteroid = mediumAsteroidStack.pop();
                 newAsteroid.revive(g.position);
-                alive.add(newAsteroid);
+                alive.add(newAsteroid);*/
+                alive.add(mediumAsteroidStack.pop().revive(g.position));
             }
         }
     }

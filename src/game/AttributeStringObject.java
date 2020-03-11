@@ -20,9 +20,10 @@ public class AttributeStringObject<T> extends StringObject {
         setText(attributeString.toString());
     }
 
-    public void showValue(T value){
+    public AttributeStringObject<T> showValue(T value){
         attributeString.showValue(value);
         updateText();
+        return this;
     }
 
     public void rename(String attributeName){
@@ -34,14 +35,9 @@ public class AttributeStringObject<T> extends StringObject {
         return attributeString.getValue();
     }
 
-    private void updateText(){
-        setText(attributeString.toString());
-    }
+    private void updateText(){ setText(attributeString.toString()); }
 
-    public AttributeStringObject<T> killThis(){
-        super.kill();
-        return this;
-    }
+    public AttributeStringObject<T> kill(){ super.kill(); return this; }
 
     public void update(){
         if (position.y < 0){

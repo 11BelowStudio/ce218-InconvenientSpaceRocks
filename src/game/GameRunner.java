@@ -32,23 +32,31 @@ public class GameRunner {
         frame.addKeyListener(esc);
         frame.pack();
 
-        highScores = new HighScoreHandler("SaveData/scores.txt",frame, false);
+        highScores = new HighScoreHandler("SaveData/scores.txt",frame);//, false);
         ctrl = new PlayerController();
         frame.addKeyListener(ctrl);
         frame.addMouseListener(ctrl);
 
+
+
         view = new View();
+
         frame.addView(view);
-
-        view.hideGame();
-
         viewDimension = view.getPreferredSize();
 
         //game = new Game(ctrl);
 
         title = new TitleScreen(ctrl, highScores);
 
-        view.showTitle(title);
+        view.showModel(title,false);
+
+        game = new Game(ctrl,highScores);
+
+        //title = new TitleScreen(ctrl, highScores);
+
+        //view.showTitle(title);
+
+        //view.showModel(title,false);
 
         repaintTimer = new Timer(DELAY,
                 ev -> view.repaint());
@@ -120,9 +128,9 @@ public class GameRunner {
             //title = new TitleScreen(ctrl, highScores);
             title.revive();
 
-            //view.showGame(game);
+            //view.showTitle(title);
 
-            view.showTitle(title);
+            view.showModel(title,false);
 
             //view.setVisible(true);
             frame.pack();
@@ -142,9 +150,13 @@ public class GameRunner {
 
             System.out.println("* title stopped *");
 
-            game = new Game(ctrl,highScores);
+            //game = new Game(ctrl,highScores);
 
-            view.showGame(game);
+            game.revive();
+
+            //view.showGame(game);
+
+            view.showModel(game,true);
 
             frame.pack();
 

@@ -20,8 +20,9 @@ public class EnemyShip extends Ship {
         BULLET_DELAY = 500;
         STEER_RATE = 1.5*Math.PI;
         texture = (BufferedImage) Constants.ENEMY_SHIP;
-        ((EnemyController) ctrl).setEnemyShip(this);
+        ctrl.setEnemyShip(this);
         thrustColour = Color.CYAN;
+        objectType = ENEMY_OBJECT;
     }
 
     public EnemyShip revive(){
@@ -37,15 +38,4 @@ public class EnemyShip extends Ship {
         intangible = false;
     }
 
-
-
-    /* @Override
-    protected void drawLineToPlayer(Graphics2D g){
-        Vector2D playerPos = game.getShipPosition();
-        if (playerPos != null) {
-            g.setColor(Color.WHITE);
-            Vector2D lineEnd = position.getVectorTo(playerPos,FRAME_WIDTH,FRAME_HEIGHT);
-            g.drawLine(0,0,(int)lineEnd.x,(int)lineEnd.y);
-        }
-    } */
 }

@@ -110,6 +110,7 @@ public abstract class GenericAsteroid extends GameObject {
         } else{
             objectPolygon = PolygonUtilities.randomScaledPolygonConstructor(hitboxX,hitboxY,asteroidScale,corners);
         }
+        objectType = ASTEROID;
         //texture = (BufferedImage)AN_TEXTURE;
     }
 

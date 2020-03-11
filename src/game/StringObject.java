@@ -74,8 +74,8 @@ public class StringObject extends GameObject {
         return revive(position,velocity);
     }
 
-    public StringObject killThis(){
-        this.kill();
+    public StringObject kill(){
+        this.dead = true;
         return this;
     }
 

@@ -1,8 +1,5 @@
 package game;
 
-import utilities.AttributeString;
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -12,13 +9,9 @@ import static game.Constants.*;
 
 public class View extends JComponent {
     // background colour
-    public static final Color BG_COLOR = Color.black;
+    private static final Color BG_COLOR = Color.black;
 
-    private Game game;
-
-    private TitleScreen title;
-
-    //TODO: generify this so it works with a single 'Model' object, not a 'Game' and 'TitleScreen' object
+    private Model model;
 
     private Image bg;
 
@@ -26,33 +19,26 @@ public class View extends JComponent {
 
     private final Image defaultBG = DEFAULT_VIEW;
 
-    //private Image urDed;
-
-    //private AffineTransform urDedTransform;
-
-    //private final Image defaultBG = TITLE;
-
     private AffineTransform bgTransform;
 
-    public boolean displayingGame;
-
-    boolean displayingTitle;
+    private boolean displayingModel;
 
     //public boolean fullscreen;
 
-    int viewHeight;
-    int viewWidth;
+    //private int viewHeight;
+    //private int viewWidth;
 
-    public Dimension defaultDimension;
-    public Dimension preferredDimension;
+    //private Dimension defaultDimension;
+    private Dimension preferredDimension;
 
     //Rectangle background;
     //int tempx,tempy;
 
+    /*
     public static final int FRAME_HEIGHT = 600;
     public static final int FRAME_WIDTH = 800;
     public static final Dimension FRAME_SIZE = new Dimension(
-            Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);
+            Constants.FRAME_WIDTH, Constants.FRAME_HEIGHT);*/
 
     double xScale;
     double yScale;
@@ -60,23 +46,19 @@ public class View extends JComponent {
     public View() {
 
         //fullscreen = false;
-        viewHeight = 600;
-        viewWidth = 800;
+        //viewHeight = 600;
+        //viewWidth = 800;
 
         xScale = 1;
         yScale = 1;
 
-        defaultDimension = FRAME_SIZE;
+        //defaultDimension = FRAME_SIZE;
 
-        preferredDimension = new Dimension(800, 600);
+        preferredDimension = FRAME_SIZE;
 
-        displayingGame = false;
-        displayingTitle = false;
+        displayingModel = false;
 
         //this.game = game;
-        //gameInfo = new InfoPanel(game);
-        //gameInfo = new InfoPanel();
-        //this.add(gameInfo,BorderLayout.NORTH);
 
         //urDed = YOU_ARE_DED;
 
@@ -96,20 +78,10 @@ public class View extends JComponent {
 
     }
 
-    public void showGame(Game game){
-        this.game = game;
-        //this.title = null;
-        replaceBackground(true);
-        displayingGame = true;
-        displayingTitle = false;
-    }
-
-    public void showTitle(TitleScreen t){
-        this.title = t;
-        //this.game = null;
-        replaceBackground(false);
-        displayingGame = false;
-        displayingTitle = true;
+    public void showModel(Model m, boolean isGame){
+        this.model = m;
+        displayingModel = true;
+        replaceBackground(isGame);
     }
 
     public void setPreferredDimension(Dimension d){
@@ -125,8 +97,7 @@ public class View extends JComponent {
     }
 
     private void replaceBackground(boolean gameActive){
-        displayingGame = gameActive;
-        if (displayingGame){
+        if (gameActive){
             bg = gameBG;
         } else{
             bg = defaultBG;
@@ -153,54 +124,17 @@ public class View extends JComponent {
 
         g.scale(xScale,yScale);
         AffineTransform backup = g.getTransform();
-        if (displayingGame) {
-            /* */
+        if (displayingModel) {
             synchronized (Model.class) {
-                for (GameObject o : game.gameObjects) {
+                for (GameObject o : model.gameObjects) {
                     o.draw(g);
                     //basically calls the draw method of each gameObject
                 }
-                for (GameObject o: game.hudObjects){
+                for (GameObject o : model.hudObjects) {
                     o.draw(g);
                     //and also the HUD
                 }
             }
-            /*
-            synchronized (Model.class) {
-                for (GameObject o : game.gameObjects) {
-                    o.draw(g);
-                    //basically calls the draw method of each gameObject
-                }
-                for (GameObject o: game.hudObjects){
-                    o.draw(g);
-                    //and also the HUD
-                }
-            }
-            /* */
-        } else if (displayingTitle){
-            /* */
-            synchronized (Model.class) {
-                for (GameObject o :title.gameObjects) {
-                    o.draw(g);
-                    //basically calls the draw method of each gameObject
-                }
-                for (GameObject o: title.hudObjects){
-                    o.draw(g);
-                    //and also the HUD
-                }
-            }
-            /*
-            synchronized (Model.class) {
-                for (GameObject o : game.gameObjects) {
-                    o.draw(g);
-                    //basically calls the draw method of each gameObject
-                }
-                for (GameObject o: game.hudObjects){
-                    o.draw(g);
-                    //and also the HUD
-                }
-            }
-            /* */
         }
         g.setTransform(backup);
         g.setTransform(initialTransform);

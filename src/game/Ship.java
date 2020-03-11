@@ -141,6 +141,8 @@ public abstract class Ship extends GameObject {
         if (currentAction.shoot){
             mkBullet();
             currentAction.shoot = false;
+        } else {
+            fired = false;
         }
 
         direction.rotate(Math.toRadians(currentAction.turn * STEER_RATE));
@@ -200,7 +202,6 @@ public abstract class Ship extends GameObject {
     }
 
     protected void fireBullet(){
-
         //spawns the bullet 2*radius away from position
         bulletLocation = Vector2D.addScaled(position,direction,2*RADIUS);
         bulletLocation.wrap(FRAME_WIDTH,FRAME_HEIGHT);
@@ -210,8 +211,6 @@ public abstract class Ship extends GameObject {
         //bullet will be going in the direction the ship is facing, but at 300 magnitude
         bulletVelocity = Vector2D.setMag(direction,300);
         fired = true;
-
-
     }
 
 

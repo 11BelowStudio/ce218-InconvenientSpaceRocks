@@ -7,13 +7,9 @@ import java.awt.*;
 public class EnemyBullet extends Bullet {
 
 
-    public EnemyBullet(Vector2D position, Vector2D direction) {
-        super(position,  Vector2D.polar(direction.angle(),300));
-        super.update();
-    }
-
     EnemyBullet(){
         super();
+        objectType = ENEMY_OBJECT;
     }
 
 

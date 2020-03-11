@@ -9,26 +9,9 @@ import java.awt.geom.AffineTransform;
 
 public class PlayerBullet extends Bullet {
 
-    //int timeToLive;
-
-    //double distanceToGo;
-
-    //double scaledDistance;
-
-    //int frameCount;
-
-
-
-    //private int[] xCorners, yCorners;
-
-    public PlayerBullet(Vector2D position, Vector2D direction){
-        super(position, Vector2D.polar(direction.angle(),300));
-        super.update();
-    }
-
-
     PlayerBullet(){
         super();
+        objectType = PLAYER_OBJECT;
     }
 
     @Override
