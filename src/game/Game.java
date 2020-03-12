@@ -84,6 +84,7 @@ public class Game extends Model  {
             playerBullets.push(new PlayerBullet());
         }
 
+        //same with the bomb
         bombStack = new Stack<>();
         bombStack.push(new Bomb());
 
@@ -126,7 +127,7 @@ public class Game extends Model  {
 
 
         hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
-        
+
 
 
     }
@@ -201,10 +202,7 @@ public class Game extends Model  {
         SoundManager.play(SoundManager.intimidating);
         //intimidation noises
 
-        //levelTextObject.setText(levelText.showValue(currentLevel));
         levelDisplay.showValue(currentLevel);
-
-        //levelTextObject.showValue(currentLevel);
         //updates the level text shown to player
 
         ArrayList<GameObject> newAsteroids = new ArrayList<>();
@@ -216,14 +214,10 @@ public class Game extends Model  {
         levelStarting = true;
         if (ohNoes){
             thisLevel = GameLevels.ohHecc;
-            //middleTextObject.setText("RIGHT THATS IT IMMA ASTEROID IN UR P");
-
-            //levelTextObject.setText("Level: oh noes");
             //maximum asteroids of all types.
             //have fun.
         } else{
             thisLevel = GameLevels.getLevelConfig(currentLevel);
-            //middleTextObject.setText("INCOMING");
             //works out how many of each to spawn
         }
 
@@ -238,6 +232,7 @@ public class Game extends Model  {
             }
         }
 
+        //le medium asteroids have arrived
         for (int i = 0; i < thisLevel.get(1); i++) {
             if (mediumAsteroidStack.isEmpty()){
                 break;
@@ -247,7 +242,7 @@ public class Game extends Model  {
                 newAsteroids.add(newAsteroid);
             }
         }
-
+        //beeg chungi
         for (int i = 0; i < thisLevel.get(2); i++) {
             if (bigAsteroidStack.isEmpty()) {
                 break;
@@ -264,7 +259,7 @@ public class Game extends Model  {
 
         spawnIt = true;
 
-        Collections.shuffle(newAsteroids);
+        Collections.shuffle(newAsteroids); //random spawn order
         return newAsteroids;
 
     }
@@ -442,7 +437,6 @@ public class Game extends Model  {
             }
             if (g instanceof PlayerShip){
                 //if the ship is here, the player is mcfricking dead
-                //System.out.println("ur ded lol");
                 lives--;
                 playerHit = true;
                 livesChanged = true;
@@ -467,22 +461,18 @@ public class Game extends Model  {
             //livesTextObject.showValue(lives);
         }
         if (playerHit){
-            //levelStarting = false;
+            //if you messed up and died
             ctrl.noAction();
-            //newAsteroidCount.kill();
             newLevelObject.kill();
             secretNewLevelObject.kill();
             if (lives > 0) {
                 waitingToRespawn = true;
                 SoundManager.play(SoundManager.ohno);
-                //middleTextObject.setText("PRESS THE ANY BUTTON TO RESPAWN");
                 aliveHUD.add(respawnPromptObject.revive());
             } else{
                 //if (playerBullets.size() == 4 && !bombStack.isEmpty()) {
                     System.out.println("GAME OVER YEAH!");
                     newAsteroidCount.kill();
-                    //middleTextObject.setText("GAME OVER!");
-                    //middleTextObject.kill();
                     aliveHUD.add(gameOverText.revive());
                     SoundManager.play(SoundManager.andYouFailed);
                     gameOver = true;
@@ -556,7 +546,8 @@ public class Game extends Model  {
             }
         } else{
             //will be spawning the asteroids in
-            //tbh the only reason for the 1 update delay between adding asteroids is so you can see them coming
+            //tbh the only reason for the 1 update delay between adding asteroids is so you can see them coming in
+            //its honestly kinda unnecessary but who cares *shrug*
             if (spawnIt) {
                 //adds the top GameObject from newObjects to 'alive'
                 GameObject newObject = newObjects.pop();
@@ -572,34 +563,15 @@ public class Game extends Model  {
 
 
         for (GameObject h : hudObjects) {
+            //making sure the HUD stuff is still up to date and ensuring the stuff that can be yote is yeetable
             h.update();
             if (!h.dead) {
                 aliveHUD.add(h);
             }
         }
 
+        cleanLists(); //yeeting the stuff that needs to get yote and keeping the stuff that must remain yeetedn't
 
-        //}
-
-        cleanLists();
-
-        /*
-        synchronized (Game.class) {
-            gameObjects.clear();
-            gameObjects.addAll(alive);
-
-            gameObjects.clear();
-            gameObjects.addAll(alive);
-
-            hudObjects.clear();
-            hudObjects.addAll(aliveHUD);
-
-            alive.clear();
-            aliveHUD.clear();
-            dead.clear();
-        } /* */
-
-        //System.out.println("Lives: " + lives + "| Score: " + score);
     }
 
     @Override

@@ -20,6 +20,10 @@ public class EnemyController extends ControllerAdapter{
     private boolean acted;
     private Vector2D targetPosition;
 
+    private int anCountdown;
+
+    private boolean itIsAMystery;
+
     private double distanceBetween;
     private double angleDifference;
 
@@ -38,11 +42,13 @@ public class EnemyController extends ControllerAdapter{
 
 
     public void revive(){
-        playerType = (int)(Math.random() * 6);
+        playerType = (int)(Math.random() * 7);
         //System.out.println("Enemy "+ playerType);
         getTargetPosition();
         nextUpdateIn();
         acted = true;
+        anCountdown = 0;
+        itIsAMystery = (Math.random() < 0.5); //50% chance of true or false
         canAct();
     }
 
@@ -88,7 +94,7 @@ public class EnemyController extends ControllerAdapter{
                 //enemy goes aggro, chasing after player and shooting them
                 break;
             case 2:
-                aimShootAction();
+                turretWithMovement();
                 //enemy just aims and shoots at the player, not much movement
                 break;
             case 3:
@@ -96,21 +102,25 @@ public class EnemyController extends ControllerAdapter{
                 //*teleports inside you* nothing personell kid
                 break;
             case 4:
-                afk();
-                //am sleep
+                moveAndSpinAndAlsoShoot();
+                //moves and spins and also shoots!
                 break;
             case 5:
+                turretTime();
+                break;
+            case 6:
             default:
                 randomAction();
-                //the 'infinte monkeys' approach
+                //the 'infinite monkeys' approach
                 break;
         }
         return action;
     }
 
+
     private void rotateShootAction(){
-        action.shoot = (Math.random() > 0.8);
-        action.turn = 1;
+        randomShoot(0.2);
+        magicalMysteryTurn();
         thrustIfSlowerThan(10);
     }
 
@@ -139,22 +149,24 @@ public class EnemyController extends ControllerAdapter{
         //return action;
     }
 
-    private void thrustIfSlowerThan(double minSpeed){
+    private boolean thrustIfSlowerThan(double minSpeed){
         if (enemyShip.velocity.mag() < minSpeed){
             action.thrust = 1;
-        } else{
-            action.thrust = 0;
+            return true;
         }
+        action.thrust = 0;
+        return false;
+
     }
 
     private void randomAction(){
         action.turn = (int)(Math.random() * 3) - 1;
         action.thrust = (int) (Math.random() * 2);
-        action.shoot = (Math.random() > 0.95);
+        randomShoot(0.5);
         action.warp = (Math.abs(Math.random()) == 0);
     }
 
-    private void aimShootAction(){
+    private void turretTime(){
         if (analysePosition()) {
             if (angleDifference >= 0 - (Math.PI /4) && angleDifference <= (Math.PI / 4) && canAct) {
                 action.shoot = true;
@@ -166,6 +178,10 @@ public class EnemyController extends ControllerAdapter{
         } else{
             randomAction();
         }
+    }
+
+    private void turretWithMovement(){
+        turretTime();
         thrustIfSlowerThan(20);
     }
 
@@ -204,7 +220,30 @@ public class EnemyController extends ControllerAdapter{
         return true;
     }
 
-    public void afk(){ noAction(); thrustIfSlowerThan(1);}
+    public void moveAndSpinAndAlsoShoot(){
+        randomShoot(0.25);
+        if (anCountdown > 0){
+            magicalMysteryTurn();
+            anCountdown--;
+        } else{
+            action.turn = 0;
+        }
+        if(thrustIfSlowerThan(1)){
+            anCountdown = (int)(Math.random() * 360);
+            itIsAMystery = !itIsAMystery;
+        }
+    }
+
+    private void randomShoot(double shootChance){
+        action.shoot = (Math.random() < shootChance);
+    }
+
+    private void magicalMysteryTurn(){
+        action.turn = (int)(Math.random()) + 1;
+        if (itIsAMystery){
+            action.turn *= -1;
+        }
+    }
 
     public void noAction(){ action.noAction(); }
 

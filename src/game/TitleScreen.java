@@ -175,11 +175,7 @@ public class TitleScreen extends Model {
                     enemyBullets.push((EnemyBullet) g);
                 }
             } else{
-                if (Math.random() < 0.00005 && (isAsteroid(g) || g instanceof EnemyShip)){
-                    dead.add(g);
-                } else {
-                    alive.add(g);
-                }
+                alive.add(g);
             }
         }
 

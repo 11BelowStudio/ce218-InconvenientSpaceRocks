@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import static game.Constants.DT;
-import static game.Constants.sans;
+//import static game.Constants.sans;
 
 public class StringObject extends GameObject {
 

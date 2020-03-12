@@ -69,15 +69,6 @@ public class PlayerShip extends Ship {
     @Override
     public void update(){
         super.update();
-        if (intangible){
-            if (System.currentTimeMillis() >= gracePeriodExpiresAt || fired){
-                //will cause the player's godmode to expire after the grace period expires
-                notIntangible();
-            } else{
-                this.objectColour = GODMODE_COLOUR;
-                //intangible = true;
-            }
-        }
         if (ctrl.action().bomb){
             Vector2D reverseDirection = Vector2D.flip(direction);
             bombPosition = Vector2D.addScaled(position,reverseDirection,2.5*RADIUS);
@@ -89,6 +80,15 @@ public class PlayerShip extends Ship {
         } else{
             spawnBomb = false;
             //bombLocation = null;
+        }
+        if (intangible){
+            if (System.currentTimeMillis() >= gracePeriodExpiresAt || fired || spawnBomb){
+                //will cause the player's godmode to expire after the grace period expires
+                notIntangible();
+            } else{
+                this.objectColour = GODMODE_COLOUR;
+                //intangible = true;
+            }
         }
     }
 

@@ -52,7 +52,7 @@ public class Constants {
     public static final double DT = DELAY / 1000.0;  // DELAY in seconds
     //public static final double DT = DELAY / 1000.0;
 
-    static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
+    //static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
 
     public static final int MODEL_SPEED = 20;
     public static final long MODEL_DURATION = 20;
@@ -60,31 +60,19 @@ public class Constants {
     public static Image SPEHSS, TITLE, DEFAULT_VIEW, YOU_ARE_DED;//ASTEROID1, MILKYWAY1;
     static {
         try {
-            //ASTEROID1 = ImageManager.loadImage("asteroid1");
-            //MILKYWAY1 = ImageManager.loadImage("milkyway1");
-            //AN_TEXTURE = ImageManager.loadImage("anTexture");
             SPEHSS = ImageManager.loadImage("spehss2");
-            //SHIP = ImageManager.loadImage("shipV2");
-            //SPACE_ROCK = ImageManager.loadImage("inconvenientSpaceRockTM");
             TITLE = ImageManager.loadImage("titleImage");
             DEFAULT_VIEW = ImageManager.loadImage("default");
             YOU_ARE_DED = ImageManager.loadImage("urdedlmao");
-            //ENEMY_SHIP = ImageManager.loadImage("enemyShip");
         } catch (IOException e) { e.printStackTrace(); }
     }
 
     public static BufferedImage AN_TEXTURE, SHIP, SPACE_ROCK, ENEMY_SHIP;//ASTEROID1, MILKYWAY1;
     static {
         try {
-            //ASTEROID1 = ImageManager.loadImage("asteroid1");
-            //MILKYWAY1 = ImageManager.loadImage("milkyway1");
             AN_TEXTURE = ImageManager.loadBufferedImage("anTexture");
-            //SPEHSS = ImageManager.loadImage("spehss2");
             SHIP = ImageManager.loadBufferedImage("shipV2");
             SPACE_ROCK = ImageManager.loadBufferedImage("inconvenientSpaceRockTM");
-            //TITLE = ImageManager.loadImage("titleImage");
-            //DEFAULT_VIEW = ImageManager.loadImage("default");
-            //YOU_ARE_DED = ImageManager.loadImage("urdedlmao");
             ENEMY_SHIP = ImageManager.loadBufferedImage("enemyShip");
         } catch (IOException e) { e.printStackTrace(); }
     }
