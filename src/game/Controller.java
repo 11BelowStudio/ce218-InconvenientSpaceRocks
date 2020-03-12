@@ -19,4 +19,6 @@ public interface Controller {
 
     Point clickLocation();
 
+    boolean shot();
+
 }

@@ -85,6 +85,14 @@ public class SoundManager {
         clip.start();
     }
 
+    public static void playYouFailed(){
+        play(andYouFailed);
+    }
+
+    public static void playBweb(){
+        play(bweb);
+    }
+
     private static Clip getClip(String filename) {
         Clip clip = null;
         try {

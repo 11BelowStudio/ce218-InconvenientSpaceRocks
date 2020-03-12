@@ -3,10 +3,7 @@ package game;
 import utilities.Vector2D;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import static game.Constants.FRAME_HEIGHT;
-import static game.Constants.FRAME_WIDTH;
+import static game.Constants.*;
 
 public class EnemyShip extends Ship {
 
@@ -19,7 +16,7 @@ public class EnemyShip extends Ship {
         direction = new Vector2D(velocity).normalise();
         BULLET_DELAY = 500;
         STEER_RATE = 1.5*Math.PI;
-        texture = (BufferedImage) Constants.ENEMY_SHIP;
+        texture = ENEMY_SHIP;
         ctrl.setEnemyShip(this);
         thrustColour = Color.CYAN;
         objectType = ENEMY_OBJECT;

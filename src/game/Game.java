@@ -42,7 +42,7 @@ public class Game extends Model  {
 
     private AttributeStringObject<Integer> bombStatus;
 
-    private int bombCooldown;
+    private int bombCount;
 
     private int maxEnemies;
     private int currentEnemies;
@@ -99,6 +99,8 @@ public class Game extends Model  {
         maxEnemies = 1;
         currentEnemies = 0;
 
+        bombCount = -1;
+
         resetEnemySpawnTimer();
         maxEnemies = 1;
 
@@ -114,22 +116,17 @@ public class Game extends Model  {
 
         int eighthWidth = HALF_WIDTH/2;
 
-        hudObjects.add(levelDisplay = new AttributeStringObject<>(new Vector2D(eighthWidth,20), new Vector2D(),"Level: ",currentLevel,StringObject.RIGHT_ALIGN));
+        hudObjects.add(levelDisplay = new AttributeStringObject<>(new Vector2D(eighthWidth,20), new Vector2D(),"Level: ",currentLevel,StringObject.LEFT_ALIGN));
         hudObjects.add(scoreDisplay = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,20), new Vector2D(),"Score: ",score,StringObject.MIDDLE_ALIGN));
-        hudObjects.add(livesDisplay = new AttributeStringObject<>(new Vector2D(3*eighthWidth,20), new Vector2D(),"Lives: ",lives,StringObject.LEFT_ALIGN));
+        hudObjects.add(livesDisplay = new AttributeStringObject<>(new Vector2D(3*eighthWidth,20), new Vector2D(),"Lives: ",lives,StringObject.RIGHT_ALIGN));
+
+        hudObjects.add(bombStatus = new AttributeStringObject<>(new Vector2D(eighthWidth,FRAME_HEIGHT-20), new Vector2D(),"Bombs: ",bombCount,StringObject.LEFT_ALIGN));
 
         hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).kill());
 
 
         hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
-
-
-        /*
-        TODO:
-            * Some sort of display to show bomb usability
-            * Method of earning bombs (1 bomb per level, max of 3 in storage? (keeping limit of 1 active at one time ofc))
-            * Exploding bombs lethal to player, bombs on timer do not interact with player
-        */
+        
 
 
     }
@@ -174,6 +171,8 @@ public class Game extends Model  {
         maxEnemies = 1;
         currentEnemies = 0;
 
+        bombCount = -1;
+
         resetEnemySpawnTimer();
         maxEnemies = 1;
 
@@ -187,6 +186,8 @@ public class Game extends Model  {
         hudObjects.add(levelDisplay.showValue(currentLevel));
         hudObjects.add(livesDisplay.showValue(lives));
         hudObjects.add(scoreDisplay.showValue(score));
+
+        hudObjects.add(bombStatus.showValue(bombCount));
 
         spawnIt = false;
 
@@ -370,9 +371,9 @@ public class Game extends Model  {
                     continue; //skip stuff that's dead/intangible
                 }
 
-                if ((isAsteroid(g) ^ isAsteroid(g2)) ||
+                if (g.objectType != g2.objectType    /*(isAsteroid(g) ^ isAsteroid(g2)) ||
                         (isPlayerObject(g) ^ isPlayerObject(g2)) ||
-                        (isEnemyObject(g) ^ isEnemyObject(g2))
+                        (isEnemyObject(g) ^ isEnemyObject(g2))*/
                 ) {
                     //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
                     // (^ operator is 'xor')
@@ -477,13 +478,15 @@ public class Game extends Model  {
                 //middleTextObject.setText("PRESS THE ANY BUTTON TO RESPAWN");
                 aliveHUD.add(respawnPromptObject.revive());
             } else{
-                System.out.println("GAME OVER YEAH!");
-                newAsteroidCount.kill();
-                //middleTextObject.setText("GAME OVER!");
-                //middleTextObject.kill();
-                aliveHUD.add(gameOverText.revive());
-                SoundManager.play(SoundManager.andYouFailed);
-                gameOver = true;
+                //if (playerBullets.size() == 4 && !bombStack.isEmpty()) {
+                    System.out.println("GAME OVER YEAH!");
+                    newAsteroidCount.kill();
+                    //middleTextObject.setText("GAME OVER!");
+                    //middleTextObject.kill();
+                    aliveHUD.add(gameOverText.revive());
+                    SoundManager.play(SoundManager.andYouFailed);
+                    gameOver = true;
+                //}
             }
         }
 
@@ -498,11 +501,13 @@ public class Game extends Model  {
                     SoundManager.fire();
                     ship.fired = false;
                 }
-                if (ship.spawnBomb && !bombStack.isEmpty()){
+                if (ship.spawnBomb && bombCount > 0 && !bombStack.isEmpty()){
                     //Bomb b = new Bomb(ship.bombLocation);
                     //Bomb b = bombStack.pop().revive(ship.bombLocation,ship.bombLocation);
                     alive.add(bombStack.pop().revive(ship.bombPosition,ship.bombVelocity));
                     ship.spawnBomb = false;
+                    bombCount--;
+                    bombStatus.showValue(bombCount);
                 }
             }
         } else{
@@ -525,6 +530,13 @@ public class Game extends Model  {
                 //if no asteroids remain, and the player isn't currently dead, the level is done
                 currentLevel++;
                 //moves forward a level
+
+                int MAX_BOMBS = 3;
+                if (bombCount < MAX_BOMBS){
+                    bombCount++;
+                    bombStatus.showValue(bombCount);
+                }
+
                 boolean secret = ctrl.action().p;
                 newObjects.addAll(setupLevel(secret));
                 //adds the asteroids for the next level

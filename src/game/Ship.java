@@ -173,6 +173,7 @@ public abstract class Ship extends GameObject {
 
         long now = System.currentTimeMillis();
         if (currentAction.warp && now >= canWarpAt) {
+            SoundManager.play(SoundManager.bwoab);
             position.addScaled(direction, warpDistance);
             canWarpAt = now + WARP_DELAY;
             velocity.setMag(0);

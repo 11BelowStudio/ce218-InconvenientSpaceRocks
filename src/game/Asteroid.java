@@ -6,7 +6,7 @@ import utilities.Vector2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
-import static basicGame.Constants.*;
+import static game.Constants.*;
 
 public class Asteroid extends GenericAsteroid {
 

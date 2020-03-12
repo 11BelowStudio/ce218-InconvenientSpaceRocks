@@ -17,19 +17,14 @@ public class StringObject extends GameObject {
 
     private Font theFont;
 
-    static final int LEFT_ALIGN = 0; static final int RIGHT_ALIGN = 1; static final int MIDDLE_ALIGN = 2;
+    static final int RIGHT_ALIGN = 0; static final int LEFT_ALIGN = 1; static final int MIDDLE_ALIGN = 2;
 
 
     private Rectangle areaRectangle;
 
-
-    private AttributeString attributeString;
-
-
+    //le ebic font has arrived no bamboozle
     static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
-
     static final Font medium_sans = new Font("Comic sans MS", Font.PLAIN,40);
-
     static final Font big_sans = new Font("Comic sans MS", Font.PLAIN,50);
 
     StringObject(Vector2D p, Vector2D v, String s, int a, Font f){
@@ -46,8 +41,6 @@ public class StringObject extends GameObject {
         setText(s);
     }
 
-
-
     StringObject(Vector2D p, Vector2D v, int a){
         this(p,v);
         alignment = a;
@@ -63,34 +56,24 @@ public class StringObject extends GameObject {
         areaRectangle = new Rectangle();
     }
 
-
     @Override
     public StringObject revive(Vector2D p, Vector2D v) {
         super.revive(p,v);
         return this;
     }
 
-    public StringObject revive(){
-        return revive(position,velocity);
-    }
+    public StringObject revive(){ return revive(position,velocity); }
 
-    public StringObject kill(){
-        this.dead = true;
-        return this;
-    }
+    public StringObject kill(){ this.dead = true; return this; }
 
     public String getString(){ return thisString; }
 
-
     public StringObject revive(String s){
-        revive(new Vector2D(),new Vector2D());
-        thisString = s;
-        return this;
+        revive();
+        return setText(s);
     }
 
-    public boolean isClicked(Point p){
-        return ((!dead) && (areaRectangle.contains(p)));
-    }
+    public boolean isClicked(Point p){ return ((!dead) && (areaRectangle.contains(p))); }
 
 
     @Override
@@ -121,13 +104,12 @@ public class StringObject extends GameObject {
         }
     }
 
-    public void setText(String s){
-        thisString = s;
-    }
+    public StringObject setText(String s){ thisString = s; return this;}
 
 
     @Override
     public void update(){
+        //only really used for scrolling text tbh
         if (position.y < 0){
             dead = true;
         } else {

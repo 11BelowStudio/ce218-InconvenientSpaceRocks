@@ -69,7 +69,7 @@ public abstract class GenericAsteroid extends GameObject {
 
     private void setShared(){
         originSpeed = velocity.mag();
-        texture = (BufferedImage)SPACE_ROCK;
+        texture = SPACE_ROCK;
         boolean definedAsteroid = true;
         int corners = (int)((Math.random() * 6) + (Math.random() * 6)) + 3;
         switch ((int)(Math.random() * 15)){

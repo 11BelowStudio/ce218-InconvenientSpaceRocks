@@ -151,6 +151,10 @@ public class TitleScreen extends Model {
     @Override
     public void update() {
 
+        if (ctrl.action().shoot){
+            endThis();
+        }
+
         for (GameObject g: gameObjects) {
             g.update();
             if (g.dead){

@@ -267,7 +267,7 @@ public class HighScoreHandler {
 
         //just adds placeholder values though
         while (i < 5) {
-            highScores.add(new ScoreRecord("unknown",0));
+            highScores.add(new ScoreRecord("ok so basically im placeholder",-1));
             i++;
         }
     }

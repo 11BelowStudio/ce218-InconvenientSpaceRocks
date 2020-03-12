@@ -37,7 +37,7 @@ public class PlayerShip extends Ship {
 
         objectColour = SHIP_COLOUR;
 
-        texture = (BufferedImage)Constants.SHIP;
+        texture = Constants.SHIP;
 
         BULLET_DELAY = 250;
 
@@ -54,7 +54,6 @@ public class PlayerShip extends Ship {
         super.revive(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(GameObject.UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1));
         gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
         objectColour = SHIP_COLOUR;
-        texture = (BufferedImage)Constants.SHIP;
         BULLET_DELAY = 250;
         warpDistance = 200;
         return this;
@@ -81,10 +80,10 @@ public class PlayerShip extends Ship {
         }
         if (ctrl.action().bomb){
             Vector2D reverseDirection = Vector2D.flip(direction);
-            bombPosition.set(Vector2D.addScaled(position,reverseDirection,RADIUS*1.5));
+            bombPosition = Vector2D.addScaled(position,reverseDirection,2.5*RADIUS);
             bombPosition.wrap(FRAME_WIDTH,FRAME_HEIGHT);
             //System.out.println(position.x + ", " + position.y);
-            bombVelocity = Vector2D.flip(velocity).mult(0.5);
+            bombVelocity = reverseDirection.setMag(100);
             ctrl.action().bomb = false;
             spawnBomb = true;
         } else{

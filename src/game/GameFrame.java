@@ -1,13 +1,11 @@
 package game;
-
-
 import javax.swing.*;
 import java.awt.*;
 
 
-
 public class GameFrame extends JFrame {
 
+    //yeah, it's pretty much the JEasyFrame thing
 
     public GameFrame() {
         this.setTitle("Inconvenient Space Rocks (In Space!)");

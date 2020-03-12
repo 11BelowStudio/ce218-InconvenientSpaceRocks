@@ -96,7 +96,7 @@ public class EnemyController extends ControllerAdapter{
                 //*teleports inside you* nothing personell kid
                 break;
             case 4:
-                noAction();
+                afk();
                 //am sleep
                 break;
             case 5:
@@ -204,9 +204,9 @@ public class EnemyController extends ControllerAdapter{
         return true;
     }
 
-    public void noAction(){
-        action.noAction();
-    }
+    public void afk(){ noAction(); thrustIfSlowerThan(1);}
+
+    public void noAction(){ action.noAction(); }
 
     public void noClick(){};
 

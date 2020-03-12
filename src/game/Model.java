@@ -105,7 +105,7 @@ public abstract class Model {
         return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
     }
 
-    protected static boolean isPlayerObject(GameObject o){ return (o instanceof PlayerShip || o instanceof PlayerBullet || o instanceof Bomb); }
+    protected static boolean isPlayerObject(GameObject o){ return (o instanceof PlayerShip || o instanceof PlayerBullet); }
 
     protected static boolean isEnemyObject(GameObject o){ return (o instanceof EnemyShip || o instanceof  EnemyBullet); }
 

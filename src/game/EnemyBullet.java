@@ -1,7 +1,5 @@
 package game;
 
-import utilities.Vector2D;
-
 import java.awt.*;
 
 public class EnemyBullet extends Bullet {

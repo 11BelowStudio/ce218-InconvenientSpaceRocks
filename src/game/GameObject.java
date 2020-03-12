@@ -21,7 +21,7 @@ public abstract class GameObject{
 
     int objectType;
 
-    protected static final int UNKNOWN_OBJECT = 0;
+    protected static final int BOMB = 0;
     protected static final int PLAYER_OBJECT = 1;
     protected static final int ENEMY_OBJECT = 2;
     protected static final int ASTEROID = 3;
@@ -81,9 +81,9 @@ public abstract class GameObject{
         collided = false;
         bombHit = false;
         pointValue = 0;
-        texture = (BufferedImage)AN_TEXTURE;
+        texture = AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
-        objectType = UNKNOWN_OBJECT;
+        objectType = BOMB;
     }
 
     public GameObject revive(Vector2D p, Vector2D v){
