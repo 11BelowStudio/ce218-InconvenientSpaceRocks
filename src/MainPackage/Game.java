@@ -291,15 +291,6 @@ public class Game extends Model  {
 
 
         boolean asteroidsRemaining = false;
-        //
-        // 1. update all game objects and add non-dead game objects to alive list
-        // 2. check if ship bullet is not null. If so, add it to alive list
-        //    and set ship bullet field to null
-        // 3. clear list of game objects
-        // 4. add all elements from the alive list to the list of game objects
-
-
-
 
         for (GameObject g : gameObjects) {
             //updating everything basically
@@ -351,7 +342,7 @@ public class Game extends Model  {
                     moveObjectAwayFromShip(g); //will move objects away from the ship if it's just spawned in
                 }
 
-                
+
                 alive.add(g);
             }
         }
@@ -379,14 +370,7 @@ public class Game extends Model  {
                     continue; //skip stuff that's dead/intangible
                 }
 
-                if (g.objectType != g2.objectType    /*(isAsteroid(g) ^ isAsteroid(g2)) ||
-                        (isPlayerObject(g) ^ isPlayerObject(g2)) ||
-                        (isEnemyObject(g) ^ isEnemyObject(g2))*/
-                ) {
-                    //only need to bother handing collisions if both objects are both asteroid/player/enemy-related objects
-                    // (^ operator is 'xor')
-                    //can't really do 'if (.class != .class)' as the superclasses kinda mess around with it,
-                    //so yeah the Model class has some static methods for sorting that out
+                if (g.objectType != g2.objectType) {
                     g.collisionHandling(g2);
                 }
             }
