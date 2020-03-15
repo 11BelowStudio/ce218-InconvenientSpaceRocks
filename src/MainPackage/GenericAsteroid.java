@@ -57,7 +57,7 @@ public abstract class GenericAsteroid extends GameObject {
     public void update(){
         super.update();
         if (needToSlowDown) {
-            velocity.mult(0.99);
+            velocity.mult(DRAG);
             needToSlowDown = (velocity.mag() > originSpeed);
             //slows down the asteroid slightly if is above the original speed for it
         }

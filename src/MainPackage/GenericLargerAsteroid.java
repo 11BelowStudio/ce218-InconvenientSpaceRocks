@@ -10,7 +10,7 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     //how long it can persist for
     private int timeToLive;
 
-    int childrenToSpawn;
+    public int childrenToSpawn;
 
     int redScale;
 
@@ -56,6 +56,14 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     }
 
     protected abstract void updateColour();
+
+    public int getChildrenToSpawn(){
+        return childrenToSpawn;
+    }
+
+    public GenericAsteroid reviveChild(GenericAsteroid a){
+        return a.revive(position);
+    }
 
 
 }

@@ -15,7 +15,7 @@ public abstract class Ship extends GameObject {
     protected double STEER_RATE = 2*Math.PI;
 
     // acceleration when thrust is applied
-    public static final double MAG_ACC = 5;
+    private static final double MAG_ACC = 5;
 
     //maximum speed
     public static final double MAX_SPEED = 250;
@@ -35,47 +35,44 @@ public abstract class Ship extends GameObject {
     protected Controller ctrl;
 
     //recording if there is thrust
-    protected boolean thrusting;
+    private boolean thrusting;
 
     protected Color thrustColour;
 
-    protected long BULLET_DELAY;
+    protected long BULLET_DELAY = 250;
     //delay between shooting bullets (in milliseconds) (250ms = 1/4s)
 
-    protected long canFireNextBulletAt;
+    private long canFireNextBulletAt;
     //when the player can fire their next bullet
 
 
-    public Bullet lastBullet;
+    private Rectangle definedRect;
 
-    protected Rectangle definedRect;
+    private Polygon thrustPolygon;
 
-    protected Polygon thrustPolygon;
+    private long WARP_DELAY = 500;
 
-    protected Action currentAction;
-
-    protected long WARP_DELAY = 500;
-
-    protected long canWarpAt;
+    private long canWarpAt;
 
     protected double warpDistance;
 
-    public boolean fired;
+    private boolean fired;
 
-    public Vector2D bulletLocation;
+    private Vector2D bulletLocation;
 
-    public Vector2D bulletVelocity;
+    private Vector2D bulletVelocity;
 
+    protected Action currentAction;
 
+    long now;
 
 
     public Ship(Vector2D p, Vector2D v, Vector2D d, Controller ctrl){
         super(p,v);
         direction = d;
+        now = System.currentTimeMillis();
 
-        //the most recent bullet that has been fired
-        lastBullet = null;
-        canFireNextBulletAt = System.currentTimeMillis();
+        canFireNextBulletAt = now;
         //allows bullet to be fired instantly basically
 
         //declaring the ship shape
@@ -90,7 +87,7 @@ public abstract class Ship extends GameObject {
         RADIUS = DRAWING_SCALE*2;
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         this.ctrl = ctrl;
-        canWarpAt = System.currentTimeMillis();
+        canWarpAt = now;
 
         warpDistance = 100;
 
@@ -101,10 +98,10 @@ public abstract class Ship extends GameObject {
     public Ship revive(Vector2D p, Vector2D v, Vector2D d){
         super.revive(p,v);
         this.direction = d;
-        lastBullet = null;
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
-        canWarpAt = System.currentTimeMillis();
-        canFireNextBulletAt = System.currentTimeMillis();
+        now = System.currentTimeMillis();
+        canWarpAt = now;
+        canFireNextBulletAt = now;
         bulletLocation = null;
         bulletVelocity = null;
         fired = false;
@@ -114,46 +111,40 @@ public abstract class Ship extends GameObject {
 
     public void update(){
         currentAction = ctrl.action();
-        if (currentAction.shoot){
-            mkBullet();
-            currentAction.shoot = false;
-        } else {
-            fired = false;
+
+        now = System.currentTimeMillis();
+
+
+        if (fired = currentAction.shoot){
+            shoot();
         }
 
         direction.rotate(Math.toRadians(currentAction.turn * STEER_RATE));
         //if the ship has a 1 or -1 for turn, it will turn in the appropriate direction
         direction.normalise();
 
-        //adds the new direction to velocity, scaled by whether or not thrust is being applied, over the frame time
-        velocity.addScaled(direction,(MAG_ACC/DT) * currentAction.thrust);
-
-        thrusting = (currentAction.thrust != 0);
-
-        if (thrusting){
+        if (thrusting = (currentAction.thrust != 0)){
             SoundManager.startThrust();
+            //adds the new direction to velocity, scaled by whether or not thrust is being applied, over the frame time
+            velocity.addScaled(direction,(MAG_ACC/DT));
         } else{
             SoundManager.stopThrust();
         }
+
+        velocity.mult(DRAG);
+        //reduces velocity by DRAG
 
         if (velocity.mag() > MAX_SPEED){
             //ensures that velocity is capped at MAX_SPEED
             velocity.setMag(MAX_SPEED);
         }
 
-        velocity.mult(1-DRAG);
-        //reduces velocity by DRAG
-
         position.addScaled(velocity,DT);
         //updates the position by the velocity (weighted by the frame time)
 
-        long now = System.currentTimeMillis();
-        if (currentAction.warp && now >= canWarpAt) {
-            SoundManager.playBwoab();
-            position.addScaled(direction, warpDistance);
-            canWarpAt = now + WARP_DELAY;
-            velocity.setMag(0);
-            currentAction.warp = false;
+
+        if (currentAction.warp){
+            warp();
         }
 
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
@@ -166,27 +157,30 @@ public abstract class Ship extends GameObject {
     }
 
 
-    protected void mkBullet(){
-        if (System.currentTimeMillis() > canFireNextBulletAt) {
-            //if it's gone past the time when the next bullet can be fired,
-            //a bullet can be fired
-            notIntangible(); //attacking will cause a premature end to the player's intangibility
-            canFireNextBulletAt = (System.currentTimeMillis() + BULLET_DELAY);
+    private void shoot(){
+        if (now > canFireNextBulletAt) {
+            //if it's gone past the time when the next bullet can be fired,a bullet can be fired
+            canFireNextBulletAt = (now + BULLET_DELAY);
             //works out when the player is next allowed to fire a bullet
-            fireBullet();
+            //spawns the bullet 2*radius away from position
+            bulletLocation = Vector2D.addScaled(position,direction,2*RADIUS);
+            bulletLocation.wrap(FRAME_WIDTH,FRAME_HEIGHT);
+            //obligatory wraparound
+            //bullet will be going in the direction the ship is facing, but at 300 magnitude
+            bulletVelocity = Vector2D.setMag(direction,300);
+            notIntangible(); //attacking will cause a premature end to the player's intangibility
+        } else{
+            fired = false;
         }
     }
 
-    protected void fireBullet(){
-        //spawns the bullet 2*radius away from position
-        bulletLocation = Vector2D.addScaled(position,direction,2*RADIUS);
-        bulletLocation.wrap(FRAME_WIDTH,FRAME_HEIGHT);
-        //obligatory wraparound
-
-
-        //bullet will be going in the direction the ship is facing, but at 300 magnitude
-        bulletVelocity = Vector2D.setMag(direction,300);
-        fired = true;
+    private void warp(){
+        if (now >= canWarpAt) {
+            SoundManager.playBwoab();
+            position.addScaled(direction, warpDistance);
+            canWarpAt = now + WARP_DELAY;
+            velocity.setMag(0);
+        }
     }
 
 
@@ -214,6 +208,15 @@ public abstract class Ship extends GameObject {
     protected void paintTexture(Graphics2D g){
         g.setPaint(new TexturePaint(texture,definedRect));
         g.fill(transformedArea);
+    }
+
+    public boolean hasFired(){
+        return fired;
+    }
+    public Bullet setBullet(Bullet b){
+        fired = false;
+        SoundManager.fire();
+        return b.revive(bulletLocation,bulletVelocity);
     }
 
 }

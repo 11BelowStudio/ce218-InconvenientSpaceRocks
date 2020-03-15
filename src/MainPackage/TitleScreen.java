@@ -327,7 +327,7 @@ public class TitleScreen extends Model {
                 showScrollingText = false;
                 scrollingTextToAdd.clear();
                 createScrollingText(highScores.longwindedLeaderboard(),60,100);
-                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),Vector2D.polar(UP_RADIANS,100),"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
+                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),100,"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
             }
         }
     }
@@ -346,7 +346,7 @@ public class TitleScreen extends Model {
         yeetHUD = true;
         showScrollingText = false;
         for (String s: theText){
-            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),Vector2D.polar(UP_RADIANS,scrollSpeed),s,StringObject.MIDDLE_ALIGN));
+            scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT+distFromBottom),scrollSpeed,s,StringObject.MIDDLE_ALIGN));
             //distFromBottom += distBetweenLines;
             distFromBottom += 22;
         }

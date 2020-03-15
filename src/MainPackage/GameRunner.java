@@ -98,6 +98,7 @@ public class GameRunner {
             frame.pack(); //repacks the frame
             repaintTimer.start(); //starts the repaintTimer
 
+
             //AND NOW THE MODEL UPDATE LOOP
             while (!currentModel.endGame){ //keeps updating the model until the endGame variable of it is true
                 //basically updates the model once every 'DELAY' milliseconds (

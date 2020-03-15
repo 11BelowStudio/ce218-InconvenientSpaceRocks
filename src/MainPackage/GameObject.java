@@ -19,7 +19,7 @@ public abstract class GameObject{
 
     public double RADIUS; //kept for collision stuff
 
-    int objectType;
+    public int objectType;
 
     protected static final int BOMB = 0;
     protected static final int PLAYER_OBJECT = 1;
@@ -31,13 +31,13 @@ public abstract class GameObject{
 
 
 
-    protected boolean intangible;
+    public boolean intangible;
     //whether or not this game object can be interacted with
 
     protected boolean wasHit;
     //records if it was hit by something or not
 
-    protected boolean playerHit;
+    public boolean playerHit;
     //records if the player hit it or not
 
     public boolean bombHit;
@@ -57,7 +57,7 @@ public abstract class GameObject{
 
     protected Color objectColour;
 
-    protected static final double DRAG = 0.015;
+    protected static final double DRAG = 0.985;
 
     protected static final double UP_RADIANS = Math.toRadians(270);
 
@@ -134,9 +134,9 @@ public abstract class GameObject{
     }
 
 
-    void collisionHandling(GameObject other) {
+    public void collisionHandling(GameObject other) {
         if (this.objectType != other.objectType && this.overlap(other)) {
-            if (this.intangible || this.dead || other.intangible || other.dead) {
+            if (this.cantTouchThis() || other.cantTouchThis()) {
                 this.bounceOff(other);
                 //they bounce off each other if one of them is now dead/intangible.
                 //shouldn't happen, but, just in case an object became dead/intangible mid-collision cycle
@@ -247,6 +247,9 @@ public abstract class GameObject{
         this.dead = true;
         return this;
     }
+
+
+    public boolean cantTouchThis(){ return (dead || intangible); } //true if dead or intangible
 
 
 

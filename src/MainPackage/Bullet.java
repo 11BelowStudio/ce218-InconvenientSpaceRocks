@@ -19,7 +19,6 @@ public abstract class Bullet extends GameObject {
 
         RADIUS = 5;
 
-
         objectPolygon = PolygonUtilities.scaledPolygonConstructor(new int[]{0,1,-1},new int[]{-1,1,1},0.5);
 
     }

@@ -117,39 +117,27 @@ public abstract class Model {
 
 
     protected void spawnChildren(GenericLargerAsteroid g){
+        int numToSpawn = g.getChildrenToSpawn();
         if (g instanceof MediumAsteroid) {
-            int numToSpawn = ((MediumAsteroid) g).childrenToSpawn;
             for (int i = 0; i < numToSpawn; i++) {
                 if (asteroidStack.isEmpty()) {
                     break;
                 }
-                /*
-                Asteroid newAsteroid = asteroidStack.pop();
-                newAsteroid.revive(g.position);
-                alive.add(newAsteroid);*/
-                alive.add(asteroidStack.pop().revive(g.position));
+                alive.add(g.reviveChild(asteroidStack.pop()));
             }
         } else if (g instanceof BigAsteroid) {
-            int numToSpawn = ((BigAsteroid) g).childrenToSpawn;
             for (int i = 0; i < numToSpawn; i++) {
                 if (mediumAsteroidStack.isEmpty()) {
                     break;
-                }/*
-                MediumAsteroid newAsteroid = mediumAsteroidStack.pop();
-                newAsteroid.revive(g.position);
-                alive.add(newAsteroid);*/
-                alive.add(mediumAsteroidStack.pop().revive(g.position));
+                }
+                alive.add(g.reviveChild(mediumAsteroidStack.pop()));
             }
         }
     }
 
     protected void enemyFire(EnemyShip e){
-        if (e.fired && !enemyBullets.isEmpty()){
-            EnemyBullet b = enemyBullets.pop();
-            b.revive(e.bulletLocation, e.bulletVelocity);
-            alive.add(b);
-            SoundManager.fire();
-            e.fired = false;
+        if (e.hasFired() && !enemyBullets.isEmpty()){
+            alive.add(e.setBullet(enemyBullets.pop()));
         }
     }
 

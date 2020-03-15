@@ -8,8 +8,8 @@ import static MainPackage.Constants.*;
 
 public class PlayerShip extends Ship {
 
-    public static final Color SHIP_COLOUR =  new Color(0,255,255,32);
-    public static final Color GODMODE_COLOUR = new Color(255,0,255,32);
+    private static final Color SHIP_COLOUR =  new Color(0,255,255,32);
+    private static final Color GODMODE_COLOUR = new Color(255,0,255,32);
 
 
     //private static final int RESPAWN_GRACE_PERIOD = 1000;
@@ -21,9 +21,9 @@ public class PlayerShip extends Ship {
     private long gracePeriodExpiresAt;
     //records when the player's grace period will expire
 
-    boolean spawnBomb;
-    Vector2D bombPosition;
-    Vector2D bombVelocity;
+    private boolean spawnBomb;
+    private Vector2D bombPosition;
+    private Vector2D bombVelocity;
 
 
 
@@ -32,7 +32,7 @@ public class PlayerShip extends Ship {
     public PlayerShip(Controller ctrl) {
         super(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1), ctrl);
 
-        gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
+        gracePeriodExpiresAt = now + RESPAWN_GRACE_PERIOD;
 
         objectColour = SHIP_COLOUR;
 
@@ -51,37 +51,30 @@ public class PlayerShip extends Ship {
 
     public PlayerShip revive() {
         super.revive(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(GameObject.UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1));
-        gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;
+        gracePeriodExpiresAt = now + RESPAWN_GRACE_PERIOD;
         objectColour = SHIP_COLOUR;
         BULLET_DELAY = 250;
         warpDistance = 200;
         return this;
     }
 
-    /*
-    public PlayerShip(Controller ctrl, Game game, Vector2D direction){
-        this(ctrl,game);
-        this.direction = direction;
-    }*/
-
-
     @Override
     public void update(){
         super.update();
-        if (ctrl.action().bomb){
-            Vector2D reverseDirection = Vector2D.flip(direction);
-            bombPosition = Vector2D.addScaled(position,reverseDirection,2.5*RADIUS);
-            bombPosition.wrap(FRAME_WIDTH,FRAME_HEIGHT);
-            //System.out.println(position.x + ", " + position.y);
-            bombVelocity = reverseDirection.setMag(100);
-            ctrl.action().bomb = false;
-            spawnBomb = true;
-        } else{
-            spawnBomb = false;
-            //bombLocation = null;
+
+
+        if (spawnBomb = currentAction.bomb){
+
+            bombVelocity = Vector2D.flip(direction); //bomb goes in opposite direction to ship
+            bombPosition = Vector2D.addScaled(position,bombVelocity,2.5*RADIUS); //2.5*RADIUS away from ship at first
+            bombPosition.wrap(FRAME_WIDTH,FRAME_HEIGHT); //wraparound time
+            bombVelocity.setMag(100); //100 speed for bomb
+            notIntangible(); //no more intangibility
         }
+
+
         if (intangible){
-            if (System.currentTimeMillis() >= gracePeriodExpiresAt || fired || spawnBomb){
+            if (now >= gracePeriodExpiresAt){
                 //will cause the player's godmode to expire after the grace period expires
                 notIntangible();
             } else{
@@ -105,7 +98,6 @@ public class PlayerShip extends Ship {
     @Override
     protected void notIntangible(){
         super.notIntangible();
-        //System.out.println("no more godmode for u"); //debug message
         this.objectColour = SHIP_COLOUR; //goes back to normal colour
     }
 
@@ -116,6 +108,17 @@ public class PlayerShip extends Ship {
         //so it won't get defeated by a new asteroid as it spawns in
         gracePeriodExpiresAt = System.currentTimeMillis() + REWARD_GRACE_PERIOD;
         intangible = true;
+        this.objectColour = GODMODE_COLOUR;
+    }
+
+    public boolean canSpawnBomb(){
+        return spawnBomb;
+    }
+
+    public Bomb setBomb(Bomb b){
+        spawnBomb = false;
+        SoundManager.playBweb();
+        return b.revive(bombPosition,bombVelocity);
     }
 
 
