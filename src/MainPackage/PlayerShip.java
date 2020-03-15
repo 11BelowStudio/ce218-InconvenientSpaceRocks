@@ -48,7 +48,7 @@ public class PlayerShip extends Ship {
     }
 
 
-    @Override
+
     public PlayerShip revive() {
         super.revive(new Vector2D(HALF_WIDTH,HALF_HEIGHT),Vector2D.polar(GameObject.UP_RADIANS,0),Vector2D.polar(UP_RADIANS,1));
         gracePeriodExpiresAt = System.currentTimeMillis() + RESPAWN_GRACE_PERIOD;

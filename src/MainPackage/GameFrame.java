@@ -5,7 +5,9 @@ import java.awt.*;
 
 public class GameFrame extends JFrame {
 
-    //yeah, it's pretty much the JEasyFrame thing
+    //yeah, it's pretty much the JEasyFrame thing but the view is added via a method
+    //which was intended for some sort of optional fullscreen support
+    //but this idea was not implemented in time.
 
     public GameFrame() {
         this.setTitle("Inconvenient Space Rocks (In Space!)");

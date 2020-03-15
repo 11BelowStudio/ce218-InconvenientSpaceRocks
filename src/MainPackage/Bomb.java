@@ -3,7 +3,6 @@ package MainPackage;
 import utilities.Vector2D;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 
 import static MainPackage.Constants.*;
@@ -18,6 +17,8 @@ public class Bomb extends GameObject {
     private int timeToLive;
 
     private double scaling;
+
+    private Shape bombCircle;
 
     public Bomb() {
         super(new Vector2D(), new Vector2D());
@@ -35,6 +36,7 @@ public class Bomb extends GameObject {
         scaling = RADIUS;
         timeToLive = 40;
         objectColour = new Color(255,255,0,128);
+        bombCircle = new Ellipse2D.Double(position.x-scaling,position.y-scaling,(scaling*2),(scaling*2));
         SoundManager.playBweb();
         return this;
     }
@@ -44,7 +46,7 @@ public class Bomb extends GameObject {
         if (!dead) {
             timeToLive--;
             if (exploding) {
-                collided = false;
+                //collided = false;
                 scaling += 5;
                 if (timeToLive <= 0) {
                     this.dead = true;
@@ -65,6 +67,8 @@ public class Bomb extends GameObject {
                 }
             }
         }
+        bombCircle = new Ellipse2D.Double(position.x-scaling,position.y-scaling,(scaling*2),(scaling*2));
+        //updates the bombCircle so it's in the correct position/correct size
     }
 
     public void hit(boolean hitByPlayer) { this.kill(); }
@@ -73,12 +77,7 @@ public class Bomb extends GameObject {
     @Override
     public void draw(Graphics2D g) {
         notIntangible();
-        AffineTransform backup = g.getTransform();
-        g.translate(position.x,position.y);
-        g.setColor(objectColour);
-        Shape transformedShape = new Ellipse2D.Double(position.x-scaling,position.y-scaling,(scaling*2),(scaling*2));
-        g.setTransform(backup); //resets the Graphics2D transformation back to default
-        wrapAround(g,transformedShape);
+        wrapAround(g,bombCircle);
         paintTheArea(g);
     }
 
@@ -96,7 +95,7 @@ public class Bomb extends GameObject {
             other.bombHit = true;
         } else {
             //if this had not yet exploded, this is destroyed, other object isn't
-            collided = true;
+            //collided = true;
             dead = true;
             if (other instanceof Bullet){
                 other.hit(true); //but if it was a bullet, it gets destroyed as usual

@@ -15,7 +15,7 @@ class GameLevels {
     //3d arraylist containing level info
 
     //{small asteroids,medium,big}
-    static int[][][] arrLevels = {
+    private static int[][][] arrLevels = {
             {{2, 2, 0}, {1, 3, 0}, {0, 0, 1}},
             {{0, 2, 1}, {0, 1, 2}, {0, 0, 3}, {0, 5,0}},
             {{0, 0, 4}, {0, 0, 5}},
@@ -24,9 +24,7 @@ class GameLevels {
             {{30, 0, 1}, {0, 6, 10}, {8, 1, 10}, {5, 3, 10}, {2, 5, 10}},
             {{7, 2, 10}, {4, 4, 10}, {1, 6, 13}, {9, 1, 13}, {6, 3, 10}},
             {{0, 8, 10}, {8, 2, 10}, {5, 4, 10}, {2, 6, 10}, {7, 3, 10},{40,20,10}}
-    };//,
-    //{{90,40,10}}
-    // };
+    };
 
     static {
 
@@ -69,8 +67,8 @@ class GameLevels {
         int tempLevel = level - 1; //reduces level by 1 for purposes of easily getting it from the arraylist
         if (tempLevel > 7){ //there's only configurations for 8 levels so yeah after that it works differently
             int extraLevel = tempLevel-7; //works out how many levels the player has gone past the final level
-            if (extraLevel > 8){
-                extraLevel =8; //just making sure it doesn't get too out of hand
+            if (extraLevel > 10){
+                extraLevel =10; //just making sure it doesn't get too out of hand
             }
             ArrayList<Integer> theLevel = getRandomLevelStatic(7); //obtains a random final level
             for (int i = 0; i < 3; i++) {
@@ -95,10 +93,12 @@ class GameLevels {
 
 
 
-    //this is a stress test. basically, using 'ohHecc' instead of a call to 'getLevelConfig'
-        // ensures that the maximum amount of all asteroids are spawned in.
-        //significantly above the actual cap, but thats to ensure that it'll spawn in enough if I increase the cap later
-    //fun times.
+    /*
+    this is a stress test. basically, using 'ohHecc' instead of a call to 'getLevelConfig'
+    ensures that the maximum amount of all asteroids are spawned in.
+    it is significantly above the actual cap, but thats to ensure that it'll spawn in enough if I increase the cap later
+    fun times.
+    */
     private static Integer[] ohNoes = new Integer[]{500,500,500};
     static ArrayList<Integer> ohHecc = new ArrayList<>(Arrays.asList(ohNoes));
 

@@ -27,12 +27,12 @@ public abstract class GameObject{
     protected static final int ASTEROID = 3;
 
 
+    double rotationAngle;
+
+
 
     protected boolean intangible;
     //whether or not this game object can be interacted with
-    protected boolean finalIntangible;
-    //records whether or not this is the final intangibility update; used to extend intangibility until the thing can be used
-    protected boolean stillIntangible;
 
     protected boolean wasHit;
     //records if it was hit by something or not
@@ -46,28 +46,20 @@ public abstract class GameObject{
 
     public Polygon objectPolygon;
 
-    //public Shape transformedShape;
-
     public Area transformedArea;
 
-    public Rectangle areaRectangle;
+    protected Rectangle areaRectangle;
 
-    public Rectangle boundingRectangle;
+    protected Rectangle boundingRectangle;
 
 
-    public BufferedImage texture;
+    protected BufferedImage texture;
 
     protected Color objectColour;
 
-    public static final double DRAG = 0.015;
+    protected static final double DRAG = 0.015;
 
-    int[] hitboxX, hitboxY;
-
-    public static final double MAX_SPEED = 100;
-
-    public static final double UP_RADIANS = Math.toRadians(270);
-
-    boolean collided;
+    protected static final double UP_RADIANS = Math.toRadians(270);
 
     public GameObject(Vector2D p, Vector2D v){
         RADIUS = 10;
@@ -77,13 +69,11 @@ public abstract class GameObject{
         intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         playerHit = false;
-        finalIntangible = false;
-        collided = false;
         bombHit = false;
         pointValue = 0;
-        texture = AN_TEXTURE;
         objectColour = new Color(255,255,255,32);
         objectType = BOMB;
+        rotationAngle = 0;
     }
 
     public GameObject revive(Vector2D p, Vector2D v){
@@ -93,43 +83,23 @@ public abstract class GameObject{
         intangible = true; //everything intangible until drawn at earliest to avoid exceptions being thrown on frame 1 collisions
         wasHit = false;
         playerHit = false;
-        finalIntangible = false;
-        collided = false;
         bombHit = false;
+        rotationAngle = 0;
         return this;
     }
 
     public void update(){
-        collided = false;
         if (!dead) {
             position.addScaled(velocity, DT);
             position.wrap(FRAME_WIDTH, FRAME_HEIGHT);
-            /*
-            if (position.x > HALF_WIDTH){
-                position.x -= FRAME_WIDTH;
-            }
-            if (position.y > HALF_HEIGHT){
-                position.y -= FRAME_HEIGHT;
-            }*/
         }
     }
 
 
     public void hit(boolean hitByPlayer){
-        //if ((!finalIntangible || !stillIntangible) && !intangible){
-            //if (!intangible) {
-                //it's dead if it got hit whilst not intangible
         dead = true;
         intangible = true;
-        //bombHit = hitByBomb;
         hitLogic(hitByPlayer);
-                //return true;
-            //}
-        //} //return false;
-
-        /* else {
-            stillIntangible = true;
-        }*/
     }
 
     protected void hitLogic(boolean hitByPlayer){
@@ -140,19 +110,26 @@ public abstract class GameObject{
     }
     //will contain the stuff that will happen if this object was actually hit (and not intangible)
 
-    public abstract void draw(Graphics2D g);
+    public void draw(Graphics2D g){
+        AffineTransform at = g.getTransform();
+        g.translate(position.x, position.y);
+        g.rotate(rotationAngle);
+        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
+        g.setTransform(at); //resets the Graphics2D transformation back to default
+        wrapAround(g,transformedShape);
+        paintTheArea(g);
+        this.intangible = false;
+    }
 
-    public boolean overlap(GameObject other){
-        // overlap detection based on areas
-        try {
-            //compares some bounding rectangles for the two objects first before attempting to properly collide them
+    private boolean overlap(GameObject other){// overlap detection based on areas
+        try {//compares some bounding rectangles for the two objects first before attempting to properly collide them
             if (this.boundingRectangle.intersects(other.boundingRectangle)) {
                 //If the actual areas of the two gameObjects involved in the collision overlap in any way, they've collided
                 Area thisArea = new Area(this.transformedArea);
                 thisArea.intersect(other.transformedArea);
                 return !thisArea.isEmpty();
             }
-        } catch(NullPointerException ignored){} //if the hitboxes haven't been set up, they haven't collided
+        } catch(NullPointerException ignored){} //if the hitboxes/bounding rectangles haven't been set up, they haven't collided
         return false;
     }
 
@@ -174,19 +151,11 @@ public abstract class GameObject{
     boolean bombCollision(GameObject other){ return false; } //bomb class overrides this with one that returns true.
 
 
-
-    /*
-    public Shape transformObjectPolygon(AffineTransform at){
-        return at.createTransformedShape(objectPolygon);
-        //return transformedObjectPolygon;
-    }*/
-
     protected void wrapAround(Graphics2D g, Shape transformedShape){
         transformedArea = new Area(transformedShape);
         //the transformedArea is the transformedShape parameter but as an Area instead
-        this.areaRectangle = transformedArea.getBounds();
+        areaRectangle = transformedArea.getBounds();
         //a simple bounding rectangle for this area, before wrapping, used for the texturePaint
-        //backupRect = transformedArea.getBounds();
         boolean wrapped = false;
         if (transformedShape.intersects(aboveScreen)){
             //moving stuff above the screen to the bottom of it
@@ -228,14 +197,19 @@ public abstract class GameObject{
     }
 
     protected void paintTheArea(Graphics2D g){
+        paintTexture(g);
+        paintColour(g);
+    }
+
+    protected void paintTexture(Graphics2D g){
         g.setPaint(new TexturePaint(texture, areaRectangle));
         g.fill(transformedArea); //filling the sprite with the texture
+    }
+
+    protected void paintColour(Graphics2D g){
         g.setColor(objectColour);
         g.fill(transformedArea); //now filling it with the overlay
     }
-
-
-
 
     @Override
     public String toString(){
@@ -244,7 +218,6 @@ public abstract class GameObject{
 
     protected void notIntangible(){
         //basically supposed to make the thing not intangible,
-        //however, also means that the thing won't die instantly due to losing intangibility whilst in contact with something
         if (intangible) {
             this.intangible = false;
         }
@@ -254,8 +227,7 @@ public abstract class GameObject{
     protected void bounceOff(GameObject other){
         if (other instanceof Bullet){
             other.dead = true;
-        }  else if (!other.collided) {
-            collided = true;
+        }  else {
             Vector2D coll = new Vector2D(other.position);
             coll.subtract(position).normalise();
             Vector2D tangent = new Vector2D(-coll.y, coll.x);

@@ -46,22 +46,14 @@ public class Constants {
 
     // sleep time between two frames
     public static final int DELAY = 20;  // time between frames in milliseconds
-    //public static final int DELAY = 20; //delay of 20: 50fps
     public static final double DT = DELAY / 1000.0;  // DELAY in seconds
-    //public static final double DT = DELAY / 1000.0;
 
-    //static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
 
-    public static final int MODEL_SPEED = 20;
-    public static final long MODEL_DURATION = 20;
-
-    public static Image SPEHSS, TITLE, DEFAULT_VIEW, YOU_ARE_DED;//ASTEROID1, MILKYWAY1;
+    public static Image SPEHSS, DEFAULT_VIEW;
     static {
         try {
             SPEHSS = ImageManager.loadImage("spehss2");
-            TITLE = ImageManager.loadImage("titleImage");
-            DEFAULT_VIEW = ImageManager.loadImage("default");
-            YOU_ARE_DED = ImageManager.loadImage("urdedlmao");
+            DEFAULT_VIEW = ImageManager.loadImage("titleBG");
         } catch (IOException e) { e.printStackTrace(); }
     }
 

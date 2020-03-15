@@ -108,7 +108,7 @@ public class TitleScreen extends Model {
     }
 
 
-    public void revive(){
+    public TitleScreen revive(){
         super.revive();
 
         //aliveHUD.clear();
@@ -146,6 +146,8 @@ public class TitleScreen extends Model {
         createScrollingText(LiterallyJustTheOpeningCreditsThing.openingArrayList,30,25);
 
         yeetHUD = false;
+
+        return this;
     }
 
     @Override

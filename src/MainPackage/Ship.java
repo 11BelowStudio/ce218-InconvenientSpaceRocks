@@ -79,15 +79,10 @@ public abstract class Ship extends GameObject {
         //allows bullet to be fired instantly basically
 
         //declaring the ship shape
-        hitboxX = new int[] {0,2,0,-2};
-        hitboxY = new int[] {1,2,-2,2};
+        this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(new int[] {0,2,0,-2},new int[] {1,2,-2,2},1);
 
-        this.objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1);
-
-        int[] XPTHRUST = new int[]{0,1,-1};
-        int[] YPTHRUST = new int[]{2,0,0};
-
-        this.thrustPolygon = PolygonUtilities.scaledPolygonConstructor(XPTHRUST,YPTHRUST,1);
+        //the thrust polygon
+        this.thrustPolygon = PolygonUtilities.scaledPolygonConstructor(new int[]{0,1,-1},new int[]{2,0,0},1);
 
         //objectColour = SHIP_COLOUR;
 
@@ -117,26 +112,8 @@ public abstract class Ship extends GameObject {
         return this;
     }
 
-    public Ship revive() {
-        revive(new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT),
-                Vector2D.polar((Math.random() * Math.PI * 2), Math.random() * MAX_SPEED),
-                Vector2D.polar((Math.random() * Math.PI * 2),1));
-        return this;
-
-    }
-
-    //basically like revive, but actually returns this object
-    public Ship reviveAndReturn(){
-        this.revive();
-        return this;
-    }
-
     public void update(){
         currentAction = ctrl.action();
-        //Vector2D lastPos = new Vector2D(position);
-
-        //Vector2D lastPos = this.position;
-
         if (currentAction.shoot){
             mkBullet();
             currentAction.shoot = false;
@@ -179,16 +156,15 @@ public abstract class Ship extends GameObject {
             currentAction.warp = false;
         }
 
-        finishUpdate();
-    }
-
-    protected void finishUpdate(){
         position.wrap(FRAME_WIDTH,FRAME_HEIGHT);
         //wraps the position around if appropriate
 
         definedRect = new Rectangle((int)(position.x - RADIUS),(int)(position.y - RADIUS),(int)RADIUS*2,(int)RADIUS*2);
         //defines the definedRect
+
+        rotationAngle = direction.angle() + Math.PI / 2;
     }
+
 
     protected void mkBullet(){
         if (System.currentTimeMillis() > canFireNextBulletAt) {
@@ -217,21 +193,15 @@ public abstract class Ship extends GameObject {
     public void draw(Graphics2D g){
         AffineTransform at = g.getTransform(); //gets a backup of the default transformation of the Graphics2D object
         g.translate(position.x, position.y);
-
-        double rot = direction.angle() + Math.PI / 2;
-        g.rotate(rot);
-
-
-
+        g.rotate(rotationAngle);
         if (thrusting) {
             //colours in the thrust polygon
             g.setColor(thrustColour);
             g.fillPolygon(thrustPolygon);
         }
-        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
+        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
         g.setTransform(at); //resets the Graphics2D transformation back to default
         wrapAround(g,transformedShape);
-
         paintTheArea(g);
     }
 
@@ -241,10 +211,8 @@ public abstract class Ship extends GameObject {
     //casually using the definedRect, not the bounding box, to render the texturepaint psuedo-sprite correctly
     //(le lack of an image editor with transparency has arrived)
     @Override
-    protected void paintTheArea(Graphics2D g){
+    protected void paintTexture(Graphics2D g){
         g.setPaint(new TexturePaint(texture,definedRect));
-        g.fill(transformedArea);
-        g.setColor(objectColour);
         g.fill(transformedArea);
     }
 

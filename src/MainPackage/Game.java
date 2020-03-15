@@ -92,7 +92,7 @@ public class Game extends Model  {
 
 
         ship = new PlayerShip(this.ctrl);
-        gameObjects.add(ship.reviveAndReturn());
+        gameObjects.add(ship.revive());
 
         score = 0;
         lives = 3;
@@ -134,7 +134,7 @@ public class Game extends Model  {
 
     }
 
-    public void revive(){
+    public Game revive(){
         super.revive();
 
         newObjects.clear();
@@ -164,7 +164,7 @@ public class Game extends Model  {
 
         bombStack.push(new Bomb());
 
-        gameObjects.add(ship.reviveAndReturn());
+        gameObjects.add(ship.revive());
 
         score = 0;
         lives = 3;
@@ -194,8 +194,7 @@ public class Game extends Model  {
 
         spawnIt = false;
 
-
-
+        return this;
     }
 
 
@@ -280,7 +279,7 @@ public class Game extends Model  {
             //middleTextObject.setText("");
             respawnPromptObject.kill();
             waitingToRespawn = false;
-            alive.add(ship.reviveAndReturn());
+            alive.add(ship.revive());
             ctrl.noAction();
             shipJustAdded = true;
             //creates a new ship if the player can respawn and the player presses any button
@@ -389,7 +388,7 @@ public class Game extends Model  {
                 //enemy = new EnemyShip(this);
                 EnemyShip e = enemyShips.pop();
                 //e.revive();
-                moveObjectAwayFromShip(e.reviveAndReturn());
+                moveObjectAwayFromShip(e.revive());
                 //enemyPlayer.newEnemy(enemy);
                 alive.add(e);
                 //newObjects.add(enemy);

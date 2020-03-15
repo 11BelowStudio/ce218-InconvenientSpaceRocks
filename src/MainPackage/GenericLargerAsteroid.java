@@ -7,14 +7,8 @@ import java.awt.geom.AffineTransform;
 
 public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
-    //public static final double MAX_SPEED = 100;
-
     //how long it can persist for
-    protected int timeToLive;
-    //how many children it spawns if hit
-    protected final int hitChildren = 2;
-    //how many children it spawns if allowed to expire naturally
-    protected final int decayChildren =  5;
+    private int timeToLive;
 
     int childrenToSpawn;
 
@@ -36,14 +30,13 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
             updateColour();
         } else {
             dead = true;
-            wasHit = false;
+            wasHit = false; //died from not being hit if it died as a result of time to live expiring
             spawnChildren();
         }
     }
 
-    //calls spawnChildren() when this is hit
     @Override
-    //public void hit(boolean hitByPlayer){
+    //calls spawnChildren() when this is hit, as it died from not natural causes.
     public void hit(boolean hitByPlayer){
         super.hit(hitByPlayer);
         spawnChildren();
@@ -53,38 +46,16 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     private void spawnChildren() {
         if (wasHit) {
             SoundManager.playCrunch();
-            childrenToSpawn = hitChildren;
+            //spawns 2 children if killed, and plays the shorter crunch noise
+            childrenToSpawn = 2;
         } else {
             SoundManager.playMedCrunch();
-            childrenToSpawn = decayChildren;
+            //spawns 5 children if allowed to expire naturally, longer crunch noise
+            childrenToSpawn = 5;
         }
     }
-    //will be used to generate the child asteroids
 
     protected abstract void updateColour();
-
-
-    @Override
-    public void draw(Graphics2D g) {
-        this.notIntangible();
-        AffineTransform at = g.getTransform();
-        g.translate(position.x, position.y);
-        spaceRockGoSpinny(g);
-        //g.setColor(Color.red);
-        g.setColor(objectColour);
-        //g.fillOval((int) (position.x - RADIUS), (int) (position.y - RADIUS), (int) (2 * RADIUS), (int)(2 * RADIUS));
-        //g.fillPolygon(this.objectPolygon);
-        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);;
-        g.setTransform(at); //resets the Graphics2D transformation back to default
-        wrapAround(g,transformedShape);
-        //g.fill(transformedArea);
-        /*
-        g.setPaint(new TexturePaint(texture,this.areaRectangle));
-        g.fill(transformedArea);
-        g.setColor(objectColour);
-        g.fill(transformedArea);*/
-        paintTheArea(g);
-    }
 
 
 }

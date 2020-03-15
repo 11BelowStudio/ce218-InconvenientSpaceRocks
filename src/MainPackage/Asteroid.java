@@ -77,31 +77,6 @@ public class Asteroid extends GenericAsteroid {
     }
 
 
-    @Override
-    public void draw(Graphics2D g) {
-        //Graphics2D g2 = (Graphics2D) g.create();
-        this.notIntangible();
-        AffineTransform at = g.getTransform();
-        g.translate(position.x, position.y);
-        spaceRockGoSpinny(g);
-        Shape transformedShape = g.getTransform().createTransformedShape(objectPolygon);
-        g.setTransform(at); //resets the Graphics2D transformation back to default
-        wrapAround(g,transformedShape);
-        //BufferedImage tempImage = (BufferedImage) texture;
-        //System.out.println(g.getPaint().getClass());
-        //Paint tempPaint = g.getPaint();
-        //g.setPaint(new TexturePaint(tempImage,new Rectangle(0,0,256,256)));
-        /*
-        g.setPaint(new TexturePaint(texture,transformedArea.getBounds()));
-        g.fill(transformedArea);
-        g.setColor(objectColour);
-        g.fill(transformedArea);*/
-        paintTheArea(g);
-        //g.setPaint(tempPaint);
-        //g.dispose();
-    }
-
-
 
     @Override
     public String toString(){

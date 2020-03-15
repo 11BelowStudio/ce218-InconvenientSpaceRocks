@@ -70,7 +70,7 @@ public abstract class Model {
         gameOver = false;
     }
 
-    public void revive(){
+    public Model revive(){
         ctrl.noAction();
         gameObjects.clear();
         hudObjects.clear();
@@ -89,6 +89,7 @@ public abstract class Model {
 
         endGame = false;
         gameOver = false;
+        return this;
     }
 
 

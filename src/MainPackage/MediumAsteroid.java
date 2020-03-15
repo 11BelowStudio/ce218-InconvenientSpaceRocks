@@ -8,24 +8,18 @@ public class MediumAsteroid extends GenericLargerAsteroid {
 
 
 
-    public MediumAsteroid(){
-        super();
-    }
+    public MediumAsteroid(){ super(); }
 
-    public MediumAsteroid(Vector2D p){
-        super(p);
-        //random asteroid at a known position
-    }
+    public MediumAsteroid(Vector2D p){ super(p); } //random asteroid at a known position
+    //initially used for spawning in child medium asteroids, redundant ever since I moved to stacks and reviving
 
     @Override
     protected void setSpecifics(){
         super.setSpecifics();
         RADIUS = 25;
-        //timeToLive = (int)(Math.random() * 512) + 512;
         pointValue = 4; //worth 4 small asteroids if destroyed by the player
             //2 small asteroids if shot = 6 potential points if shot, but only 5 if allowed to decay
         asteroidScale = 0.75;
-        //objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX,hitboxY,1.5);
     }
 
 
@@ -34,7 +28,7 @@ public class MediumAsteroid extends GenericLargerAsteroid {
         if (redScale < 0){
             redScale = 0;
         }
-        this.objectColour = new Color(255-redScale,redScale,0,128);
+        this.objectColour = new Color(255-redScale,redScale,0,128); //colour is somewhere between red and yellow
     }
 
     @Override
