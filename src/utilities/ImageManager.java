@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
+//le ce218 sample code has arrived (Provided by Dr Dimitri Ognibene)
+
+//edited slightly by me
+
 public class ImageManager {
 
     // this may need modifying

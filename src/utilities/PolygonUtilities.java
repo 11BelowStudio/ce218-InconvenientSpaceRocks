@@ -2,9 +2,6 @@ package utilities;
 
 import java.awt.*;
 
-
-import static GamePackage.Constants.DRAWING_SCALE;
-
 public class PolygonUtilities {
 
     public static Polygon scaledPolygonConstructor(int[] xCorners, int[] yCorners, double scale){
@@ -12,8 +9,8 @@ public class PolygonUtilities {
             return null;
         }
         for (int i = 0; i < xCorners.length; i++) {
-            xCorners[i] = (int)(xCorners[i] * (DRAWING_SCALE * scale));
-            yCorners[i] = (int)(yCorners[i] * (DRAWING_SCALE * scale));
+            xCorners[i] = (int)(xCorners[i] * scale);
+            yCorners[i] = (int)(yCorners[i] * scale);
         }
         return new Polygon(xCorners,yCorners,xCorners.length);
     }
@@ -22,7 +19,7 @@ public class PolygonUtilities {
         if (xCorners.length != yCorners.length){
             return null;
         }
-        double standardRadius = scale * DRAWING_SCALE * 4;
+        double standardRadius = scale;
         double maxRadius = standardRadius * 1.05;
         double minRadius = standardRadius * 0.75;
 
@@ -37,7 +34,7 @@ public class PolygonUtilities {
         return new Polygon(xCorners,yCorners,nPoints);
     }
 
-    public static Polygon prettyMuchACircle(int[] xCorners, int[] yCorners, double scale){
+    public static Polygon dodecahedron(int[] xCorners, int[] yCorners, double scale){
         xCorners = new int[12];
         yCorners = new int[12];
 

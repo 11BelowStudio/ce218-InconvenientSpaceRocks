@@ -1,8 +1,14 @@
 package GamePackage;
 
+import GamePackage.Constants;
+import GamePackage.GameObjects.GameObject;
+import GamePackage.Models.Model;
+import utilities.ImageManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 
 //le ce218 sample code has arrived (Provided by Dr Dimitri Ognibene) (enhanced a bit by me)
 import static GamePackage.Constants.*;
@@ -13,11 +19,14 @@ public class View extends JComponent {
 
     private Model model;
 
-    private Image bg;
-
-    private final Image gameBG = SPEHSS;
-
-    private final Image titleBG = TITLE;
+    private static Image gameBG, titleBG, bg;
+    static {
+        try {
+            gameBG = ImageManager.loadImage("spehss2");
+            titleBG = ImageManager.loadImage("titleBG");
+            bg = ImageManager.loadImage("loading");
+        } catch (IOException e) { e.printStackTrace(); }
+    }
 
     private AffineTransform bgTransform;
 
@@ -39,27 +48,27 @@ public class View extends JComponent {
     private double xScale;
     private double yScale;
 
-    public View() {
+    View(){
 
         xScale = 1;
         yScale = 1;
 
-        preferredDimension = FRAME_SIZE;
+        setPreferredDimension(FRAME_SIZE);
 
         displayingModel = false;
 
-        bg = LOADING;
         setupBackgroundTransformation();
 
 
     }
 
-    public void showModel(Model m, boolean isGame){
+    void showModel(Model m, boolean isGame){
         this.model = m;
         displayingModel = true;
         swapBackground(isGame);
     }
 
+    //would have got more use with the fullscreen support stuff
     public void setPreferredDimension(Dimension d){
         preferredDimension = d;
         xScale = (preferredDimension.width == FRAME_WIDTH? 1 :

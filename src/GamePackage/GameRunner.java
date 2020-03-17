@@ -1,7 +1,17 @@
 package GamePackage;
 
+import GamePackage.Controllers.PlayerController;
+import GamePackage.Frames.GameFrame;
+import GamePackage.Models.Game;
+import GamePackage.Models.Model;
+import GamePackage.Models.TitleScreen;
 import utilities.HighScoreHandler;
+import utilities.SoundManager;
+
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 import static GamePackage.Constants.DELAY;
 
 public class GameRunner {
@@ -61,14 +71,14 @@ public class GameRunner {
 
     }
 
-    public void pauseGame(){
+    private void pauseGame(){
         //sets pause to true and stops the repaintTimer if not paused already
         if (!paused){
             paused = true;
             repaintTimer.stop();
         }
     }
-    public void resumeGame(){
+    private void resumeGame(){
         //unpauses the model and restarts the repaintTimer if currently paused
         if (paused){
             paused = false;
@@ -96,7 +106,7 @@ public class GameRunner {
 
 
             //AND NOW THE MODEL UPDATE LOOP
-            while (!currentModel.endGame){ //keeps updating the model until the endGame variable of it is true
+            while (currentModel.keepGoing()){ //keeps updating the model until the endGame variable of it is true
                 //basically updates the model once every 'DELAY' milliseconds (
                 startTime = System.currentTimeMillis();
                 if (!paused) {
@@ -130,7 +140,7 @@ public class GameRunner {
     }
 
 
-    public void quitPrompt(){
+    void quitPrompt(){
         pauseGame(); //pauses the game
         if ((
                 JOptionPane.showConfirmDialog(
@@ -159,6 +169,20 @@ public class GameRunner {
         }
     }
 
+
+
+    private static class EscapeListener extends KeyAdapter {
+        private GameRunner runner;
+        EscapeListener(GameRunner r) {
+            runner = r;
+        }
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                runner.quitPrompt();
+            }
+        }
+    }
 
 
 }
