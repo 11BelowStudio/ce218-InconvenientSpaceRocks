@@ -8,7 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 
-
+//le ce218 sample code has arrived (Provided by Dr Dimitri Ognibene)
 public class JEasyFrameFull extends JFrame {
     public final static GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
     public final static GraphicsDevice device = env.getScreenDevices()[0];

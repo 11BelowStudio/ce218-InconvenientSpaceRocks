@@ -3,7 +3,7 @@ package utilities;
 import java.awt.*;
 
 
-import static MainPackage.Constants.DRAWING_SCALE;
+import static GamePackage.Constants.DRAWING_SCALE;
 
 public class PolygonUtilities {
 

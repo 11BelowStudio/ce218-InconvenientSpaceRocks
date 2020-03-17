@@ -18,6 +18,7 @@ public final class Vector2D {
         this.y = y;
     }
 
+    //constructor for a vector with same co-ords as a Point
     public Vector2D(Point p){
         this.x = p.x;
         this.y = p.y;
@@ -170,15 +171,11 @@ public final class Vector2D {
     }
 
     // "dot product" ("scalar product") with argument vector
-    public double dot(Vector2D v) {
-        return ((this.x*v.x)+(this.y*v.y));
-    }
+    public double dot(Vector2D v) { return ((this.x*v.x)+(this.y*v.y)); }
 
     // distance to argument vector
     //Euclidean distance formula (which, for 2d planes, is pretty much pythagoras' theorem)
-    public double dist(Vector2D v) {
-        return (Math.hypot((x-v.x),(y-v.y)));
-    }
+    public double dist(Vector2D v) { return (Math.hypot((x-v.x),(y-v.y))); }
 
     // normalise vector so that magnitude becomes 1
     //basically divides x and y by mag so mag effectively becomes 1
@@ -200,9 +197,8 @@ public final class Vector2D {
         this.set(polar(this.angle(),newMag));
         return this;
     }
-    public static Vector2D setMag(Vector2D v, double newMag){
-        return polar(v.angle(),newMag);
-    }
+
+    public static Vector2D setMag(Vector2D v, double newMag){ return polar(v.angle(),newMag); }
 
     // wrap-around operation, assumes w> 0 and h>0
 // remember to manage negative values of the coordinates
@@ -224,16 +220,15 @@ public final class Vector2D {
     }
 
 
-
     public double getAngleTo(Vector2D v){
         double xAngle = v.x - x;
         double yAngle = v.y - y;
         return Math.atan2(yAngle,xAngle);
     }
 
-    public Vector2D getVectorTo(Vector2D v){
-        return Vector2D.polar(getAngleTo(v),dist(v));
-    }
+    public Vector2D getVectorTo(Vector2D v){ return polar(getAngleTo(v),dist(v)); }
+
+    public static Vector2D getVectorTo(Vector2D v1, Vector2D v2){ return v1.getVectorTo(v2); }
 
     public double getAngleTo(Vector2D v, double w, double h){
         double xAngle = v.x - x;
@@ -256,7 +251,10 @@ public final class Vector2D {
     }
 
     public Vector2D getVectorTo(Vector2D v, double w, double h){
-        return Vector2D.polar(getAngleTo(v,w,h),v.dist(this));
+        return polar(getAngleTo(v,w,h),v.dist(this));
+    }
+    public static Vector2D getVectorTo(Vector2D v1, Vector2D v2, double w, double h){
+        return v1.getVectorTo(v2,w,h);
     }
 
     //projection of this vector in some direction
@@ -266,18 +264,18 @@ public final class Vector2D {
         return result;
     }
 
-    public static Vector2D randomVectorFromOrigin(Vector2D v, double minDist, double maxDist){
-        Vector2D v1 = Vector2D.polar(Math.toRadians(Math.random()*360),(Math.random()*maxDist+minDist)-minDist);
-        v1.add(v);
-        return v1;
+    public static Vector2D randomVectorFromOrigin(Vector2D origin, double minDist, double maxDist){
+        Vector2D fromOrigin = polar(Math.toRadians(Math.random()*360),(Math.random()*maxDist+minDist)-minDist);
+        fromOrigin.add(origin);
+        return fromOrigin;
     }
 
-    public static Vector2D randomVectorPointingTo(Vector2D v, double mag){
-        Vector2D v1 = Vector2D.polar(Math.toRadians(Math.random()*360),mag);
-        v1.add(v);
-        double xAngle = v.x - v1.x;
-        double yAngle = v.y - v1.y;
-        return Vector2D.polar(Math.atan2(yAngle,xAngle),mag);
+    public static Vector2D randomVectorPointingTo(Vector2D pointToThis, double mag){
+        Vector2D vectorFromOrigin = polar(Math.toRadians(Math.random()*360),mag);
+        vectorFromOrigin.add(pointToThis);
+        double xAngle = pointToThis.x - vectorFromOrigin.x;
+        double yAngle = pointToThis.y - vectorFromOrigin.y;
+        return polar(Math.atan2(yAngle,xAngle),mag);
     }
 
     public Vector2D flip(){
@@ -290,13 +288,9 @@ public final class Vector2D {
         return result.flip();
     }
 
-    public Point toPoint(){
-        return new Point((int)x,(int)y);
-    }
+    public Point toPoint(){ return new Point((int)x,(int)y); }
 
-    public static Vector2D originToPoint(Vector2D v, Point p){
-        return v.getVectorTo(new Vector2D(p));
-    }
+    public static Vector2D getVectorToPoint(Vector2D origin, Point p){ return origin.getVectorTo(new Vector2D(p)); }
 
 
 }

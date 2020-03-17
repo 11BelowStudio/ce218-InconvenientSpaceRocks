@@ -8,8 +8,6 @@ import java.util.Collections;
 
 public class HighScoreHandler {
 
-    //pls note that everything in this is package-private or just private
-
     private Component parentComponent;
 
     private ArrayList<ScoreRecord> highScores;
@@ -59,7 +57,7 @@ public class HighScoreHandler {
                 if (scoreLine == null){
                     scoreLine = "0"; //set to '0' if blank
                 }
-                highScores.add(new ScoreRecord(nameLine,scoreLine));
+                highScores.add(new ScoreRecord(nameLine, scoreLine));
                 //nameLine and scoreLine used to construct a ScoreRecord, which is added to highScores
                 i++;
             }
@@ -187,7 +185,7 @@ public class HighScoreHandler {
         showHighScores(thisScore,yourPos);
     }
 
-    public ArrayList<String> longwindedLeaderboard(){
+    public ArrayList<String> StringArrayListLeaderboard(){
         ArrayList<String> leaderboard = new ArrayList<>();
         int currentPos = 1;
         for (ScoreRecord sr: highScores) {
@@ -202,7 +200,7 @@ public class HighScoreHandler {
     }
 
 
-    public void showHighScores(){ //package-private btw
+    public void showHighScores(){
         //pretty much just creates a JOptionPane to show a record of the top 5 scores, using the scoresToString method of this
         JOptionPane.showMessageDialog(
                 parentComponent,
@@ -212,6 +210,7 @@ public class HighScoreHandler {
     }
 
     private void showHighScores(ScoreRecord newScore, int newPos){
+        //same as above, but this one also displays the newest score on the JOptionPane
         JOptionPane.showMessageDialog(parentComponent,
                 "<HTML><h1>Leaderboard</h1>" + scoresToString(newScore, newPos) + "</HTML>",
                 "Leaderboard",
@@ -232,15 +231,12 @@ public class HighScoreHandler {
         return scoreString.toString();
     }
 
-    String scoresToString(){
+    private String scoresToString(){
         int i = 0;
         StringBuilder scoreString = new StringBuilder();
         scoreString.append("<ol>");
         while (i < 5){
-            //int pos = i+1;
-            scoresToString(scoreString,highScores.get(i));//,pos);
-            //scoreString.append("\n");
-            //i = pos;
+            scoresToString(scoreString,highScores.get(i));
             i++;
         }
         scoreString.append("</ol>");
@@ -249,14 +245,10 @@ public class HighScoreHandler {
         //adds an extra newline between each score for human-readability reasons too
     }
 
-    private void scoresToString(StringBuilder sb, ScoreRecord sr){//, int pos){
-        //sb.append("<p><b>");
-        //sb.append(pos);
-        //sb.append(":</b>");
+    private void scoresToString(StringBuilder sb, ScoreRecord sr){
         sb.append("<li>");
         sb.append(sr.toHTMLString());
-        //sb.append("</li>");
-        //sb.append("</p><br>");
+        sb.append("</li>");
     }
 
 
@@ -267,7 +259,7 @@ public class HighScoreHandler {
 
         //just adds placeholder values though
         while (i < 5) {
-            highScores.add(new ScoreRecord("ok so basically im placeholder",-1));
+            highScores.add(new ScoreRecord("ok so basically im placeholder", -1));
             i++;
         }
     }
@@ -301,68 +293,64 @@ public class HighScoreHandler {
         }
     }
 
-}
-//well, this will only ever be used in context of a HighScoreHandler, so why not tbh
-class ScoreRecord implements Comparable {
+    public void cheaterAlert(){ cheater = true; } //only to be called if a game is being run in a debug mode or something
 
-    //basically contains a String object to hold a player's name, and an Integer object to hold their score
-    private String name;
-    private Integer theScore;
+    //well, this will only ever be used in context of a HighScoreHandler, so why not make it an inner class?
+    static class ScoreRecord implements Comparable<ScoreRecord> {
 
-    //pls note that the constructors are package-private
+        //basically contains a String object to hold a player's name, and an Integer object to hold their score
+        private String name;
+        private Integer theScore;
 
-    ScoreRecord(String scoreName, String score){
-        //this constructor is called when HighScoreHandler is reading from the high score file
-        setName(scoreName); //attempts to initialise their name
-        try {
-            //attempts to get an Integer theScore from the String score
-            this.theScore = Integer.parseInt(score);
-        } catch (Exception e){
-            //sets theScore to 0 if it fails
-            this.theScore = 0;
+        //pls note that the constructors are package-private
+
+        ScoreRecord(String scoreName, String score){
+            //this constructor is called when HighScoreHandler is reading from the high score file
+            setName(scoreName); //attempts to initialise their name
+            try {
+                //attempts to get an Integer theScore from the String score
+                this.theScore = Integer.parseInt(score);
+            } catch (Exception e){
+                //sets theScore to 0 if it fails
+                this.theScore = 0;
+            }
+        }
+
+        ScoreRecord(String scoreName, int score) {
+            //this constructor is called when HighScoreHandler is constructing a score achieved by the current player
+            setName(scoreName); //attempts to initialise their name
+            this.theScore = score; //theScore set to value of score
+        }
+
+        private void setName(String scoreName){
+            if (scoreName == null ||  scoreName.isEmpty()){
+                this.name = "unknown"; //name set to unknown if scoreName is empty
+            } else{
+                this.name = scoreName; //otherwise name set to scoreName
+            }
+        }
+
+        Integer getScore(){
+            return theScore;
+        } //returns 'theScore' of this ScoreRecord
+
+        String getName(){ return name; } //returns the 'name' of this ScoreRecord
+
+
+        @Override
+        public String toString(){
+            return name + "\n" + theScore + "\n";
+            //name on first line of string, theScore on 2nd line, and followed by a newline
+        }
+
+        String toHTMLString(){
+            return "<span style = \"font-weight: bold;\">" + name + "</strong><br>" + theScore;
+        }
+
+        @Override
+        public int compareTo(ScoreRecord o) {
+            return this.getScore().compareTo(o.getScore());
+            //compares the 'theScore' value of this to the 'theScore' value of the other ScoreRecord;
         }
     }
-
-    ScoreRecord(String scoreName, int score) {
-        //this constructor is called when HighScoreHandler is constructing a score achieved by the current player
-        setName(scoreName); //attempts to initialise their name
-        this.theScore = score; //theScore set to value of score
-    }
-
-    private void setName(String scoreName){
-        if (scoreName == null ||  scoreName.isEmpty()){
-            this.name = "unknown"; //name set to unknown if scoreName is empty
-        } else{
-            this.name = scoreName; //otherwise name set to scoreName
-        }
-    }
-
-    Integer getScore(){
-        return theScore;
-    } //returns 'theScore' of this ScoreRecord
-
-    String getName(){ return name; } //returns the 'name' of this ScoreRecord
-
-
-    @Override
-    public String toString(){
-        return name + "\n" + theScore + "\n";
-        //name on first line of string, theScore on 2nd line, and followed by a newline
-    }
-
-    String toHTMLString(){
-        return "<span style = \"font-weight: bold;\">" + name + "</strong><br>" + theScore;
-    }
-
-
-    @Override
-    public int compareTo(Object o) {
-        if (o instanceof ScoreRecord){
-            return this.getScore().compareTo(((ScoreRecord) o).getScore());
-            //compares the 'theScore' value of this to the 'theScore' value of the other ScoreRecord
-        } else{
-            return 0; //can't really compare the other object if it isn't a scoreRecord, y'know?
-        }
-    }
-
 }

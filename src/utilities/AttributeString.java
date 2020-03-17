@@ -5,8 +5,8 @@ public class AttributeString<T>{
 
     /*
     This is a utilty class which can be used to show a value with a name for it
-    bit easier than trying to include methods to completely rewrite the entire string
-    whenever the value is updated by any amount, y'know?
+    bit easier than trying to include methods to completely rewrite every individual string
+    whenever the value associated with that string is updated by any amount, y'know?
     */
 
     private String attributeName;
@@ -29,28 +29,25 @@ public class AttributeString<T>{
 
     public String showValue(T value){
         this.value = value;
-        updateText();
-        return theString;
-    }
-    //updates the text on the label to show the new value, and updates the associated value attribute
+        return updateText();
+    }//updates the value attribute, updates theString to have this new value, then returns theString.
 
-    public void rename(String attributeName){
+    public String rename(String attributeName){
         this.attributeName = attributeName;
-        updateText();
-    } //ditto but changing the attributeName
+        return updateText();
+    } //ditto but changing the attributeName instead
 
-    private void updateText(){
-        theString = (attributeName + value);
+    private String updateText(){
+        return theString = (attributeName + value);
     } //the string is the attributeName followed by the value
 
-    public T getValue(){
-        return value;
-    }
+    public T getValue(){ return value; }
     //returns the 'value' attribute of this object
 
-    public String toString(){
-        return theString;
-    }
+    public String getAttributeName(){ return attributeName; }
+    //ditto but for 'attributeName' instead
+
+    public String toString(){ return theString; }
 
 
 }

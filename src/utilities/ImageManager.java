@@ -16,38 +16,35 @@ public class ImageManager {
 
     public static Map<String, Image> images = new HashMap<String, Image>();
 
-    public static Image getImage(String s) {
-        return images.get(s);
-    }
+    public static Image getImage(String s) { return images.get(s); }
 
     public static Image loadImage(String fname) throws IOException {
         BufferedImage img = loadBufferedImage(fname);
-        //img = ImageIO.read(new File(path + fname + ext));
         images.put(fname, img);
         return img;
     }
 
+    //easier than using loadImage to just cast the Image back to a BufferedImage, y'know?
     public static BufferedImage loadBufferedImage(String fname) throws IOException{
-        BufferedImage img = null;
-        img = ImageIO.read(new File(path + fname + ext));
-        return img;
+        return ImageIO.read(new File(path + fname + ext));
     }
 
     public static Image loadImage(String imName, String fname) throws IOException {
-        BufferedImage img = null;
-        img = ImageIO.read(new File(path + fname + ext));
+        BufferedImage img = loadBufferedImage(fname);
         images.put(imName, img);
         return img;
     }
 
     public static void loadImages(String[] fNames) throws IOException {
-        for (String s : fNames)
+        for (String s : fNames) {
             loadImage(s);
+        }
     }
 
     public static void loadImages(Iterable<String> fNames) throws IOException {
-        for (String s : fNames)
+        for (String s : fNames) {
             loadImage(s);
+        }
     }
 
 }
