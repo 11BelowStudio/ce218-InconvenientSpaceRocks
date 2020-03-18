@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ControllerAndInputAdapter extends ControllerAdapter implements MouseListener, KeyListener {
-
+    //controllerAdapter but its also KeyAdapter and MouseAdapter as well! (with some default methods)
 
     @Override
     public void keyTyped(KeyEvent e) {action.releasedTheAnyButton();}

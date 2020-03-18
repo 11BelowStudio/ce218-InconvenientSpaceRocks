@@ -15,11 +15,11 @@ class GameObjectConstants {
     static final int HALF_HEIGHT = Constants.HALF_HEIGHT;
     static final int HALF_WIDTH = Constants.HALF_WIDTH;
 
-    private static final int boundingRect = 400;
-    static final Rectangle leftScreen = new Rectangle(-boundingRect,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
-    static final Rectangle rightScreen = new Rectangle(FRAME_WIDTH,-boundingRect,boundingRect,FRAME_HEIGHT+boundingRect);
-    static final Rectangle aboveScreen = new Rectangle(-boundingRect,-boundingRect,FRAME_WIDTH+boundingRect,boundingRect);
-    static final Rectangle underScreen = new Rectangle(-boundingRect,FRAME_HEIGHT,FRAME_WIDTH+boundingRect,boundingRect);
+    private static final int RECT_SIZE = 400;
+    static final Rectangle LEFT_SCREEN = new Rectangle(-RECT_SIZE,-RECT_SIZE, RECT_SIZE,FRAME_HEIGHT+ RECT_SIZE);
+    static final Rectangle RIGHT_SCREEN = new Rectangle(FRAME_WIDTH,-RECT_SIZE, RECT_SIZE,FRAME_HEIGHT+ RECT_SIZE);
+    static final Rectangle ABOVE_SCREEN = new Rectangle(-RECT_SIZE,-RECT_SIZE,FRAME_WIDTH+ RECT_SIZE, RECT_SIZE);
+    static final Rectangle BELOW_SCREEN = new Rectangle(-RECT_SIZE,FRAME_HEIGHT,FRAME_WIDTH+ RECT_SIZE, RECT_SIZE);
 
     static final double DRAWING_SCALE = 10;
 
@@ -32,11 +32,5 @@ class GameObjectConstants {
         } catch (IOException e) { e.printStackTrace(); }
     }
     static final double DT = Constants.DT;
-
-
-
-
-
-
 
 }

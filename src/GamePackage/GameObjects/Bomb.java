@@ -14,8 +14,6 @@ public class Bomb extends GameObject {
 
     private boolean exploding;
 
-    private int timeToLive;
-
     private double scaling;
 
     private Shape bombCircle;
@@ -76,16 +74,13 @@ public class Bomb extends GameObject {
 
     @Override
     public void draw(Graphics2D g) {
-        wrapAround(g,bombCircle); //attempts dealing with making the bombCircle wrap around  (and sets up hitboxes)
+        wrapAround(g,bombCircle); //attempts dealing with making the bombCircle wrap around (and sets up hitbox)
         paintTheArea(g); //renders the bombCircle
         notIntangible(); //this will no longer be intangible
     }
 
 
-    void paintTheArea(Graphics2D g){
-        g.setColor(objectColour);
-        g.fill(transformedArea); //no texture, just colour
-    }
+    void paintTheArea(Graphics2D g){ paintColour(g); } //no texture, just colour
 
     @Override
     boolean bombCollision(GameObject other){

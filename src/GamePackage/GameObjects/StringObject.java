@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import static GamePackage.GameObjects.GameObjectConstants.DT;
-//import static game.Constants.sans;
 
 public class StringObject extends GameObject {
 

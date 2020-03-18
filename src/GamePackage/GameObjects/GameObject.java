@@ -161,22 +161,22 @@ public abstract class GameObject{
         areaRectangle = transformedArea.getBounds();
         //a simple bounding rectangle for this area, before wrapping, used for the texturePaint
         boolean wrapped = false;
-        if (transformedShape.intersects(aboveScreen)){
+        if (transformedShape.intersects(ABOVE_SCREEN)){
             //moving stuff above the screen to the bottom of it
-            wraparoundHandler(g,  aboveScreen, 0, FRAME_HEIGHT);
+            wraparoundHandler(g, ABOVE_SCREEN, 0, FRAME_HEIGHT);
             wrapped = true;
-        } else if (transformedShape.intersects(underScreen)){
+        } else if (transformedShape.intersects(BELOW_SCREEN)){
             //moving stuff under the screen to the top of it
-            wraparoundHandler(g, underScreen, 0, -FRAME_HEIGHT);
+            wraparoundHandler(g, BELOW_SCREEN, 0, -FRAME_HEIGHT);
             wrapped = true;
         }
-        if (transformedShape.intersects(leftScreen)){
+        if (transformedShape.intersects(LEFT_SCREEN)){
             //moving stuff to the left of the screen to the right of it
-            wraparoundHandler(g,  leftScreen, FRAME_WIDTH, 0);
+            wraparoundHandler(g, LEFT_SCREEN, FRAME_WIDTH, 0);
             wrapped = true;
-        } else if (transformedShape.intersects(rightScreen)){
+        } else if (transformedShape.intersects(RIGHT_SCREEN)){
             //moving stuff on the right of the screen to the left of it
-            wraparoundHandler(g, rightScreen, -FRAME_WIDTH, 0);
+            wraparoundHandler(g, RIGHT_SCREEN, -FRAME_WIDTH, 0);
             wrapped = true;
         }
 
