@@ -19,7 +19,7 @@ public class Asteroid extends GenericAsteroid {
 
     @Override
     //specific stuff for a normal Asteroid
-    protected void setSpecifics(){
+    void setSpecifics(){
         RADIUS = 15;
         pointValue = 1;
         asteroidScale = 0.5;
@@ -28,7 +28,7 @@ public class Asteroid extends GenericAsteroid {
 
     @Override
     //like hit but plays solidHit too
-    public void hit(boolean hitByPlayer){
+    void hit(boolean hitByPlayer){
         super.hit(hitByPlayer);
         SoundManager.playSolidHit();
     }

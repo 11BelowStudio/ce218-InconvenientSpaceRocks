@@ -14,7 +14,6 @@ public class Bomb extends GameObject {
 
     private boolean exploding;
 
-
     private int timeToLive;
 
     private double scaling;
@@ -83,7 +82,7 @@ public class Bomb extends GameObject {
     }
 
 
-    protected void paintTheArea(Graphics2D g){
+    void paintTheArea(Graphics2D g){
         g.setColor(objectColour);
         g.fill(transformedArea); //no texture, just colour
     }
@@ -104,7 +103,7 @@ public class Bomb extends GameObject {
     }
 
 
-    protected void bounceOff(GameObject other){
+    void bounceOff(GameObject other){
         if (other instanceof Bullet) {
             other.kill(); //if the other object is a bullet, it's just killed
         } else{

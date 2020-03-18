@@ -15,18 +15,16 @@ public class PolygonUtilities {
         return new Polygon(xCorners,yCorners,xCorners.length);
     }
 
-    public static Polygon randomScaledPolygonConstructor(int[] xCorners, int[] yCorners, double scale, int nPoints){
-        if (xCorners.length != yCorners.length){
-            return null;
-        }
-        double standardRadius = scale;
-        double maxRadius = standardRadius * 1.05;
-        double minRadius = standardRadius * 0.75;
+    public static Polygon randomScaledPolygonConstructor(double scale, int nPoints){
+        int[] xCorners = new int[nPoints];
+        int[] yCorners = new int[nPoints];
+        double maxRadius = scale * 1.05;
+        double minRadius = scale * 0.75;
 
         for (int i = 0; i < nPoints; i++) {
             Vector2D temp = Vector2D.polar(
                     Math.PI * 2 * (i + Math.random())/ nPoints,
-                    standardRadius + Math.random() * (maxRadius - minRadius)
+                    scale + Math.random() * (maxRadius - minRadius)
             );
             xCorners[i] = (int)temp.x;
             yCorners[i] = (int)temp.y;
@@ -34,17 +32,16 @@ public class PolygonUtilities {
         return new Polygon(xCorners,yCorners,nPoints);
     }
 
-    public static Polygon dodecahedron(int[] xCorners, int[] yCorners, double scale){
-        xCorners = new int[12];
-        yCorners = new int[12];
+    public static Polygon dodecahedron(double scale){
+        int[] xCorners = new int[12];
+        int[] yCorners = new int[12];
 
-        double radius = scale;
         double angle = 0;
 
         for (int i = 0; i < 12; i++) {
             Vector2D temp = Vector2D.polar(
                     angle,
-                    radius
+                    scale
             );
             angle += Math.PI/6; //(Math.PI * 2) / 12
             xCorners[i] = (int)temp.x;

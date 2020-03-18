@@ -261,7 +261,7 @@ public class TitleScreen extends Model {
 
     }
 
-    protected void clicked(Point p){
+    void clicked(Point p){
 
         if (menuOnscreen) {
             if (play.isClicked(p)) {

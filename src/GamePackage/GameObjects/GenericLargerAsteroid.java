@@ -17,7 +17,7 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
 
     @Override
-    protected void setSpecifics(){ timeToLive = (int)(Math.random() * 512) + 512; }
+    void setSpecifics(){ timeToLive = (int)(Math.random() * 512) + 512; }
     //timeToLive will be somewhere between 512 and 1024 update calls
 
     public void update() {
@@ -35,7 +35,7 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
 
     @Override
     //calls spawnChildren() when this is hit, as it died from not natural causes.
-    public void hit(boolean hitByPlayer){
+    void hit(boolean hitByPlayer){
         super.hit(hitByPlayer);
         spawnChildren();
     }
@@ -54,7 +54,7 @@ public abstract class GenericLargerAsteroid extends GenericAsteroid {
     }
 
     //Big and Medium asteroids spawn differently
-    protected abstract void updateColour();
+    abstract void updateColour();
 
     //obtaining the number of children that need to be spawned
     public int getChildrenToSpawn(){ return childrenToSpawn; }

@@ -112,12 +112,12 @@ public abstract class GenericAsteroid extends GameObject {
         if (definedAsteroid) {
             objectPolygon = PolygonUtilities.scaledPolygonConstructor(hitboxX, hitboxY, asteroidScale);
         } else{
-            objectPolygon = PolygonUtilities.randomScaledPolygonConstructor(hitboxX,hitboxY,4*asteroidScale,corners);
+            objectPolygon = PolygonUtilities.randomScaledPolygonConstructor(4*asteroidScale, corners);
         }
         objectType = ASTEROID;
     }
 
-    protected abstract void setSpecifics();
+    abstract void setSpecifics();
     //overridden to get per-asteroid specifics (such as asteroidScale, timeToLive, etc)
 
     @Override

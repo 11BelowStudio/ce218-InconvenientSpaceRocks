@@ -6,7 +6,9 @@ import utilities.HighScoreHandler;
 import utilities.SoundManager;
 import utilities.Vector2D;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Stack;
 
 import static GamePackage.Models.ModelConstants.*;
 import static utilities.SoundManager.*;
@@ -533,7 +535,7 @@ public class Game extends Model  {
     }
 
     @Override
-    protected void endThis() {
+    void endThis() {
         if (ctrl.theAnyButton()) {
             //records high score and then ends the game when the any button is pressed
             highScores.recordHighScore(score);

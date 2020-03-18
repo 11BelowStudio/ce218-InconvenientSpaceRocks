@@ -9,7 +9,7 @@ public class BigAsteroid extends GenericLargerAsteroid {
 
     @Override
     //the specific values for a BigAsteroid
-    protected void setSpecifics(){
+    void setSpecifics(){
         super.setSpecifics();
         RADIUS = 50;
         pointValue = 24; //worth 4 potential medium asteroids (extra 12 potential from the 2 spawned mediums = potential 36) if shot
@@ -18,7 +18,7 @@ public class BigAsteroid extends GenericLargerAsteroid {
     }
 
 
-    protected void updateColour(){
+    void updateColour(){
         if (redScale < 0){
             redScale = 0;
         }

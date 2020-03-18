@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import static GamePackage.Models.ModelConstants.*;
+import static GamePackage.Models.ModelConstants.FRAME_HEIGHT;
+import static GamePackage.Models.ModelConstants.FRAME_WIDTH;
 
 //le ce218 sample code has arrived (Provided by Dr Dimitri Ognibene)
 
@@ -116,7 +117,7 @@ public abstract class Model {
         }
     }
 
-    protected void clicked(Point p){}
+    void clicked(Point p){}
 
 
     public Vector2D getShipPosition(){
@@ -163,7 +164,7 @@ public abstract class Model {
         }
     }
 
-    protected void endThis(){ endGame = true; }
+    void endThis(){ endGame = true; }
 
 
 

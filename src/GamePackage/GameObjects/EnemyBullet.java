@@ -10,5 +10,5 @@ public class EnemyBullet extends Bullet {
 
     @Override
     //bullets are orange, fading to white as time to live expires
-    protected void updateColour() { objectColour = new Color(255 - (timeToLive/2),255 - (3*timeToLive),255 - (5*timeToLive)); }
+    void updateColour() { objectColour = new Color(255 - (timeToLive/2),255 - (3*timeToLive),255 - (5*timeToLive)); }
 }

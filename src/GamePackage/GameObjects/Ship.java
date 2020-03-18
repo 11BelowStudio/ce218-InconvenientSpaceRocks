@@ -2,8 +2,8 @@ package GamePackage.GameObjects;
 
 import GamePackage.Controllers.Action;
 import GamePackage.Controllers.Controller;
-import utilities.SoundManager;
 import utilities.PolygonUtilities;
+import utilities.SoundManager;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -206,7 +206,7 @@ public abstract class Ship extends GameObject {
     //casually using the definedRect, not the bounding box, to render the texturepaint psuedo-sprite correctly
     //(le lack of an image editor with transparency has arrived)
     @Override
-    protected void paintTexture(Graphics2D g){
+    void paintTexture(Graphics2D g){
         g.setPaint(new TexturePaint(texture,definedRect));
         g.fill(transformedArea);
     }

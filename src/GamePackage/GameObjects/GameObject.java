@@ -7,7 +7,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 
-
 import static GamePackage.GameObjects.GameObjectConstants.*;
 
 public abstract class GameObject{
@@ -201,12 +200,12 @@ public abstract class GameObject{
         g.setTransform(backup); //reverts to backup
     }
 
-    protected void paintTheArea(Graphics2D g){
+    void paintTheArea(Graphics2D g){
         paintTexture(g);
         paintColour(g);
     }
 
-    protected void paintTexture(Graphics2D g){
+    void paintTexture(Graphics2D g){
         g.setPaint(new TexturePaint(texture, areaRectangle));
         g.fill(transformedArea); //filling the sprite with the texture
     }
@@ -221,11 +220,11 @@ public abstract class GameObject{
         return (this.getClass() + " x: " + String.format("%.2f",position.x) + ", y: " + String.format("%.2f",position.y) + ", vx: " + velocity.x + ", vy: " + velocity.y);
     }
 
-    protected void notIntangible(){ this.intangible = false; }//basically supposed to make the thing not intangible,
+    void notIntangible(){ this.intangible = false; }//basically supposed to make the thing not intangible,
 
 
 
-    protected void bounceOff(GameObject other){
+    void bounceOff(GameObject other){
         if (other instanceof Bullet){
             other.kill(); //the bullet just dies if it's a bullet
         }  else if (other.objectType == BOMB) {

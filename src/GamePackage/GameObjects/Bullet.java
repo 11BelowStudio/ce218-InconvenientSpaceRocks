@@ -1,7 +1,7 @@
 package GamePackage.GameObjects;
 
-import utilities.SoundManager;
 import utilities.PolygonUtilities;
+import utilities.SoundManager;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -53,17 +53,17 @@ public abstract class Bullet extends GameObject {
 
 
     @Override
-    protected void paintTheArea(Graphics2D g){ paintColour(g); }
+    void paintTheArea(Graphics2D g){ paintColour(g); }
     //no textures here, so only the colour is painted
 
     @Override
-    public void bounceOff(GameObject other){ dead = true; }
+    void bounceOff(GameObject other){ dead = true; }
     //this dies instead of bouncing off another object.
 
-    protected abstract void updateColour();
+    abstract void updateColour();
     //PlayerBullet and EnemyBullet have their colours updated differently
 
     @Override
-    public void hit(boolean hitByPlayer) { dead = true; }
+    void hit(boolean hitByPlayer) { dead = true; }
     //dead if hit
 }

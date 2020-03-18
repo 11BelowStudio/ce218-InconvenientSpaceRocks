@@ -16,13 +16,15 @@ public class StringObject extends GameObject {
 
     private Font theFont;
 
-    public static final int RIGHT_ALIGN = 0; public static final int LEFT_ALIGN = 1; public static final int MIDDLE_ALIGN = 2;
+    public static final int RIGHT_ALIGN = 0;
+    public static final int LEFT_ALIGN = 1;
+    public static final int MIDDLE_ALIGN = 2;
 
 
     private Rectangle areaRectangle;
 
     //le ebic font has arrived no bamboozle
-    private static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
+    public static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
     public static final Font medium_sans = new Font("Comic sans MS", Font.PLAIN,40);
     public static final Font big_sans = new Font("Comic sans MS", Font.PLAIN,50);
 

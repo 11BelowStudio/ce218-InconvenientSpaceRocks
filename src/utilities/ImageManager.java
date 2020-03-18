@@ -1,12 +1,12 @@
 package utilities;
 
-import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.imageio.ImageIO;
 
 //le ce218 sample code has arrived (Provided by Dr Dimitri Ognibene)
 
@@ -18,7 +18,7 @@ public class ImageManager {
     public final static String path = "images/";
     public final static String ext = ".png";
 
-    public static Map<String, Image> images = new HashMap<String, Image>();
+    public static Map<String, Image> images = new HashMap<>();
 
     public static Image getImage(String s) { return images.get(s); }
 

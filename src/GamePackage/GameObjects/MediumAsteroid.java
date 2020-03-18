@@ -13,7 +13,7 @@ public class MediumAsteroid extends GenericLargerAsteroid {
     //initially used for spawning in child medium asteroids, redundant ever since I moved to stacks and reviving
 
     @Override
-    protected void setSpecifics(){
+    void setSpecifics(){
         super.setSpecifics();
         RADIUS = 25;
         pointValue = 4; //worth 4 small asteroids if destroyed by the player
@@ -23,7 +23,7 @@ public class MediumAsteroid extends GenericLargerAsteroid {
 
 
     @Override
-    protected void updateColour(){
+    void updateColour(){
         if (redScale < 0){
             redScale = 0;
         }

@@ -61,7 +61,7 @@ public class PlayerShip extends Ship {
 
 
     @Override
-    protected void notIntangible(){ intangible = false; this.objectColour = SHIP_COLOUR; }
+    void notIntangible(){ intangible = false; this.objectColour = SHIP_COLOUR; }
     //no more intangibility, ship goes back to normal
 
 
