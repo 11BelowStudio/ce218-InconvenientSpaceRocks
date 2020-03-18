@@ -105,10 +105,10 @@ public abstract class Model {
         for (int i = 0; i < alive.size(); i++) { //iterates through the alive list
             GameObject g = alive.get(i); //obtains the current alive object
             if (!g.cantTouchThis()) { //if it's not dead/intangible, it goes to the next step
-                currentObjectType = g.objectType; //records its object type
+                currentObjectType = g.getObjectType(); //records its object type
                 for (int j = i + 1; j < alive.size(); j++) { //iterates through the remainder of alive
                     GameObject g2 = alive.get(j); //obtains next current alive object
-                    if (!g2.cantTouchThis() && currentObjectType != g2.objectType) { //if it's not intangible, and a different type to the other one
+                    if (!g2.cantTouchThis() && currentObjectType != g2.getObjectType()) { //if it's not intangible, and a different type to the other one
                         g.collisionHandling(g2); //collision handling happens
                     }
                 }

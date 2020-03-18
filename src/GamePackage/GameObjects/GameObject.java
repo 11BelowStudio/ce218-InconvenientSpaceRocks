@@ -19,9 +19,9 @@ public abstract class GameObject{
 
     boolean dead;
 
-    double RADIUS; //kept for collision stuff
+    double RADIUS;
 
-    public int objectType;
+    int objectType;
 
     static final int BOMB = 0;
     static final int PLAYER_OBJECT = 1;
@@ -274,6 +274,8 @@ public abstract class GameObject{
     public boolean isDead(){ return dead; }
 
     public boolean isPlayerObject(){ return objectType == PLAYER_OBJECT;}
+
+    public int getObjectType(){ return objectType; }
 
 
 
