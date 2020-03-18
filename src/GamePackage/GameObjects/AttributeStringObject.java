@@ -25,10 +25,9 @@ public class AttributeStringObject<T> extends StringObject {
         return this;
     }
 
-    //public AttributeStringObject<T> rename(String attributeName){ attributeString.rename(attributeName); updateText(); return this;}
+    public AttributeStringObject<T> rename(String attributeName){ attributeString.rename(attributeName); updateText(); return this;}
 
-
-    //public T getValue(){ return attributeString.getValue();}
+    public T getValue(){ return attributeString.getValue();}
 
     private void updateText(){ setText(attributeString.toString()); }
 

@@ -33,9 +33,7 @@ public class StringObject extends GameObject {
         theFont = f;
     }
 
-    public StringObject(Vector2D p, double speed, String s, int a, Font f){
-        this(p,Vector2D.polar(UP_RADIANS,speed),s,a,f);
-    }
+    public StringObject(Vector2D p, double speed, String s, int a, Font f){ this(p,Vector2D.polar(UP_RADIANS,speed),s,a,f); }
 
     public StringObject(Vector2D p, Vector2D v, String s, int a){
         this(p,v,a);
