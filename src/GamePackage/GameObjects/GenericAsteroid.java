@@ -25,12 +25,13 @@ public abstract class GenericAsteroid extends GameObject {
         setShared();
     }
 
+    /*
     GenericAsteroid(Vector2D startPosition){
         super(startPosition,
                 Vector2D.polar(Math.random() * 2 * PI,Math.random() * MAX_SPEED)
         );
         setShared();
-    }
+    }*/
 
     /*
     public GenericAsteroid(Vector2D p, Vector2D v) {
@@ -44,7 +45,7 @@ public abstract class GenericAsteroid extends GameObject {
         return this;
     }
 
-    public GenericAsteroid revive(Vector2D p){ //this is for reviving child asteroids (spawned from a parent; at a given position)
+    GenericAsteroid revive(Vector2D p){ //this is for reviving child asteroids (spawned from a parent; at a given position)
         super.revive(p,Vector2D.polar(Math.random() * 2 * PI, 1+ Math.random() * MAX_SPEED));
         setShared();
         velocity.mult(1 + (Math.random()/2));

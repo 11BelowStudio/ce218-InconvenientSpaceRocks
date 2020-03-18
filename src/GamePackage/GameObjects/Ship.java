@@ -22,12 +22,6 @@ public abstract class Ship extends GameObject {
     //maximum speed
     static final double MAX_SPEED = 250;
 
-    //public static final int RADIUS = 8;
-
-    // constant speed loss factor
-
-    //public static Color SHIP_COLOUR;
-
     // direction in which the nose of the ship is pointing
     // this will be the direction in which thrust is applied
     // it is a unit vector representing the angle by which the ship has rotated
@@ -201,8 +195,6 @@ public abstract class Ship extends GameObject {
     }
 
 
-
-
     //casually using the definedRect, not the bounding box, to render the texturepaint psuedo-sprite correctly
     //(le lack of an image editor with transparency has arrived)
     @Override
@@ -220,9 +212,7 @@ public abstract class Ship extends GameObject {
 
     public Vector2D getDirection(){ return direction; }
 
-    private void stopThrust(){
-        SoundManager.stopThrust();
-    }
+    private void stopThrust(){ SoundManager.stopThrust(); }
 
     @Override
     void hit(boolean hitByPlayer){
@@ -237,8 +227,8 @@ public abstract class Ship extends GameObject {
     }
 
     @Override
-    public GameObject kill() {
+    public Ship kill() {
         stopThrust();
-        return super.kill();
+        return (Ship)super.kill();
     }
 }

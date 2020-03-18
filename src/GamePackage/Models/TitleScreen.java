@@ -256,7 +256,6 @@ public class TitleScreen extends Model {
 
         if (ctrl.isClicked()){
             clicked(ctrl.clickLocation());
-            //ctrl.noClick();
         }
 
     }
@@ -276,14 +275,7 @@ public class TitleScreen extends Model {
         }
     }
 
-    /*@Override
-    Vector2D getShipPosition() {
-        if (!gameObjects.isEmpty()){
-            int range = gameObjects.size();
-            return (gameObjects.get((int)(Math.random() * range-2)+1).position);
-        }
-        return new Vector2D(Math.random() * FRAME_WIDTH, Math.random() * FRAME_HEIGHT);
-    }*/
+
 
     private void createScrollingText(ArrayList<String> theText, int distFromBottom, double scrollSpeed){
         scrollingTextToAdd.clear();
