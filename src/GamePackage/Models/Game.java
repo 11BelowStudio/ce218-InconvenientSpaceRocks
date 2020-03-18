@@ -119,7 +119,7 @@ public class Game extends Model  {
         hudObjects.add(secretNewLevelObject = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"right thats it imma asteroid in ur p",StringObject.MIDDLE_ALIGN).kill());
 
         hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).kill());
-        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
+        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS).kill());
 
         int eighthWidth = HALF_WIDTH/2;
 
@@ -132,7 +132,7 @@ public class Game extends Model  {
         hudObjects.add(newAsteroidCount = new AttributeStringObject<>(new Vector2D(HALF_WIDTH,HALF_HEIGHT+20),new Vector2D(),"REMAINING: ",newObjects.size(),StringObject.MIDDLE_ALIGN).kill());
 
 
-        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.big_sans).kill());
+        hudObjects.add(gameOverText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT), new Vector2D(), "GAME OVER!", StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS).kill());
 
 
 

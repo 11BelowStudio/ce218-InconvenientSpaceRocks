@@ -58,16 +58,16 @@ public class TitleScreen extends Model {
             enemyShips.push(e);
         }
 
-        titleText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT/2),new Vector2D(),"INCONVENIENT SPACE ROCKS",StringObject.MIDDLE_ALIGN,StringObject.big_sans);
+        titleText = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT/2),new Vector2D(),"INCONVENIENT SPACE ROCKS",StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS);
         titleText.kill();
 
-        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,5*(HALF_HEIGHT/8)), new Vector2D(),"(In Space!)",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        subtitleText = new StringObject(new Vector2D(HALF_WIDTH,5*(HALF_HEIGHT/8)), new Vector2D(),"(In Space!)",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
         subtitleText.kill();
 
-        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        play = new StringObject(new Vector2D(HALF_WIDTH,HALF_HEIGHT),new Vector2D(),"*Play*",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
         play.kill();
 
-        showScores = new StringObject(new Vector2D(HALF_WIDTH,3*(HALF_HEIGHT/2)),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.medium_sans);
+        showScores = new StringObject(new Vector2D(HALF_WIDTH,3*(HALF_HEIGHT/2)),new Vector2D(),"*Show Scores*",StringObject.MIDDLE_ALIGN,StringObject.MEDIUM_SANS);
         showScores.kill();
 
         /*
@@ -270,7 +270,7 @@ public class TitleScreen extends Model {
                 showScrollingText = false;
                 scrollingTextToAdd.clear();
                 createScrollingText(highScores.StringArrayListLeaderboard(),60,100);
-                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),100,"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.big_sans));
+                scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),100,"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS));
             }
         }
     }

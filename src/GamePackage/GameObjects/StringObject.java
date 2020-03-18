@@ -24,9 +24,9 @@ public class StringObject extends GameObject {
     private Rectangle areaRectangle;
 
     //le ebic font has arrived no bamboozle
-    public static final Font sans = new Font("Comic Sans MS",  Font.PLAIN , 20);
-    public static final Font medium_sans = new Font("Comic sans MS", Font.PLAIN,40);
-    public static final Font big_sans = new Font("Comic sans MS", Font.PLAIN,50);
+    public static final Font SANS = new Font("Comic Sans MS",  Font.PLAIN , 20);
+    public static final Font MEDIUM_SANS = new Font("Comic sans MS", Font.PLAIN,40);
+    public static final Font BIG_SANS = new Font("Comic sans MS", Font.PLAIN,50);
 
     public StringObject(Vector2D p, Vector2D v, String s, int a, Font f){
         this(p,v,s,a);
@@ -59,7 +59,7 @@ public class StringObject extends GameObject {
         alignment = 0;
         thisString = "";
         objectColour = Color.WHITE;
-        theFont = sans;
+        theFont = SANS;
         areaRectangle = new Rectangle();
     }
 
@@ -99,10 +99,10 @@ public class StringObject extends GameObject {
                     g.drawString(thisString,0,0);
                     break;
                 case 1:
-                    g.drawString(thisString, 0 - w, 0);
+                    g.drawString(thisString, -w, 0);
                     break;
                 case 2:
-                    g.drawString(thisString, 0 - (w / 2), 0);
+                    g.drawString(thisString, -(w / 2), 0);
                     break;
             }
             g.setTransform(at);
