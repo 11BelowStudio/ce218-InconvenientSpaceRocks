@@ -3,6 +3,7 @@ package GamePackage.Models;
 import GamePackage.Controllers.PlayerController;
 import GamePackage.GameObjects.*;
 import utilities.HighScoreHandler;
+import utilities.SoundManager;
 import utilities.Vector2D;
 
 import java.awt.*;
@@ -216,7 +217,7 @@ public class TitleScreen extends Model {
             if (showScrollingText) {
                 showScrollingText = false;
                 aliveHUD.add(titleText.revive());
-                aliveHUD.add(subtitleText.revive());
+                aliveHUD.add(subtitleText.revive("(In Space!)")); //in case someone used the easter egg
                 aliveHUD.add(play.revive());
                 aliveHUD.add(showScores.revive());
                 menuOnscreen = true;
@@ -271,6 +272,14 @@ public class TitleScreen extends Model {
                 scrollingTextToAdd.clear();
                 createScrollingText(highScores.StringArrayListLeaderboard(),60,100);
                 scrollingTextToAdd.add(new StringObject(new Vector2D(HALF_WIDTH,FRAME_HEIGHT),100,"LEADERBOARD",StringObject.MIDDLE_ALIGN,StringObject.BIG_SANS));
+            } else if (titleText.isClicked(p)){
+                SoundManager.playNice(); //a nice easter egg
+            } else if (subtitleText.isClicked(p)){
+                SoundManager.playLongCrunch();
+                subtitleText.setText("om nom nom im eating crisps");
+                //this is a reference to the fact that the asteroid crunch noises were made with a bag of crisps
+                    //not eating them, just squeezing the bag that they were currently in
+                    //but hey, may as well get some use out of the long crunch sound effect I recorded
             }
         }
     }

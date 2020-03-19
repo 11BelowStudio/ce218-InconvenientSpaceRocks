@@ -69,7 +69,7 @@ public class Game extends Model  {
         for (int i = 0; i < 150; i++) {
             asteroidStack.push(new Asteroid());
         }
-        for (int i = 0; i < 45; i++) {
+        for (int i = 0; i < 50; i++) {
             mediumAsteroidStack.push(new MediumAsteroid());
         }
         for (int i = 0; i < 15; i++) {
