@@ -62,7 +62,7 @@ class GameLevels {
 
 
     static ArrayList<Integer> getLevelConfig(int level){
-        //returns one random configuration for the current level of the player, passed as a parameter to makeBoard in FlipBoard
+        //returns one random configuration for the current level
 
         int tempLevel = level - 1; //reduces level by 1 for purposes of easily getting it from the arraylist
         if (tempLevel > 7){ //there's only configurations for 8 levels so yeah after that it works differently
@@ -81,7 +81,7 @@ class GameLevels {
             return theLevel;
         } else {
             return getRandomLevelStatic(tempLevel);
-            //returns the level as-is if the player hasn't got past level
+            //returns the level as-is if the player hasn't got past the last defined level
         }
     }
 
