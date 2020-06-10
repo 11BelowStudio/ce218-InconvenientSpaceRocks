@@ -4,9 +4,9 @@ oh no you are in space and there are a bunch of rocks (in space)
 that are being very inconvenient and are in everyone's way pls
 get rid of them for us k thx bye
 
-## If you're here to assess this for the CE218 assignment
+## If you were here to assess this for the CE218 assignment
 
-[The assignment documentation has its own folder. Go there.](Assignment documentation stuff)
+The assignment documentation is in the 'Assignment documentation stuff' folder.
 
 # The README
 
@@ -14,7 +14,7 @@ get rid of them for us k thx bye
 
 * Keyboard
 * Mouse (optional)
-* Computer that can run Java stuff
+* Computer that can run Java stuff (This was written in Java 8 btw)
 * Speakers (optional)
 * Monitor (optional, but highly recommended)
 
