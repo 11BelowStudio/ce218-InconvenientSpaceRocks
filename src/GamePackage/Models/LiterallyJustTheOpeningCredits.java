@@ -1,8 +1,6 @@
 package GamePackage.Models;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 class LiterallyJustTheOpeningCredits {
@@ -13,8 +11,11 @@ class LiterallyJustTheOpeningCredits {
         //if it wasn't obvious, yes, this was repurposed from the HighScoreHandler
         OPENING_CREDITS = new ArrayList<>();
         try{
-            FileReader fr = new FileReader("textAssets/openingTitleCrawlThing.txt");
-            BufferedReader br = new BufferedReader(fr);
+            //FileReader fr = new FileReader("textAssets/openingTitleCrawlThing.txt");
+            //BufferedReader br = new BufferedReader(fr);
+            InputStream in = LiterallyJustTheOpeningCredits.class.getResourceAsStream("/textAssets/openingTitleCrawlThing.txt");
+            //Thanks, Drew MacInnis! (https://stackoverflow.com/a/20389418)
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String currentString;
             //pretty much setting up the stuff for reading the file
 

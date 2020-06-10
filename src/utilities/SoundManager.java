@@ -3,7 +3,7 @@ package utilities;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioInputStream;
-import java.io.File;
+//import java.io.File;
 import java.util.Arrays;
 
 // SoundManager for Asteroids
@@ -21,7 +21,7 @@ public class SoundManager {
 
 
     // this may need modifying
-    private final static String path = "sounds/";
+    private final static String path = "/sounds/";
 
     // note: having too many clips open may cause
     // "LineUnavailableException: No Free Voices"
@@ -42,7 +42,7 @@ public class SoundManager {
     private final static Clip ohno = getClip("ohno");
     private final static Clip solidHit = getClip("solidHit");
     private final static Clip explosion = getClip("WeirdExplosion");
-    private final static Clip yerDead = getClip("yerDead");
+    //private final static Clip yerDead = getClip("yerDead");
     private final static Clip nice = getClip("nice");
 
     static {
@@ -62,8 +62,8 @@ public class SoundManager {
         Clip clip = null;
         try {
             clip = AudioSystem.getClip();
-            AudioInputStream sample = AudioSystem.getAudioInputStream(new File(path
-                    + filename + ".wav"));
+            //AudioInputStream sample = AudioSystem.getAudioInputStream(new File(path + filename + ".wav"));
+            AudioInputStream sample = AudioSystem.getAudioInputStream(SoundManager.class.getResourceAsStream(path + filename + ".wav"));
             clip.open(sample);
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,13 +132,14 @@ public class SoundManager {
     public static void playNice(){ play(nice); }
     public static void playSolidHit(){ play(solidHit); }
     public static void playLongCrunch(){ play(longCrunch);}
-    public static void playYerDead(){ play(yerDead); }
+    //public static void playYerDead(){ play(yerDead); }
 
 
 
 
     //A depreciated method which would have been used to only play one instance of a single clip at a time.
     //turns out the method I was using to limit it to one instance of a clip wouldn't work so yeah it goes unused
+    /*
     private static void play(Clip whatClip, boolean clipIsPlaying){
         if (!clipIsPlaying){
             clipIsPlaying = true;
@@ -146,5 +147,6 @@ public class SoundManager {
             clipIsPlaying = false;
         }
     }
+    */
 
 }

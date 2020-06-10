@@ -15,7 +15,7 @@ import java.util.Map;
 public class ImageManager {
 
     // this may need modifying
-    public final static String path = "images/";
+    public final static String path = "/images/";
     public final static String ext = ".png";
 
     public static Map<String, Image> images = new HashMap<>();
@@ -30,7 +30,9 @@ public class ImageManager {
 
     //easier than using loadImage to just cast the Image back to a BufferedImage, y'know?
     public static BufferedImage loadBufferedImage(String fname) throws IOException{
-        return ImageIO.read(new File(path + fname + ext));
+        //return ImageIO.read(new File(path + fname + ext));
+        return ImageIO.read(ImageManager.class.getResource(path + fname + ext));
+        //Thank you, JB Nizet! (https://stackoverflow.com/a/8362018)
     }
 
     public static Image loadImage(String imName, String fname) throws IOException {

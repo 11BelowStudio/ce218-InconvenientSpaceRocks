@@ -108,6 +108,8 @@ get rid of them for us k thx bye
         * Some stuff was written entirely for use in this
         * Other stuff was reverse-engineered from some of my previous projects
     * Some sample/template code provided by Dr. Dimitri Ognibene
+    * Help with getting the images/audio in the JAR file provided by JB Nizet on StackOverflow (https://stackoverflow.com/a/8362018)
+    * Help with getting the intro crawl into the JAR file provided by Thanks, Drew MacInnis on StackOverflow (https://stackoverflow.com/a/20389418)
 * Art:
     * Me
         * Made with MS Paint because thats all the university computers had lol
