@@ -18,13 +18,13 @@ import static GamePackage.Models.ModelConstants.FRAME_WIDTH;
 public abstract class Model {
 
 
-    public List<GameObject> gameObjects;
+    List<GameObject> gameObjects;
 
     List<GameObject> alive;
     List<GameObject> dead;
 
 
-    public List<GameObject> hudObjects;
+    List<GameObject> hudObjects;
 
     List<GameObject> aliveHUD;
 
@@ -187,4 +187,18 @@ public abstract class Model {
     }
 
     public boolean keepGoing(){ return !endGame; }
+
+
+    public void draw(Graphics2D g){
+        synchronized (Model.class) {
+            for (GameObject o : gameObjects) {
+                o.draw(g);
+                //basically calls the draw method of each gameObject
+            }
+            for (GameObject o : hudObjects) {
+                o.draw(g);
+                //and then the HUD (so its displayed above the HUD)
+            }
+        }
+    }
 }

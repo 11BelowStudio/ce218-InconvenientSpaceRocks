@@ -107,21 +107,12 @@ public class View extends JComponent {
 
         g.drawImage(bg, bgTransform,null); //renders the background
 
-        g.scale(xScale,yScale);
-        AffineTransform backup = g.getTransform();
+        //g.scale(xScale,yScale);
+        //AffineTransform backup = g.getTransform();
         if (displayingModel) {
-            synchronized (Model.class) {
-                for (GameObject o : model.gameObjects) {
-                    o.draw(g);
-                    //basically calls the draw method of each gameObject
-                }
-                for (GameObject o : model.hudObjects) {
-                    o.draw(g);
-                    //and then the HUD (so its displayed above the HUD)
-                }
-            }
+            model.draw(g);
         }
-        g.setTransform(backup);
+        //g.setTransform(backup);
         g.setTransform(initialTransform);
         revalidate();
     }
