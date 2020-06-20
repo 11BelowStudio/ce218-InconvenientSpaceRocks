@@ -20,27 +20,26 @@ The assignment documentation is in the 'Assignment documentation stuff' folder.
 
 ## Controls
 
-* Up key: engage thrusters on your ship
+* Up key: engage thrusters on your ship (start going in the direction you are facing)
 * Left key: rotate anticlockwise
 * Right key: rotate clockwise
-* Down key: teleport forwards
+* Down key: teleport forwards in the direction you are facing
+    * There will be a slight delay between teleports
+    * Your velocity will be set to 0 after you teleport
 * Spacebar: shoot/start game
 * B: deploy bomb (if you have a bomb)
-* Any button: the Any button/skip intro/skip full leaderboard
+* Any button: the Any button/skip intro/skip full leaderboard/start game
 * Escape: pause game, show quit prompt
 * Mouse: select main menu options
 
 ## Running the game
 
-* Run the main method.
-    * In case you can't find it:
-        * [src/ThePackageThatContainsTheMainMethod/MainClass.java](src/ThePackageThatContainsTheMainMethod/MainClass.java)
-* Folders that are needed for the game to work
-    * pretty much all of /src
-    * /textAssets
-    * /images
-    * /SaveData
-    * /sounds
+* Make sure you have Java installed
+    * This was written in Java 8, so yeah make sure you have that.
+* Download the .zip from the 'Compiled Versions' folder (if you're looking at the repo)
+* Unzip that .zip
+* DO NOT TOUCH THE 'Resources' FOLDER!
+* Click on 'InconvenientSpaceRocks.jar' and run it
 * yes it might take a moment for everything to get loaded.
 
 ## How to play
@@ -108,7 +107,7 @@ The assignment documentation is in the 'Assignment documentation stuff' folder.
         * Some stuff was written entirely for use in this
         * Other stuff was reverse-engineered from some of my previous projects
     * Some sample/template code provided by Dr. Dimitri Ognibene
-    * Help with getting the images/audio in the JAR file provided by JB Nizet on StackOverflow (https://stackoverflow.com/a/8362018)
+    * Help with getting the images in the JAR file provided by JB Nizet on StackOverflow (https://stackoverflow.com/a/8362018)
     * Help with getting the intro crawl into the JAR file provided by Thanks, Drew MacInnis on StackOverflow (https://stackoverflow.com/a/20389418)
 * Art:
     * Me
@@ -119,4 +118,6 @@ The assignment documentation is in the 'Assignment documentation stuff' folder.
         * Recorded using my phone's sound recorder thing, exported into .wav with Audacity
 * Story stuff:
     * Me
-    
+* Design:
+    * Pretty much copied from 'Asteroids' (designed by Lyle Rains, Ed Logg, and Dominic Walsh)
+    * Some of the specific design bits (such as the score stuff, look and feel, the way this version does it etc) by me

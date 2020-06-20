@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="InconvenientSpaceRocks">
+    <output-path>$PROJECT_DIR$/out/artifacts/InconvenientSpaceRocks</output-path>
+    <root id="archive" name="InconvenientSpaceRocks.jar">
+      <element id="module-output" name="ce218" />
+      <element id="dir-copy" path="$PROJECT_DIR$/Resources/sounds" />
+    </root>
+  </artifact>
+</component>

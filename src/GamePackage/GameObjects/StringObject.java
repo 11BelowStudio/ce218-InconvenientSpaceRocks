@@ -87,21 +87,31 @@ public class StringObject extends GameObject {
             g.setFont(theFont);
             AffineTransform at = g.getTransform();
             g.translate(position.x, position.y);
-            g.setColor(objectColour);
+            g.setColor(Color.black);
             FontMetrics metrics = g.getFontMetrics(g.getFont());
             int w = metrics.stringWidth(thisString);
             int h = metrics.getHeight();
+            int widthOffset;
             switch (alignment){
+                default:
+                    widthOffset = alignment;
+                    break;
                 case 0:
-                    g.drawString(thisString,0,0);
+                    widthOffset = 0;
                     break;
                 case 1:
-                    g.drawString(thisString, -w, 0);
+                    widthOffset = -w;
                     break;
                 case 2:
-                    g.drawString(thisString, -(w / 2), 0);
+                    widthOffset = -(w/2);
                     break;
             }
+            g.drawString(thisString,widthOffset+1,1);
+            g.drawString(thisString,widthOffset-1,1);
+            g.drawString(thisString,widthOffset-1,-1);
+            g.drawString(thisString,widthOffset+1,-1);
+            g.setColor(objectColour);
+            g.drawString(thisString,widthOffset,0);
             g.setTransform(at);
             g.setFont(tempFont);
             areaRectangle = new Rectangle((int)position.x - w/2, (int)position.y - h/2,w,h);

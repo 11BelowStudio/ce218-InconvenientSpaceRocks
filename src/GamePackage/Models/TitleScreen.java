@@ -221,7 +221,7 @@ public class TitleScreen extends Model {
                 aliveHUD.add(play.revive());
                 aliveHUD.add(showScores.revive());
                 menuOnscreen = true;
-
+                ctrl.noAction();
             } else if (setupScrollingText){
                 aliveHUD.addAll(scrollingTextToAdd);
                 menuOnscreen = false;

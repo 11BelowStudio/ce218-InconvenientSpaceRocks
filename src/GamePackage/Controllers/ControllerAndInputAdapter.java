@@ -9,7 +9,7 @@ public class ControllerAndInputAdapter extends ControllerAdapter implements Mous
     //controllerAdapter but its also KeyAdapter and MouseAdapter as well! (with some default methods)
 
     @Override
-    public void keyTyped(KeyEvent e) {action.releasedTheAnyButton();}
+    public void keyTyped(KeyEvent e) { }
 
     @Override
     public void keyPressed(KeyEvent e) { action.pressedTheAnyButton(); }
@@ -18,7 +18,7 @@ public class ControllerAndInputAdapter extends ControllerAdapter implements Mous
     public void keyReleased(KeyEvent e) { action.releasedTheAnyButton();}
 
     @Override
-    public void mouseClicked(MouseEvent e) {action.releasedTheAnyButton();}
+    public void mouseClicked(MouseEvent e) { }
 
     @Override
     public void mousePressed(MouseEvent e) { action.pressedTheAnyButton();}
