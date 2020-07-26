@@ -38,8 +38,6 @@ get rid of them for us k thx bye
 * Click on 'InconvenientSpaceRocks.jar' and run it
 * yes it might take a moment for everything to get loaded.
 
-* please do not attempt to resize the window, I have no idea how to make that work properly.
-
 ## How to play
 
 * get an high score
@@ -94,25 +92,25 @@ get rid of them for us k thx bye
     * Collision stuff
         * basically the hitboxes match up exactly with what you see onscreen.
             * even if the object in question is wrapped around the screen.
-        * yes, the hitboxes are updated in the draw thread,
-        I know it's absolutely terrible, but tbh it's a bit too late for me to completely refactor it now.
 
 ## CREDITS
 
 * Code:
-    * Me
+    * 11BelowStudio
+        * Some stuff was written entirely for use in this
+        * Other stuff was reverse-engineered from some of my previous projects
     * Some sample/template code provided by Dr. Dimitri Ognibene
     * Help with getting the images in the JAR file provided by JB Nizet on StackOverflow (https://stackoverflow.com/a/8362018)
     * Help with getting the intro crawl into the JAR file provided by Thanks, Drew MacInnis on StackOverflow (https://stackoverflow.com/a/20389418)
 * Art:
-    * Me
+    * 11BelowStudio
         * Made with MS Paint because thats all the university computers had lol
 * Audio:
-    * Me
+    * 11BelowStudio
         * With some additional sounds provided by a bag of Tesco roast chicken crisps
         * Recorded using my phone's sound recorder thing, exported into .wav with Audacity
 * Story stuff:
-    * Me
+    * 11BelowStudio
 * Design:
     * Pretty much copied from 'Asteroids' (designed by Lyle Rains, Ed Logg, and Dominic Walsh)
     * Some of the specific design bits (such as the score stuff, look and feel, the way this version does it etc) by me
@@ -142,6 +140,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-# did u kno that this game is open-source?
+# Interesting links
 
-go to https://github.com/11BelowStudio/ce218-InconvenientSpaceRocks to see the source code!
+Source code: https://github.com/11BelowStudio/ce218-InconvenientSpaceRocks
+itch.io page: https://11belowstudio.itch.io/inconvenient-space-rocks

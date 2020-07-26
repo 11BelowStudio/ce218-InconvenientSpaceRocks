@@ -121,3 +121,9 @@ The assignment documentation is in the 'Assignment documentation stuff' folder.
 * Design:
     * Pretty much copied from 'Asteroids' (designed by Lyle Rains, Ed Logg, and Dominic Walsh)
     * Some of the specific design bits (such as the score stuff, look and feel, the way this version does it etc) by me
+
+
+# Interesting links
+
+* Source code: https://github.com/11BelowStudio/ce218-InconvenientSpaceRocks
+* itch.io page: https://11belowstudio.itch.io/inconvenient-space-rocks
